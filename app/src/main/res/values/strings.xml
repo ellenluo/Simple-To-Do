@@ -1,0 +1,15 @@
+<resources>
+    <string name="app_name">Simple To-Do</string>
+
+    <string name="title_activity_add_task">Create New Task</string>
+    <string name="add_task_name">What is your task?</string>
+    <string name="add_task_details">Additional details:</string>
+    <string name="add_task_button">Add Task</string>
+
+    <string name="title_activity_task_details">Task Details</string>
+    <string name="task_details_name">Task:</string>
+    <string name="task_details_details">Additional details:</string>
+
+    <string name="drawer_open">Open navigation drawer</string>
+    <string name="drawer_close">Close navigation drawer</string>
+</resources>
