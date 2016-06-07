@@ -2,6 +2,7 @@ package com.ellenluo.simpleto_do;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Paint;
 import android.os.Bundle;
 import android.os.Handler;
@@ -22,6 +23,9 @@ public class FragmentMain extends Fragment {
     ArrayList<Task> taskList;
     DBHandler db;
     private Handler handler = new Handler();
+
+    SharedPreferences pref;
+    private static final int PREFERENCE_MODE_PRIVATE = 0;
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_main, container, false);
@@ -44,8 +48,10 @@ public class FragmentMain extends Fragment {
         lvTasks.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapter, View view, int position, long id) {
+                pref = getActivity().getSharedPreferences("Settings", PREFERENCE_MODE_PRIVATE);
+                pref.edit().putInt("position", position).apply();
+
                 Intent intent = new Intent(getActivity(), TaskDetailsActivity.class);
-                intent.putExtra("position", position);
                 startActivity(intent);
             }
         });
