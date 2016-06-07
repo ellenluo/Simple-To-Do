@@ -26,8 +26,6 @@ public class FragmentMain extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_main, container, false);
 
-        Log.d("FRAGMENTMAIN", "Initialized");
-
         // set up task list
         db = new DBHandler(getActivity());
 
