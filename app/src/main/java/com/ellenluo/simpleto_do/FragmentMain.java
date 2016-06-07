@@ -1,6 +1,5 @@
 package com.ellenluo.simpleto_do;
 
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Paint;
@@ -19,7 +18,6 @@ import java.util.ArrayList;
 
 public class FragmentMain extends Fragment {
 
-    // initialize task list
     ArrayList<Task> taskList;
     DBHandler db;
     private Handler handler = new Handler();
@@ -32,14 +30,8 @@ public class FragmentMain extends Fragment {
 
         // set up task list
         db = new DBHandler(getActivity());
-
         ListView lvTasks = (ListView) v.findViewById(R.id.task_list);
-
         taskList = db.getAllTasks();
-
-        for (int i = 0; i < taskList.size(); i++) {
-            Log.d("Task " + i, taskList.get(i).toString());
-        }
 
         final TaskListAdapter taskAdapter = new TaskListAdapter(getActivity(), taskList);
         lvTasks.setAdapter(taskAdapter);
@@ -48,8 +40,10 @@ public class FragmentMain extends Fragment {
         lvTasks.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapter, View view, int position, long id) {
+                Task curTask = taskList.get(position);
+
                 pref = getActivity().getSharedPreferences("Settings", PREFERENCE_MODE_PRIVATE);
-                pref.edit().putInt("position", position).apply();
+                pref.edit().putInt("id", curTask.getId()).apply();
 
                 Intent intent = new Intent(getActivity(), TaskDetailsActivity.class);
                 startActivity(intent);

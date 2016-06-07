@@ -17,8 +17,7 @@ import java.util.ArrayList;
 public class TaskDetailsActivity extends AppCompatActivity {
 
     DBHandler db = new DBHandler(this);
-    ArrayList<Task> taskList;
-    int position;
+    int id;
 
     SharedPreferences pref;
     private static final int PREFERENCE_MODE_PRIVATE = 0;
@@ -34,17 +33,17 @@ public class TaskDetailsActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayShowHomeEnabled(true);
         toolbar.setPadding(0, getStatusBarHeight(), 0, 0);
 
-        // get tasks from database
-        taskList = db.getAllTasks();
+        // get task from database
         pref = getSharedPreferences("Settings", PREFERENCE_MODE_PRIVATE);
-        position = pref.getInt("position", 0);
+        id = pref.getInt("id", 0);
+        Task curTask = db.getTask(id);
 
         // set task details
         TextView tvName = (TextView) findViewById(R.id.task_details_name);
         TextView tvDetails = (TextView) findViewById(R.id.task_details_details);
 
-        tvName.setText(taskList.get(position).getName());
-        tvDetails.setText(taskList.get(position).getDetails());
+        tvName.setText(curTask.getName());
+        tvDetails.setText(curTask.getDetails());
     }
 
     // inflates action bar menu

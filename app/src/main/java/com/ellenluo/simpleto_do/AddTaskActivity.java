@@ -23,6 +23,7 @@ public class AddTaskActivity extends AppCompatActivity {
         toolbar.setPadding(0, getStatusBarHeight(), 0, 0);
     }
 
+    // add task to database
     public void addTask(View view) {
         EditText etName = (EditText) findViewById(R.id.add_task_task_name);
         EditText etText = (EditText) findViewById(R.id.add_task_task_details);

@@ -5,6 +5,7 @@ public class Task {
     private int id;
     private String name, details;
 
+    // constructors
     public Task(int id, String name, String details) {
         this.id = id;
         this.name = name;
@@ -16,6 +17,7 @@ public class Task {
         this.details = details;
     }
 
+    // get/set methods
     public int getId() {
         return this.id;
     }
@@ -28,7 +30,11 @@ public class Task {
         return this.details;
     }
 
-    public String toString() {
-        return "id: " + this.id + " name: " + this.name + " details: " + this.details;
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setDetails(String details) {
+        this.details = details;
     }
 }

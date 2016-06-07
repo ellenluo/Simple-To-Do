@@ -14,12 +14,12 @@ import java.util.ArrayList;
 public class EditTaskActivity extends AppCompatActivity {
 
     DBHandler db = new DBHandler(this);
-    ArrayList<Task> taskList;
-
     SharedPreferences pref;
     private static final int PREFERENCE_MODE_PRIVATE = 0;
 
     EditText etName, etDetails;
+    Task curTask;
+    int id;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,14 +33,16 @@ public class EditTaskActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayShowHomeEnabled(true);
         toolbar.setPadding(0, getStatusBarHeight(), 0, 0);
 
-        taskList = db.getAllTasks();
+        // get task from database
         pref = getSharedPreferences("Settings", PREFERENCE_MODE_PRIVATE);
-        int position = pref.getInt("position", 0);
+        id = pref.getInt("id", 0);
+        curTask = db.getTask(id);
 
+        // set text fields to current values
         etName = (EditText) findViewById(R.id.edit_task_task_name);
         etDetails = (EditText) findViewById(R.id.edit_task_task_details);
-        etName.setText(taskList.get(position).getName());
-        etDetails.setText(taskList.get(position).getDetails());
+        etName.setText(curTask.getName());
+        etDetails.setText(curTask.getDetails());
     }
 
     // find height of status bar
@@ -53,12 +55,14 @@ public class EditTaskActivity extends AppCompatActivity {
         return result;
     }
 
+    // save changes
     public void saveChanges(View view) {
         String newName = etName.getText().toString();
         String newDetails = etDetails.getText().toString();
 
-        Task task = new Task(newName, newDetails);
-        db.updateTask(task);
+        curTask.setName(newName);
+        curTask.setDetails(newDetails);
+        db.updateTask(curTask);
 
         Intent intent = new Intent(EditTaskActivity.this, TaskDetailsActivity.class);
         startActivity(intent);
