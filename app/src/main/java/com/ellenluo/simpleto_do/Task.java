@@ -27,4 +27,8 @@ public class Task {
     public String getDetails() {
         return this.details;
     }
+
+    public String toString() {
+        return "id: " + this.id + " name: " + this.name + " details: " + this.details;
+    }
 }
