@@ -15,4 +15,13 @@ public class List {
         this.name = name;
     }
 
+    // getters
+    public String getName() {
+        return this.name;
+    }
+
+    public int getId() {
+        return this.id;
+    }
+
 }

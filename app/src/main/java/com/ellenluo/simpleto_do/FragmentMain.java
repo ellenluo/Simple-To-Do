@@ -31,7 +31,14 @@ public class FragmentMain extends Fragment {
         // set up task list
         db = new DBHandler(getActivity());
         ListView lvTasks = (ListView) v.findViewById(R.id.task_list);
-        taskList = db.getAllTasks();
+        pref = getActivity().getSharedPreferences("Settings", PREFERENCE_MODE_PRIVATE);
+        String currentList = pref.getString("current_list", "all_tasks");
+
+        // set list to view
+        if (currentList.equals("all_tasks"))
+            taskList = db.getAllTasks();
+        else
+            taskList = db.getTasksFromList(currentList);
 
         final TaskListAdapter taskAdapter = new TaskListAdapter(getActivity(), taskList);
         lvTasks.setAdapter(taskAdapter);
@@ -42,7 +49,6 @@ public class FragmentMain extends Fragment {
             public void onItemClick(AdapterView<?> adapter, View view, int position, long id) {
                 Task curTask = taskList.get(position);
 
-                pref = getActivity().getSharedPreferences("Settings", PREFERENCE_MODE_PRIVATE);
                 pref.edit().putInt("id", curTask.getId()).apply();
 
                 Intent intent = new Intent(getActivity(), TaskDetailsActivity.class);

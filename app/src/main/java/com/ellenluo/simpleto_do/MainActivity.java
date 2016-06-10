@@ -1,6 +1,7 @@
 package com.ellenluo.simpleto_do;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.graphics.Paint;
 import android.os.Bundle;
@@ -9,18 +10,22 @@ import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.GravityCompat;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -28,6 +33,10 @@ public class MainActivity extends AppCompatActivity {
     private Toolbar toolbar;
     private NavigationView nvDrawer;
     private ActionBarDrawerToggle drawerToggle;
+
+    DBHandler db = new DBHandler(this);
+    SharedPreferences pref;
+    private static final int PREFERENCE_MODE_PRIVATE = 0;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -46,7 +55,9 @@ public class MainActivity extends AppCompatActivity {
         drawerToggle = setupDrawerToggle();
         mDrawer.addDrawerListener(drawerToggle);
 
-        // set up add new button
+        refreshLists();
+
+        // set up add button
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
@@ -66,6 +77,23 @@ public class MainActivity extends AppCompatActivity {
 
         FragmentManager fragmentManager = getSupportFragmentManager();
         fragmentManager.beginTransaction().replace(R.id.frame, fragment).commit();
+    }
+
+    // refresh navigation menu of lists
+    public void refreshLists() {
+        ArrayList<List> listList = db.getAllLists();
+        ArrayList<String> listName = new ArrayList<String>();
+        Menu menu = nvDrawer.getMenu();
+
+        for (int i = 0; i < listList.size(); i++) {
+            listName.add(i, listList.get(i).getName());
+        }
+
+        Collections.sort(listName, String.CASE_INSENSITIVE_ORDER);
+
+        for (int i = 0; i < listList.size(); i++) {
+            menu.add(R.id.group_lists, Menu.NONE, Menu.NONE, listName.get(i));
+        }
     }
 
     // set up navigation drawer
@@ -93,30 +121,49 @@ public class MainActivity extends AppCompatActivity {
         Fragment fragment = null;
         Class fragmentClass = null;
 
-        switch(menuItem.getItemId()) {
-            case R.id.nav_all:
-                fragmentClass = FragmentMain.class;
-                break;
-            case R.id.nav_about:
-                break;
-            case R.id.nav_backup:
+        if (menuItem.getItemId() != 0) {
+            switch (menuItem.getItemId()) {
+                case R.id.nav_all:
+                    fragmentClass = FragmentMain.class;
+                    pref = getSharedPreferences("Settings", PREFERENCE_MODE_PRIVATE);
+                    pref.edit().putString("current_list", "all_tasks").apply();
+                    break;
+                case R.id.nav_about:
+                    break;
+                case R.id.nav_backup:
+                    break;
+                default:
+                    break;
+            }
 
-                break;
-            default:
-                break;
+            try {
+                fragment = (Fragment) fragmentClass.newInstance();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            FragmentManager fragmentManager = getSupportFragmentManager();
+            fragmentManager.beginTransaction().replace(R.id.frame, fragment).commit();
+
+            setTitle(menuItem.getTitle());
+            mDrawer.closeDrawers();
+        } else {
+            try {
+                fragment = (Fragment) FragmentMain.class.newInstance();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            FragmentManager fragmentManager = getSupportFragmentManager();
+            fragmentManager.beginTransaction().replace(R.id.frame, fragment).commit();
+
+            // set list
+            pref = getSharedPreferences("Settings", PREFERENCE_MODE_PRIVATE);
+            pref.edit().putString("current_list", menuItem.getTitle().toString()).apply();
+
+            setTitle(menuItem.getTitle());
+            mDrawer.closeDrawers();
         }
-
-        try {
-            fragment = (Fragment) fragmentClass.newInstance();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        FragmentManager fragmentManager = getSupportFragmentManager();
-        fragmentManager.beginTransaction().replace(R.id.frame, fragment).commit();
-
-        setTitle(menuItem.getTitle());
-        mDrawer.closeDrawers();
     }
 
     @Override
@@ -146,5 +193,12 @@ public class MainActivity extends AppCompatActivity {
         return result;
     }
 
+    // change back to viewing all tasks
+    @Override
+    protected void onStop() {
+        pref = getSharedPreferences("Settings", PREFERENCE_MODE_PRIVATE);
+        pref.edit().putString("current_list", "all_tasks").apply();
+        super.onStop();
+    }
 }
 

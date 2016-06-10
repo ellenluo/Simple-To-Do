@@ -3,21 +3,23 @@ package com.ellenluo.simpleto_do;
 public class Task {
 
     private int id;
-    private String name, details;
+    private String name, details, list;
 
     // constructors
-    public Task(int id, String name, String details) {
+    public Task(int id, String name, String details, String list) {
         this.id = id;
         this.name = name;
         this.details = details;
+        this.list = list;
     }
 
-    public Task(String name, String details) {
+    public Task(String name, String details, String list) {
         this.name = name;
         this.details = details;
+        this.list = list;
     }
 
-    // get/set methods
+    // getter
     public int getId() {
         return this.id;
     }
@@ -30,6 +32,11 @@ public class Task {
         return this.details;
     }
 
+    public String getList() {
+        return this.list;
+    }
+
+    // setter
     public void setName(String name) {
         this.name = name;
     }

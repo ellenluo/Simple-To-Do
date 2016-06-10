@@ -33,6 +33,31 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:text="@string/add_task_list"/>
+
+        <Spinner
+            android:id="@+id/add_task_list_spinner"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+
+            android:paddingBottom="16dp"/>
+
+        <TextView
+            android:id="@+id/add_task_instructions"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Enter name of new list:"/>
+
+        <EditText
+            android:id="@+id/add_task_list_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:maxLines="1"
+            android:layout_marginBottom="@dimen/activity_vertical_margin"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:text="@string/add_task_details"/>
 
         <EditText
