@@ -67,6 +67,9 @@ public class MainActivity extends AppCompatActivity {
         });
 
         // set main fragment
+        pref = getSharedPreferences("Settings", PREFERENCE_MODE_PRIVATE);
+        String curList = pref.getString("current_list", "All Tasks");
+
         Fragment fragment = null;
 
         try {
@@ -77,6 +80,7 @@ public class MainActivity extends AppCompatActivity {
 
         FragmentManager fragmentManager = getSupportFragmentManager();
         fragmentManager.beginTransaction().replace(R.id.frame, fragment).commit();
+        setTitle(curList);
     }
 
     // refresh navigation menu of lists
@@ -126,7 +130,7 @@ public class MainActivity extends AppCompatActivity {
                 case R.id.nav_all:
                     fragmentClass = FragmentMain.class;
                     pref = getSharedPreferences("Settings", PREFERENCE_MODE_PRIVATE);
-                    pref.edit().putString("current_list", "all_tasks").apply();
+                    pref.edit().putString("current_list", "All Tasks").apply();
                     break;
                 case R.id.nav_about:
                     break;
@@ -193,12 +197,10 @@ public class MainActivity extends AppCompatActivity {
         return result;
     }
 
-    // change back to viewing all tasks
+    // disable back button
     @Override
-    protected void onStop() {
-        pref = getSharedPreferences("Settings", PREFERENCE_MODE_PRIVATE);
-        pref.edit().putString("current_list", "all_tasks").apply();
-        super.onStop();
+    public void onBackPressed() {
     }
+
 }
 

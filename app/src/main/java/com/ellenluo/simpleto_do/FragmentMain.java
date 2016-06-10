@@ -32,10 +32,10 @@ public class FragmentMain extends Fragment {
         db = new DBHandler(getActivity());
         ListView lvTasks = (ListView) v.findViewById(R.id.task_list);
         pref = getActivity().getSharedPreferences("Settings", PREFERENCE_MODE_PRIVATE);
-        String currentList = pref.getString("current_list", "all_tasks");
+        String currentList = pref.getString("current_list", "All Tasks");
 
         // set list to view
-        if (currentList.equals("all_tasks"))
+        if (currentList.equals("All Tasks"))
             taskList = db.getAllTasks();
         else
             taskList = db.getTasksFromList(currentList);

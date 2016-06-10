@@ -25,6 +25,9 @@ import java.util.ArrayList;
 public class AddTaskActivity extends AppCompatActivity {
 
     DBHandler db;
+    SharedPreferences pref;
+    private static final int PREFERENCE_MODE_PRIVATE = 0;
+
     String[] spinnerItem;
     ArrayList<List> listList;
     String listName = "";
@@ -32,6 +35,7 @@ public class AddTaskActivity extends AppCompatActivity {
 
     TextView tvAddList;
     EditText etAddList;
+    Spinner listSpinner;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,7 +56,7 @@ public class AddTaskActivity extends AppCompatActivity {
         etAddList.setVisibility(View.GONE);
 
         // set up spinner
-        Spinner listSpinner = (Spinner) findViewById(R.id.add_task_list_spinner);
+        listSpinner = (Spinner) findViewById(R.id.add_task_list_spinner);
 
         db = new DBHandler(this);
         db.getReadableDatabase();
@@ -60,7 +64,6 @@ public class AddTaskActivity extends AppCompatActivity {
         size = listList.size();
 
         spinnerItem = new String[size + 2];
-
         spinnerItem[0] = "Select one";
         spinnerItem[size + 1] = "Add new list";
 
@@ -70,6 +73,11 @@ public class AddTaskActivity extends AppCompatActivity {
 
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item, spinnerItem);
         listSpinner.setAdapter(adapter);
+
+        // set default list option
+        pref = getSharedPreferences("Settings", PREFERENCE_MODE_PRIVATE);
+        String curList = pref.getString("current_list", "All Tasks");
+        listSpinner.setSelection(getIndex(curList));
 
         // if spinner item is selected
         listSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -94,6 +102,20 @@ public class AddTaskActivity extends AppCompatActivity {
                 listName = "";
             }
         });
+    }
+
+    // get index of item in spinner
+    private int getIndex(String item)
+    {
+        int index = 0;
+
+        for (int i = 0; i < listSpinner.getCount(); i++){
+            if (listSpinner.getItemAtPosition(i).toString().equalsIgnoreCase(item)){
+                index = i;
+                break;
+            }
+        }
+        return index;
     }
 
     // add task to database
