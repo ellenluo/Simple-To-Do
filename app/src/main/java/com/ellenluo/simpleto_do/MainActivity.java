@@ -90,12 +90,15 @@ public class MainActivity extends AppCompatActivity {
         Menu menu = nvDrawer.getMenu();
 
         for (int i = 0; i < listList.size(); i++) {
-            listName.add(i, listList.get(i).getName());
+            if (db.getTasksFromList(listList.get(i).getName()).size() > 0)
+                listName.add(listList.get(i).getName());
+            else
+                db.deleteList(listList.get(i));
         }
 
         Collections.sort(listName, String.CASE_INSENSITIVE_ORDER);
 
-        for (int i = 0; i < listList.size(); i++) {
+        for (int i = 0; i < listName.size(); i++) {
             menu.add(R.id.group_lists, Menu.NONE, Menu.NONE, listName.get(i));
         }
     }

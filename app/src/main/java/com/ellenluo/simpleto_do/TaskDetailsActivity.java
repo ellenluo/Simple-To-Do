@@ -11,6 +11,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
 
+import org.w3c.dom.Text;
+
 import java.util.ArrayList;
 
 
@@ -18,6 +20,7 @@ public class TaskDetailsActivity extends AppCompatActivity {
 
     DBHandler db = new DBHandler(this);
     int id;
+    Task curTask;
 
     SharedPreferences pref;
     private static final int PREFERENCE_MODE_PRIVATE = 0;
@@ -36,13 +39,15 @@ public class TaskDetailsActivity extends AppCompatActivity {
         // get task from database
         pref = getSharedPreferences("Settings", PREFERENCE_MODE_PRIVATE);
         id = pref.getInt("id", 0);
-        Task curTask = db.getTask(id);
+        curTask = db.getTask(id);
 
         // set task details
         TextView tvName = (TextView) findViewById(R.id.task_details_name);
+        TextView tvList = (TextView) findViewById(R.id.task_details_list);
         TextView tvDetails = (TextView) findViewById(R.id.task_details_details);
 
         tvName.setText(curTask.getName());
+        tvList.setText(curTask.getList());
         tvDetails.setText(curTask.getDetails());
     }
 
@@ -74,6 +79,13 @@ public class TaskDetailsActivity extends AppCompatActivity {
             result = getResources().getDimensionPixelSize(resourceId);
         }
         return result;
+    }
+
+    // make back button return to main activity
+    @Override
+    public void onBackPressed() {
+        Intent intent = new Intent(TaskDetailsActivity.this, MainActivity.class);
+        startActivity(intent);
     }
 
 }

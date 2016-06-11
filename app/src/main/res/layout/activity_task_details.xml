@@ -20,35 +20,51 @@
         android:paddingRight="@dimen/activity_horizontal_margin"
         android:paddingTop="@dimen/activity_vertical_margin"
         android:orientation="vertical">
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/task_details_name"/>
 
-    <TextView
-        android:id="@+id/task_details_name"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="This is a task."
-        android:textColor="#000000"
-        android:textSize="18sp"
-        android:layout_marginBottom="@dimen/activity_vertical_margin"
-        android:layout_marginTop="8dp"/>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/task_details_name"/>
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/task_details_details"/>
+        <TextView
+            android:id="@+id/task_details_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="This is a task."
+            android:textColor="#000000"
+            android:textSize="18sp"
+            android:layout_marginBottom="@dimen/activity_vertical_margin"
+            android:layout_marginTop="8dp"/>
 
-    <TextView
-        android:id="@+id/task_details_details"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Details go here."
-        android:textColor="#000000"
-        android:textSize="18sp"
-        android:layout_marginBottom="@dimen/activity_vertical_margin"
-        android:layout_marginTop="8dp" />
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="List:"/>
+
+        <TextView
+            android:id="@+id/task_details_list"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="This is a list."
+            android:textColor="#000000"
+            android:textSize="18sp"
+            android:layout_marginBottom="@dimen/activity_vertical_margin"
+            android:layout_marginTop="8dp"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/task_details_details"/>
+
+        <TextView
+            android:id="@+id/task_details_details"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Details go here."
+            android:textColor="#000000"
+            android:textSize="18sp"
+            android:layout_marginBottom="@dimen/activity_vertical_margin"
+            android:layout_marginTop="8dp" />
 
     </LinearLayout>
 

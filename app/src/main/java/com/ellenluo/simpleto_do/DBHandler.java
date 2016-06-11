@@ -114,6 +114,18 @@ public class DBHandler extends SQLiteOpenHelper {
         db.close();
     }
 
+    public List getList(String name) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        String selectQuery = "Select * FROM " + TABLE_LISTS + " WHERE " + KEY_LIST_NAME + " =  \"" + name + "\"";
+        Cursor cursor = db.rawQuery(selectQuery, null);
+
+        if (cursor != null)
+            cursor.moveToFirst();
+
+        List list = new List(Integer.parseInt(cursor.getString(0)), cursor.getString(1));
+        return list;
+    }
+
     public ArrayList<List> getAllLists() {
         SQLiteDatabase db = this.getReadableDatabase();
         String selectQuery =  "SELECT * FROM " + TABLE_LISTS;

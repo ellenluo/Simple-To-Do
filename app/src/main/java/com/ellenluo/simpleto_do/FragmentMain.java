@@ -19,6 +19,7 @@ import java.util.ArrayList;
 public class FragmentMain extends Fragment {
 
     ArrayList<Task> taskList;
+    String curList;
     DBHandler db;
     private Handler handler = new Handler();
 
@@ -32,13 +33,13 @@ public class FragmentMain extends Fragment {
         db = new DBHandler(getActivity());
         ListView lvTasks = (ListView) v.findViewById(R.id.task_list);
         pref = getActivity().getSharedPreferences("Settings", PREFERENCE_MODE_PRIVATE);
-        String currentList = pref.getString("current_list", "All Tasks");
+        curList = pref.getString("current_list", "All Tasks");
 
         // set list to view
-        if (currentList.equals("All Tasks"))
+        if (curList.equals("All Tasks"))
             taskList = db.getAllTasks();
         else
-            taskList = db.getTasksFromList(currentList);
+            taskList = db.getTasksFromList(curList);
 
         final TaskListAdapter taskAdapter = new TaskListAdapter(getActivity(), taskList);
         lvTasks.setAdapter(taskAdapter);
@@ -68,6 +69,14 @@ public class FragmentMain extends Fragment {
                     public void run() {
                         db.deleteTask(taskList.remove(pos));
                         taskAdapter.notifyDataSetChanged();
+
+                        if (taskList.size() == 0) {
+                            pref.edit().putString("current_list", "All Tasks").apply();
+                            db.deleteList(db.getList(curList));
+
+                            Intent intent = new Intent(getActivity(), MainActivity.class);
+                            startActivity(intent);
+                        }
                     }
                 }, 500);
 

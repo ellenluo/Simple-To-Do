@@ -44,4 +44,8 @@ public class Task {
     public void setDetails(String details) {
         this.details = details;
     }
+
+    public void setList(String list) {
+        this.list = list;
+    }
 }
