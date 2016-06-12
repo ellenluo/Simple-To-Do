@@ -12,6 +12,7 @@ import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 
@@ -146,7 +147,13 @@ public class EditTaskActivity extends AppCompatActivity {
         curTask.setList(listName);
         curTask.setDetails(newDetails);
         db.updateTask(curTask);
-        pref.edit().putString("current_list", listName).apply();
+
+        if (curTask.getList().equals(""))
+            pref.edit().putString("current_list", "All Tasks").apply();
+        else
+            pref.edit().putString("current_list", listName).apply();
+
+        Toast.makeText(this, "'" + curTask.getName() + "' successfully updated", Toast.LENGTH_SHORT).show();
 
         Intent intent = new Intent(EditTaskActivity.this, TaskDetailsActivity.class);
         startActivity(intent);

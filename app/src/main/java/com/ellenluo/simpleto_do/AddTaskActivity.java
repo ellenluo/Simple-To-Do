@@ -17,6 +17,7 @@ import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.w3c.dom.Text;
 
@@ -132,6 +133,7 @@ public class AddTaskActivity extends AppCompatActivity {
 
         // add task & return to main activity
         db.addTask(new Task(etName.getText().toString(), etText.getText().toString(), listName));
+        Toast.makeText(this, "New task successfully added", Toast.LENGTH_SHORT).show();
 
         Intent intent = new Intent(AddTaskActivity.this, MainActivity.class);
         startActivity(intent);

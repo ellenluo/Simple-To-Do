@@ -13,14 +13,16 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
+
 import java.util.ArrayList;
 
 
 public class FragmentMain extends Fragment {
 
     ArrayList<Task> taskList;
-    String curList;
     DBHandler db;
+    String curList;
     private Handler handler = new Handler();
 
     SharedPreferences pref;
@@ -63,19 +65,24 @@ public class FragmentMain extends Fragment {
             public boolean onItemLongClick(AdapterView<?> av, View v, final int pos, long id) {
                 TextView tvName = (TextView) v.findViewById(R.id.task_row_name);
                 tvName.setPaintFlags(tvName.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
+                Toast.makeText(getActivity(), "'" + taskList.get(pos).getName() + "' successfully removed", Toast.LENGTH_SHORT).show();
 
                 // delay deletion
                 handler.postDelayed(new Runnable() {
                     public void run() {
-                        db.deleteTask(taskList.remove(pos));
-                        taskAdapter.notifyDataSetChanged();
+                        if (db.getTasksFromList(taskList.get(pos).getList()).size() == 1) {
+                            Log.d("FRAGMENTMAIN", "Entered");
 
-                        if (taskList.size() == 0) {
                             pref.edit().putString("current_list", "All Tasks").apply();
-                            db.deleteList(db.getList(curList));
+                            db.deleteList(db.getList(taskList.get(pos).getList()));
+                            db.deleteTask(taskList.remove(pos));
+                            taskAdapter.notifyDataSetChanged();
 
                             Intent intent = new Intent(getActivity(), MainActivity.class);
                             startActivity(intent);
+                        } else {
+                            db.deleteTask(taskList.remove(pos));
+                            taskAdapter.notifyDataSetChanged();
                         }
                     }
                 }, 500);
