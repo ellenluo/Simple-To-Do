@@ -1,5 +1,7 @@
 package com.ellenluo.simpleto_do;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.support.v4.app.DialogFragment;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -11,12 +13,14 @@ import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 
 public class AddTaskActivity extends AppCompatActivity {
 
@@ -29,7 +33,8 @@ public class AddTaskActivity extends AppCompatActivity {
     String listName = "";
     int size = 0;
 
-    TextView tvAddList;
+    TextView tvAddList, tvTime;
+    Button btnTime;
     EditText etAddList;
     Spinner listSpinner;
 
@@ -44,6 +49,12 @@ public class AddTaskActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
         toolbar.setPadding(0, getStatusBarHeight(), 0, 0);
+
+        // make timepicker invisible
+        tvTime = (TextView) findViewById(R.id.add_task_time);
+        btnTime = (Button) findViewById(R.id.add_task_set_time);
+        tvTime.setVisibility(View.GONE);
+        btnTime.setVisibility(View.GONE);
 
         // make new list edittext & textview invisible
         tvAddList = (TextView) findViewById(R.id.add_task_instructions);
@@ -117,6 +128,9 @@ public class AddTaskActivity extends AppCompatActivity {
     public void setDate(View view) {
         DialogFragment datePicker = new FragmentDatePicker();
         datePicker.show(getSupportFragmentManager(), "datePicker");
+
+        tvTime.setVisibility(View.VISIBLE);
+        btnTime.setVisibility(View.VISIBLE);
     }
 
     public void setTime(View view) {
@@ -136,8 +150,33 @@ public class AddTaskActivity extends AppCompatActivity {
             db.addList(new List(listName));
         }
 
+        // get time & date
+        int hour = pref.getInt("hour", 0);
+        int minutes = pref.getInt("minutes", 0);
+        int day = pref.getInt("day", -1);
+        int month = pref.getInt("month", -1);
+        int year = pref.getInt("year", -1);
+        long millis = -1;
+
+        if (day != -1) {
+            Calendar calendar = Calendar.getInstance();
+            calendar.set(Calendar.YEAR, year);
+            calendar.set(Calendar.MONTH, month);
+            calendar.set(Calendar.DAY_OF_MONTH, day);
+            calendar.set(Calendar.HOUR_OF_DAY, hour);
+            calendar.set(Calendar.MINUTE, minutes);
+            millis = calendar.getTimeInMillis();
+        }
+
+        // reset preferences
+        pref.edit().remove("hour").apply();
+        pref.edit().remove("minutes").apply();
+        pref.edit().remove("day").apply();
+        pref.edit().remove("month").apply();
+        pref.edit().remove("year").apply();
+
         // add task & return to main activity
-        db.addTask(new Task(etName.getText().toString(), etText.getText().toString(), listName));
+        db.addTask(new Task(etName.getText().toString(), etText.getText().toString(), millis, listName));
         Toast.makeText(this, "New task successfully added", Toast.LENGTH_SHORT).show();
 
         Intent intent = new Intent(AddTaskActivity.this, MainActivity.class);

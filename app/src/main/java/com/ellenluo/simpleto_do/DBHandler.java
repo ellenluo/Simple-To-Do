@@ -22,6 +22,7 @@ public class DBHandler extends SQLiteOpenHelper {
     private static final String KEY_TASK_ID = "task_id";
     private static final String KEY_TASK_NAME = "task_name";
     private static final String KEY_TASK_DETAILS = "task_details";
+    private static final String KEY_TASK_DUE = "task_due";
     private static final String KEY_TASK_LIST = "task_list";
     private static final String KEY_LIST_ID = "list_id";
     private static final String KEY_LIST_NAME = "list_name";
@@ -32,7 +33,7 @@ public class DBHandler extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        String CREATE_TASK_TABLE = "CREATE TABLE " + TABLE_TASKS + " (" + KEY_TASK_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " + KEY_TASK_NAME + " TEXT, " + KEY_TASK_DETAILS + " TEXT, " + KEY_TASK_LIST + " TEXT)";
+        String CREATE_TASK_TABLE = "CREATE TABLE " + TABLE_TASKS + " (" + KEY_TASK_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " + KEY_TASK_NAME + " TEXT, " + KEY_TASK_DETAILS + " TEXT, " + KEY_TASK_DUE + " TEXT, " + KEY_TASK_LIST + " TEXT)";
         String CREATE_LIST_TABLE = "CREATE TABLE " + TABLE_LISTS + " (" + KEY_LIST_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " + KEY_LIST_NAME + " TEXT)";
 
         db.execSQL(CREATE_TASK_TABLE);
@@ -53,6 +54,7 @@ public class DBHandler extends SQLiteOpenHelper {
 
         values.put(KEY_TASK_NAME, task.getName());
         values.put(KEY_TASK_DETAILS, task.getDetails());
+        values.put(KEY_TASK_DUE, task.getDue());
         values.put(KEY_TASK_LIST, task.getList());
 
         db.insert(TABLE_TASKS, null, values);
@@ -61,12 +63,12 @@ public class DBHandler extends SQLiteOpenHelper {
 
     public Task getTask(int id) {
         SQLiteDatabase db = this.getReadableDatabase();
-        Cursor cursor = db.query(TABLE_TASKS, new String[]{KEY_TASK_ID, KEY_TASK_NAME, KEY_TASK_DETAILS, KEY_TASK_LIST}, KEY_TASK_ID + "=?", new String[] { String.valueOf(id) }, null, null, null, null);
+        Cursor cursor = db.query(TABLE_TASKS, new String[]{KEY_TASK_ID, KEY_TASK_NAME, KEY_TASK_DETAILS, KEY_TASK_DUE, KEY_TASK_LIST}, KEY_TASK_ID + "=?", new String[] { String.valueOf(id) }, null, null, null, null);
 
         if (cursor != null)
             cursor.moveToFirst();
 
-        Task task = new Task(Integer.parseInt(cursor.getString(0)), cursor.getString(1), cursor.getString(2), cursor.getString(3));
+        Task task = new Task(Integer.parseInt(cursor.getString(0)), cursor.getString(1), cursor.getString(2), Long.parseLong(cursor.getString(3)), cursor.getString(4));
         return task;
     }
 
@@ -79,7 +81,7 @@ public class DBHandler extends SQLiteOpenHelper {
 
         if (cursor.moveToFirst()) {
             do {
-                Task task = new Task(Integer.parseInt(cursor.getString(0)), cursor.getString(1), cursor.getString(2), cursor.getString(3));
+                Task task = new Task(Integer.parseInt(cursor.getString(0)), cursor.getString(1), cursor.getString(2), Long.parseLong(cursor.getString(3)), cursor.getString(4));
                 taskList.add(task);
             } while (cursor.moveToNext());
         }
@@ -92,6 +94,7 @@ public class DBHandler extends SQLiteOpenHelper {
         ContentValues values = new ContentValues();
         values.put(KEY_TASK_NAME, task.getName());
         values.put(KEY_TASK_DETAILS, task.getDetails());
+        values.put(KEY_TASK_DUE, task.getDue());
         values.put(KEY_TASK_LIST, task.getList());
 
         return db.update(TABLE_TASKS, values, KEY_TASK_ID + " = ?", new String[]{String.valueOf(task.getId())});
@@ -166,7 +169,7 @@ public class DBHandler extends SQLiteOpenHelper {
 
         if (cursor.moveToFirst()) {
             do {
-                Task task = new Task(Integer.parseInt(cursor.getString(0)), cursor.getString(1), cursor.getString(2), cursor.getString(3));
+                Task task = new Task(Integer.parseInt(cursor.getString(0)), cursor.getString(1), cursor.getString(2), Long.parseLong(cursor.getString(3)), cursor.getString(4));
                 tasks.add(task);
             } while (cursor.moveToNext());
         }

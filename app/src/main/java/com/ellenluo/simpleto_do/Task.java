@@ -3,19 +3,22 @@ package com.ellenluo.simpleto_do;
 public class Task {
 
     private int id;
+    private long due;
     private String name, details, list;
 
     // constructors
-    public Task(int id, String name, String details, String list) {
+    public Task(int id, String name, String details, long due, String list) {
         this.id = id;
         this.name = name;
         this.details = details;
+        this.due = due;
         this.list = list;
     }
 
-    public Task(String name, String details, String list) {
+    public Task(String name, String details, long due, String list) {
         this.name = name;
         this.details = details;
+        this.due = due;
         this.list = list;
     }
 
@@ -36,6 +39,10 @@ public class Task {
         return this.list;
     }
 
+    public long getDue() {
+        return this.due;
+    }
+
     // setter
     public void setName(String name) {
         this.name = name;
@@ -43,6 +50,10 @@ public class Task {
 
     public void setDetails(String details) {
         this.details = details;
+    }
+
+    public void setDue(long due) {
+        this.due = due;
     }
 
     public void setList(String list) {

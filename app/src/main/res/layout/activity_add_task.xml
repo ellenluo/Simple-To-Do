@@ -67,12 +67,13 @@
                 android:id="@+id/add_task_time"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="No time selected"
+                android:text="12:00 AM"
                 android:textColor="#000000"
                 android:layout_weight="1"
                 android:textSize="16dp"/>
 
             <Button
+                android:id="@+id/add_task_set_time"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Set Time"
