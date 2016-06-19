@@ -3,6 +3,7 @@ package com.ellenluo.simpleto_do;
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.text.format.DateUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -47,30 +48,29 @@ public class TaskListAdapter extends ArrayAdapter {
         long millis = taskList.get(position).getDue();
 
         if (millis != -1) {
-            Calendar calendar = Calendar.getInstance();
-            calendar.setTimeInMillis(millis);
+            // get calendars
+            Calendar now = Calendar.getInstance();
+            Calendar tomorrow = Calendar.getInstance();
+            tomorrow.add(Calendar.DATE, 1);
+            Calendar due = Calendar.getInstance();
+            due.setTimeInMillis(millis);
 
-            int year = calendar.get(Calendar.YEAR);
-            int month = calendar.get(Calendar.MONTH);
-            int day = calendar.get(Calendar.DAY_OF_MONTH);
-            int hour = calendar.get(Calendar.HOUR_OF_DAY);
-            int minutes = calendar.get(Calendar.MINUTE);
-            String[] monthArray = {"Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
+            // get date
+            Date date = due.getTime();
 
-            if (Calendar.getInstance().get(Calendar.YEAR) == year)
-                tvDate.setText(monthArray[month] + " " + day);
-            else
-                tvDate.setText(monthArray[month] + " " + day + ", " + year);
-
-
-            String time = hour + ":" + minutes;
-
-            try {
-                final SimpleDateFormat format = new SimpleDateFormat("H:mm");
-                final Date date = format.parse(time);
+            if (due.before(now))
+                tvDate.setText("Overdue");
+            else {
                 tvTime.setText(new SimpleDateFormat("hh:mm a").format(date));
-            } catch (Exception e) {
-                e.printStackTrace();
+
+                if (now.get(Calendar.DAY_OF_YEAR) == due.get(Calendar.DAY_OF_YEAR) && now.get(Calendar.YEAR) == due.get(Calendar.YEAR))
+                    tvDate.setText("Today");
+                else if (tomorrow.get(Calendar.DAY_OF_YEAR) == due.get(Calendar.DAY_OF_YEAR) && tomorrow.get(Calendar.YEAR) == due.get(Calendar.YEAR))
+                    tvDate.setText("Tomorrow");
+                else if (now.get(Calendar.YEAR) == due.get(Calendar.YEAR))
+                    tvDate.setText(new SimpleDateFormat("MMM dd").format(date));
+                else
+                    tvDate.setText(new SimpleDateFormat("MMM dd, yyyy").format(date));
             }
         }
 

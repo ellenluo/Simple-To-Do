@@ -2,6 +2,7 @@ package com.ellenluo.simpleto_do;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Movie;
 import android.graphics.Paint;
 import android.os.Bundle;
 import android.os.Handler;
@@ -16,11 +17,13 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 
 
 public class FragmentMain extends Fragment {
 
-    ArrayList<Task> taskList;
+    static ArrayList<Task> taskList;
     DBHandler db;
     String curList;
     private Handler handler = new Handler();
@@ -42,6 +45,8 @@ public class FragmentMain extends Fragment {
             taskList = db.getAllTasks();
         else
             taskList = db.getTasksFromList(curList);
+
+        sortByDate();
 
         final TaskListAdapter taskAdapter = new TaskListAdapter(getActivity(), taskList);
         lvTasks.setAdapter(taskAdapter);
@@ -71,8 +76,6 @@ public class FragmentMain extends Fragment {
                 handler.postDelayed(new Runnable() {
                     public void run() {
                         if (db.getTasksFromList(taskList.get(pos).getList()).size() == 1) {
-                            Log.d("FRAGMENTMAIN", "Entered");
-
                             pref.edit().putString("current_list", "All Tasks").apply();
                             db.deleteList(db.getList(taskList.get(pos).getList()));
                             db.deleteTask(taskList.remove(pos));
@@ -92,5 +95,28 @@ public class FragmentMain extends Fragment {
         });
 
         return v;
+    }
+
+    private static void sortByDate() {
+        Collections.sort(taskList, new Comparator<Task>() {
+            public int compare(Task t1, Task t2) {
+                if (t2.getDue() == -1) {
+                    Log.d("SORTING", "arg 0");
+                    return -1;
+                }
+                else if (t1.getDue() > t2.getDue() || t1.getDue() == -1) {
+                    Log.d("SORTING", "arg 1");
+                    return 1;
+                }
+                else if (t1.getDue() < t2.getDue()) {
+                    Log.d("SORTING", "arg 2");
+                    return -1;
+                }
+                Log.d("SORTING", "arg 3");
+                return 0;
+            }
+        });
+
+        Log.d("FRAGMENTMAIN", "sorted");
     }
 }

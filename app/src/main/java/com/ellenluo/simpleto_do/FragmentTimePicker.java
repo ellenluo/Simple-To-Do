@@ -31,19 +31,17 @@ public class FragmentTimePicker extends DialogFragment implements TimePickerDial
     // when time is set
     public void onTimeSet(TimePicker view, int hourOfDay, int minutes) {
         TextView tvDate= (TextView) getActivity().findViewById(R.id.add_task_time);
-        String time = hourOfDay + ":" + minutes;
 
         pref = getActivity().getSharedPreferences("Settings", PREFERENCE_MODE_PRIVATE);
         pref.edit().putInt("hour", hourOfDay).apply();
         pref.edit().putInt("minutes", minutes).apply();
 
-        try {
-            final SimpleDateFormat format = new SimpleDateFormat("H:mm");
-            final Date date = format.parse(time);
-            tvDate.setText(new SimpleDateFormat("hh:mm a").format(date));
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        Calendar time = Calendar.getInstance();
+        time.set(Calendar.HOUR_OF_DAY, hourOfDay);
+        time.set(Calendar.MINUTE, minutes);
+        Date date = time.getTime();
+
+        tvDate.setText(new SimpleDateFormat("hh:mm a").format(date));
     }
 
 }

@@ -23,8 +23,7 @@
             android:textSize="18sp"
             android:maxLines="1"
             android:ellipsize="end"
-            android:focusable="false"
-            android:layout_marginBottom="4dp"/>
+            android:focusable="false" />
 
         <TextView
             android:id="@+id/task_row_list"
@@ -67,8 +66,7 @@
             android:textSize="12sp"
             android:layout_gravity="right"
             android:maxLines="1"
-            android:focusable="false"
-            android:layout_marginBottom="4dp"/>
+            android:focusable="false" />
 
     </LinearLayout>
 
