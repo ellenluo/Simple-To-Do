@@ -13,7 +13,10 @@ import android.widget.TextView;
 
 import org.w3c.dom.Text;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 
 
 public class TaskDetailsActivity extends AppCompatActivity {
@@ -41,14 +44,21 @@ public class TaskDetailsActivity extends AppCompatActivity {
         id = pref.getInt("id", 0);
         curTask = db.getTask(id);
 
-        // set task details
+        // set task info
         TextView tvName = (TextView) findViewById(R.id.task_details_name);
+        TextView tvDue = (TextView) findViewById(R.id.task_details_due);
         TextView tvList = (TextView) findViewById(R.id.task_details_list);
         TextView tvDetails = (TextView) findViewById(R.id.task_details_details);
 
         tvName.setText(curTask.getName());
         tvList.setText(curTask.getList());
         tvDetails.setText(curTask.getDetails());
+
+        // set due date
+        Calendar cal = Calendar.getInstance();
+        cal.setTimeInMillis(curTask.getDue());
+        Date date = cal.getTime();
+        tvDue.setText(new SimpleDateFormat("MMMM dd, yyyy").format(date) + " at " + new SimpleDateFormat("hh:mm a").format(date));
     }
 
     // inflates action bar menu
