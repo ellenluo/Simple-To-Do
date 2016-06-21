@@ -2,6 +2,7 @@ package com.ellenluo.simpleto_do;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
@@ -14,7 +15,10 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 
 public class EditTaskActivity extends AppCompatActivity {
 
@@ -55,6 +59,19 @@ public class EditTaskActivity extends AppCompatActivity {
         etDetails = (EditText) findViewById(R.id.edit_task_task_details);
         etName.setText(curTask.getName());
         etDetails.setText(curTask.getDetails());
+
+        // set up current date & time
+        if (curTask.getDue() != -1) {
+            TextView tvDate = (TextView) findViewById(R.id.task_date);
+            TextView tvTime = (TextView) findViewById(R.id.task_time);
+
+            Calendar cal = Calendar.getInstance();
+            cal.setTimeInMillis(curTask.getDue());
+            Date date = cal.getTime();
+
+            tvDate.setText(new SimpleDateFormat("MMM dd, yyyy").format(date));
+            tvTime.setText(new SimpleDateFormat("hh:mm a").format(date));
+        }
 
         // make new list edittext & textview invisible
         tvAddList = (TextView) findViewById(R.id.edit_task_instructions);
@@ -107,6 +124,11 @@ public class EditTaskActivity extends AppCompatActivity {
         });
     }
 
+    public void setDate(View view) {
+        DialogFragment datePicker = new FragmentDatePicker();
+        datePicker.show(getSupportFragmentManager(), "datePicker");
+    }
+
     // get index of item in spinner
     private int getIndex(String item)
     {
@@ -142,17 +164,45 @@ public class EditTaskActivity extends AppCompatActivity {
             db.addList(new List(listName));
         }
 
+        // get time & date
+        int hour = pref.getInt("hour", 0);
+        int minutes = pref.getInt("minutes", 0);
+        int day = pref.getInt("day", -1);
+        int month = pref.getInt("month", -1);
+        int year = pref.getInt("year", -1);
+        long millis = -1;
+
+        if (day != -1) {
+            Calendar calendar = Calendar.getInstance();
+            calendar.set(Calendar.YEAR, year);
+            calendar.set(Calendar.MONTH, month);
+            calendar.set(Calendar.DAY_OF_MONTH, day);
+            calendar.set(Calendar.HOUR_OF_DAY, hour);
+            calendar.set(Calendar.MINUTE, minutes);
+            millis = calendar.getTimeInMillis();
+        }
+
+        // reset preferences
+        pref.edit().remove("hour").apply();
+        pref.edit().remove("minutes").apply();
+        pref.edit().remove("day").apply();
+        pref.edit().remove("month").apply();
+        pref.edit().remove("year").apply();
+
         // update task
         curTask.setName(newName);
         curTask.setList(listName);
         curTask.setDetails(newDetails);
+        curTask.setDue(millis);
         db.updateTask(curTask);
 
+        // return to list that edited task belongs to
         if (curTask.getList().equals(""))
             pref.edit().putString("current_list", "All Tasks").apply();
         else
             pref.edit().putString("current_list", listName).apply();
 
+        // show completion message & return to task details
         Toast.makeText(this, "'" + curTask.getName() + "' successfully updated", Toast.LENGTH_SHORT).show();
 
         Intent intent = new Intent(EditTaskActivity.this, TaskDetailsActivity.class);

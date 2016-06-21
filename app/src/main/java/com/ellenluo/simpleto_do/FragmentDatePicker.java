@@ -36,7 +36,7 @@ public class FragmentDatePicker extends DialogFragment implements DatePickerDial
         pref.edit().putInt("month", month).apply();
         pref.edit().putInt("day", day).apply();
 
-        TextView tvDate= (TextView) getActivity().findViewById(R.id.add_task_date);
+        TextView tvDate= (TextView) getActivity().findViewById(R.id.task_date);
         tvDate.setText(monthArray[month] + " " + day + ", " + year);
 
         // show time picker

@@ -55,10 +55,12 @@ public class TaskDetailsActivity extends AppCompatActivity {
         tvDetails.setText(curTask.getDetails());
 
         // set due date
-        Calendar cal = Calendar.getInstance();
-        cal.setTimeInMillis(curTask.getDue());
-        Date date = cal.getTime();
-        tvDue.setText(new SimpleDateFormat("MMMM dd, yyyy").format(date) + " at " + new SimpleDateFormat("hh:mm a").format(date));
+        if (curTask.getDue() != -1) {
+            Calendar cal = Calendar.getInstance();
+            cal.setTimeInMillis(curTask.getDue());
+            Date date = cal.getTime();
+            tvDue.setText(new SimpleDateFormat("MMMM dd, yyyy").format(date) + " at " + new SimpleDateFormat("hh:mm a").format(date));
+        }
     }
 
     // inflates action bar menu
