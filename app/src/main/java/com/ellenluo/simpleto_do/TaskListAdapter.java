@@ -42,7 +42,7 @@ public class TaskListAdapter extends ArrayAdapter {
         if (!taskList.get(position).getList().equals(""))
             tvList.setText(taskList.get(position).getList());
 
-        // get date & time
+        // get date & time text
         TextView tvDate = (TextView) convertView.findViewById(R.id.task_row_date);
         TextView tvTime = (TextView) convertView.findViewById(R.id.task_row_time);
         long millis = taskList.get(position).getDue();
@@ -58,6 +58,7 @@ public class TaskListAdapter extends ArrayAdapter {
             // get date
             Date date = due.getTime();
 
+            // set text
             if (due.before(now))
                 tvDate.setText("Overdue");
             else {

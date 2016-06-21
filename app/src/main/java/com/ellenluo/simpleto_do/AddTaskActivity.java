@@ -50,12 +50,6 @@ public class AddTaskActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayShowHomeEnabled(true);
         toolbar.setPadding(0, getStatusBarHeight(), 0, 0);
 
-        // make timepicker invisible
-        tvTime = (TextView) findViewById(R.id.add_task_time);
-        btnTime = (Button) findViewById(R.id.add_task_set_time);
-        tvTime.setVisibility(View.GONE);
-        btnTime.setVisibility(View.GONE);
-
         // make new list edittext & textview invisible
         tvAddList = (TextView) findViewById(R.id.add_task_instructions);
         etAddList = (EditText) findViewById(R.id.add_task_list_name);
@@ -128,14 +122,6 @@ public class AddTaskActivity extends AppCompatActivity {
     public void setDate(View view) {
         DialogFragment datePicker = new FragmentDatePicker();
         datePicker.show(getSupportFragmentManager(), "datePicker");
-
-        tvTime.setVisibility(View.VISIBLE);
-        btnTime.setVisibility(View.VISIBLE);
-    }
-
-    public void setTime(View view) {
-        DialogFragment timePicker = new FragmentTimePicker();
-        timePicker.show(getSupportFragmentManager(), "timePicker");
     }
 
     // add task to database

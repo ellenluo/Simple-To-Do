@@ -97,26 +97,18 @@ public class FragmentMain extends Fragment {
         return v;
     }
 
+    // sort tasks by due date
     private static void sortByDate() {
         Collections.sort(taskList, new Comparator<Task>() {
             public int compare(Task t1, Task t2) {
-                if (t2.getDue() == -1) {
-                    Log.d("SORTING", "arg 0");
+                if (t2.getDue() == -1)
                     return -1;
-                }
-                else if (t1.getDue() > t2.getDue() || t1.getDue() == -1) {
-                    Log.d("SORTING", "arg 1");
+                else if (t1.getDue() > t2.getDue() || t1.getDue() == -1)
                     return 1;
-                }
-                else if (t1.getDue() < t2.getDue()) {
-                    Log.d("SORTING", "arg 2");
+                else if (t1.getDue() < t2.getDue())
                     return -1;
-                }
-                Log.d("SORTING", "arg 3");
                 return 0;
             }
         });
-
-        Log.d("FRAGMENTMAIN", "sorted");
     }
 }

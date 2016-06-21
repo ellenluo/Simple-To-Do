@@ -38,6 +38,10 @@ public class FragmentDatePicker extends DialogFragment implements DatePickerDial
 
         TextView tvDate= (TextView) getActivity().findViewById(R.id.add_task_date);
         tvDate.setText(monthArray[month] + " " + day + ", " + year);
+
+        // show time picker
+        DialogFragment timePicker = new FragmentTimePicker();
+        timePicker.show(getActivity().getSupportFragmentManager(), "timePicker");
     }
 
 }
