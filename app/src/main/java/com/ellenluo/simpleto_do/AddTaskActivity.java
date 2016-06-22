@@ -1,42 +1,42 @@
 package com.ellenluo.simpleto_do;
 
-import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.support.v4.app.DialogFragment;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.TimePicker;
 import android.widget.Toast;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 
-public class AddTaskActivity extends AppCompatActivity {
+public class AddTaskActivity extends AppCompatActivity implements FragmentTimePicker.OnTimeSetListener, FragmentDatePicker.OnDateSetListener {
 
     DBHandler db;
     SharedPreferences pref;
     private static final int PREFERENCE_MODE_PRIVATE = 0;
 
-    String[] spinnerItem;
+    String[] listSpinnerItem;
     ArrayList<List> listList;
     String listName = "";
     int size = 0;
+    int selectedYear, selectedMonth, selectedDay, selectedHour, selectedMinute = -1;
 
-    TextView tvAddList, tvTime;
-    Button btnTime;
+    TextView tvAddList;
     EditText etAddList;
-    Spinner listSpinner;
+    Spinner listSpinner, remindSpinner;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,13 +50,20 @@ public class AddTaskActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayShowHomeEnabled(true);
         toolbar.setPadding(0, getStatusBarHeight(), 0, 0);
 
+        // set up reminder spinner
+        remindSpinner = (Spinner) findViewById(R.id.remind_spinner);
+        ArrayList<String> remindSpinnerItem = new ArrayList<String>(1);
+        remindSpinnerItem.add("Select custom time");
+        ArrayAdapter<String> remindAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item, remindSpinnerItem);
+        remindSpinner.setAdapter(remindAdapter);
+
         // make new list edittext & textview invisible
         tvAddList = (TextView) findViewById(R.id.add_task_instructions);
         etAddList = (EditText) findViewById(R.id.add_task_list_name);
         tvAddList.setVisibility(View.GONE);
         etAddList.setVisibility(View.GONE);
 
-        // set up spinner
+        // set up list spinner
         listSpinner = (Spinner) findViewById(R.id.add_task_list_spinner);
 
         db = new DBHandler(this);
@@ -64,16 +71,16 @@ public class AddTaskActivity extends AppCompatActivity {
         listList = db.getAllLists();
         size = listList.size();
 
-        spinnerItem = new String[size + 2];
-        spinnerItem[0] = "Select one";
-        spinnerItem[size + 1] = "Add new list";
+        listSpinnerItem = new String[size + 2];
+        listSpinnerItem[0] = "Select one";
+        listSpinnerItem[size + 1] = "Add new list";
 
         if (size > 0)
             for (int i = 0; i < listList.size(); i++)
-                spinnerItem[i + 1] = listList.get(i).getName();
+                listSpinnerItem[i + 1] = listList.get(i).getName();
 
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item, spinnerItem);
-        listSpinner.setAdapter(adapter);
+        ArrayAdapter<String> listAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item, listSpinnerItem);
+        listSpinner.setAdapter(listAdapter);
 
         // set default list option
         pref = getSharedPreferences("Settings", PREFERENCE_MODE_PRIVATE);
@@ -94,7 +101,7 @@ public class AddTaskActivity extends AppCompatActivity {
                 } else {
                     tvAddList.setVisibility(View.GONE);
                     etAddList.setVisibility(View.GONE);
-                    listName = spinnerItem[position];
+                    listName = listSpinnerItem[position];
                 }
             }
 
@@ -124,6 +131,37 @@ public class AddTaskActivity extends AppCompatActivity {
         datePicker.show(getSupportFragmentManager(), "datePicker");
     }
 
+    // when date is set
+    @Override
+    public void onDateSet(DatePicker view, int year, int month, int day) {
+        String[] monthArray = {"Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
+        selectedYear = year;
+        selectedMonth = month;
+        selectedDay = day;
+
+        TextView tvDate = (TextView) findViewById(R.id.task_date);
+        tvDate.setText(monthArray[month] + " " + day + ", " + year);
+
+        // show time picker
+        DialogFragment timePicker = new FragmentTimePicker();
+        timePicker.show(getSupportFragmentManager(), "timePicker");
+    }
+
+    // when time is set
+    @Override
+    public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
+        selectedHour = hourOfDay;
+        selectedMinute = minute;
+
+        Calendar time = Calendar.getInstance();
+        time.set(Calendar.HOUR_OF_DAY, hourOfDay);
+        time.set(Calendar.MINUTE, minute);
+        Date date = time.getTime();
+
+        TextView tvTime = (TextView) findViewById(R.id.task_time);
+        tvTime.setText(new SimpleDateFormat("hh:mm a").format(date));
+    }
+
     // add task to database
     public void addTask(View view) {
         EditText etName = (EditText) findViewById(R.id.add_task_task_name);
@@ -136,30 +174,13 @@ public class AddTaskActivity extends AppCompatActivity {
             db.addList(new List(listName));
         }
 
-        // get time & date
-        int hour = pref.getInt("hour", 0);
-        int minutes = pref.getInt("minutes", 0);
-        int day = pref.getInt("day", -1);
-        int month = pref.getInt("month", -1);
-        int year = pref.getInt("year", -1);
         long millis = -1;
 
-        if (day != -1) {
-            Calendar calendar = Calendar.getInstance();
-            calendar.set(Calendar.YEAR, year);
-            calendar.set(Calendar.MONTH, month);
-            calendar.set(Calendar.DAY_OF_MONTH, day);
-            calendar.set(Calendar.HOUR_OF_DAY, hour);
-            calendar.set(Calendar.MINUTE, minutes);
-            millis = calendar.getTimeInMillis();
+        if (selectedMinute != -1) {
+            Calendar cal = Calendar.getInstance();
+            cal.set(selectedYear, selectedMonth, selectedDay, selectedHour, selectedMinute);
+            millis = cal.getTimeInMillis();
         }
-
-        // reset preferences
-        pref.edit().remove("hour").apply();
-        pref.edit().remove("minutes").apply();
-        pref.edit().remove("day").apply();
-        pref.edit().remove("month").apply();
-        pref.edit().remove("year").apply();
 
         // add task & return to main activity
         db.addTask(new Task(etName.getText().toString(), etText.getText().toString(), millis, listName));

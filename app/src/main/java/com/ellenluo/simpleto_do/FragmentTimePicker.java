@@ -1,5 +1,6 @@
 package com.ellenluo.simpleto_do;
 
+import android.app.Activity;
 import android.app.Dialog;
 import android.app.TimePickerDialog;
 import android.content.SharedPreferences;
@@ -13,10 +14,16 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
-public class FragmentTimePicker extends DialogFragment implements TimePickerDialog.OnTimeSetListener {
+public class FragmentTimePicker extends DialogFragment {
 
     SharedPreferences pref;
     private static final int PREFERENCE_MODE_PRIVATE = 0;
+    OnTimeSetListener listener;
+
+    // interface
+    public interface OnTimeSetListener extends TimePickerDialog.OnTimeSetListener {
+        void onTimeSet(TimePicker view, int hourOfDay, int minute);
+    }
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
@@ -25,23 +32,13 @@ public class FragmentTimePicker extends DialogFragment implements TimePickerDial
         int initHour = c.get(Calendar.HOUR_OF_DAY);
         int initMin = c.get(Calendar.MINUTE);
 
-        return new TimePickerDialog(getActivity(), this, initHour, initMin, DateFormat.is24HourFormat(getActivity()));
+        return new TimePickerDialog(getActivity(), listener, initHour, initMin, DateFormat.is24HourFormat(getActivity()));
     }
 
-    // when time is set
-    public void onTimeSet(TimePicker view, int hourOfDay, int minutes) {
-        TextView tvTime= (TextView) getActivity().findViewById(R.id.task_time);
-
-        pref = getActivity().getSharedPreferences("Settings", PREFERENCE_MODE_PRIVATE);
-        pref.edit().putInt("hour", hourOfDay).apply();
-        pref.edit().putInt("minutes", minutes).apply();
-
-        Calendar time = Calendar.getInstance();
-        time.set(Calendar.HOUR_OF_DAY, hourOfDay);
-        time.set(Calendar.MINUTE, minutes);
-        Date date = time.getTime();
-
-        tvTime.setText(new SimpleDateFormat("hh:mm a").format(date));
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        listener = (OnTimeSetListener) activity;
     }
 
 }
