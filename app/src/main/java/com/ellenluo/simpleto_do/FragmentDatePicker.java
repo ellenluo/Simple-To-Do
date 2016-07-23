@@ -3,20 +3,14 @@ package com.ellenluo.simpleto_do;
 import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.widget.DatePicker;
-import android.widget.TextView;
-import android.widget.TimePicker;
 
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
 public class FragmentDatePicker extends DialogFragment {
 
-    SharedPreferences pref;
-    private static final int PREFERENCE_MODE_PRIVATE = 0;
     OnDateSetListener listener;
 
     // interface

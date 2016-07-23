@@ -1,18 +1,23 @@
 package com.ellenluo.simpleto_do;
 
+import android.app.Activity;
+import android.app.AlarmManager;
+import android.app.PendingIntent;
 import android.support.v4.app.DialogFragment;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.Spinner;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
@@ -32,11 +37,18 @@ public class AddTaskActivity extends AppCompatActivity implements FragmentTimePi
     ArrayList<List> listList;
     String listName = "";
     int size = 0;
-    int selectedYear, selectedMonth, selectedDay, selectedHour, selectedMinute = -1;
+    int picker = 0;
+
+    Calendar due;
+    Calendar remind;
 
     TextView tvAddList;
+    TextView tvDueDate;
+    TextView tvRemindDate;
+    TextView tvRemindTime;
+    TextView tvDueTime;
     EditText etAddList;
-    Spinner listSpinner, remindSpinner;
+    Spinner listSpinner;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,12 +62,37 @@ public class AddTaskActivity extends AppCompatActivity implements FragmentTimePi
         getSupportActionBar().setDisplayShowHomeEnabled(true);
         toolbar.setPadding(0, getStatusBarHeight(), 0, 0);
 
-        // set up reminder spinner
-        remindSpinner = (Spinner) findViewById(R.id.remind_spinner);
-        ArrayList<String> remindSpinnerItem = new ArrayList<String>(1);
-        remindSpinnerItem.add("Select custom time");
-        ArrayAdapter<String> remindAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item, remindSpinnerItem);
-        remindSpinner.setAdapter(remindAdapter);
+        // initialize due date/time
+        tvDueDate = (TextView) findViewById(R.id.task_date);
+        tvDueTime = (TextView) findViewById(R.id.task_time);
+
+        // make reminder date invisible
+        tvRemindDate = (TextView) findViewById(R.id.remind_date);
+        tvRemindTime = (TextView) findViewById(R.id.remind_time);
+        final Button btnSetRemind = (Button) findViewById(R.id.remind_set);
+        tvRemindDate.setVisibility(View.GONE);
+        tvRemindTime.setVisibility(View.GONE);
+        btnSetRemind.setVisibility(View.GONE);
+
+        // set up reminder switch
+        Switch remindSwitch = (Switch) findViewById(R.id.remind_switch);
+
+        remindSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked) {
+                    tvRemindDate.setVisibility(View.VISIBLE);
+                    tvRemindTime.setVisibility(View.VISIBLE);
+                    btnSetRemind.setVisibility(View.VISIBLE);
+                    tvRemindDate.setText(tvDueDate.getText());
+                    tvRemindTime.setText(tvDueTime.getText());
+                } else {
+                    tvRemindDate.setVisibility(View.GONE);
+                    tvRemindTime.setVisibility(View.GONE);
+                    btnSetRemind.setVisibility(View.GONE);
+                }
+            }
+        });
 
         // make new list edittext & textview invisible
         tvAddList = (TextView) findViewById(R.id.add_task_instructions);
@@ -112,21 +149,14 @@ public class AddTaskActivity extends AppCompatActivity implements FragmentTimePi
         });
     }
 
-    // get index of item in spinner
-    private int getIndex(String item)
-    {
-        int index = 0;
-
-        for (int i = 0; i < listSpinner.getCount(); i++){
-            if (listSpinner.getItemAtPosition(i).toString().equalsIgnoreCase(item)){
-                index = i;
-                break;
-            }
-        }
-        return index;
+    public void setDate(View view) {
+        picker = 0;
+        DialogFragment datePicker = new FragmentDatePicker();
+        datePicker.show(getSupportFragmentManager(), "datePicker");
     }
 
-    public void setDate(View view) {
+    public void setRemind(View view) {
+        picker = 1;
         DialogFragment datePicker = new FragmentDatePicker();
         datePicker.show(getSupportFragmentManager(), "datePicker");
     }
@@ -135,12 +165,16 @@ public class AddTaskActivity extends AppCompatActivity implements FragmentTimePi
     @Override
     public void onDateSet(DatePicker view, int year, int month, int day) {
         String[] monthArray = {"Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
-        selectedYear = year;
-        selectedMonth = month;
-        selectedDay = day;
 
-        TextView tvDate = (TextView) findViewById(R.id.task_date);
-        tvDate.setText(monthArray[month] + " " + day + ", " + year);
+        if (picker == 0) {
+            due = Calendar.getInstance();
+            due.set(year, month, day);
+            tvDueDate.setText(monthArray[month] + " " + day + ", " + year);
+        } else {
+            remind = Calendar.getInstance();
+            remind.set(year, month, day);
+            tvRemindDate.setText(monthArray[month] + " " + day + ", " + year);
+        }
 
         // show time picker
         DialogFragment timePicker = new FragmentTimePicker();
@@ -150,16 +184,17 @@ public class AddTaskActivity extends AppCompatActivity implements FragmentTimePi
     // when time is set
     @Override
     public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
-        selectedHour = hourOfDay;
-        selectedMinute = minute;
-
-        Calendar time = Calendar.getInstance();
-        time.set(Calendar.HOUR_OF_DAY, hourOfDay);
-        time.set(Calendar.MINUTE, minute);
-        Date date = time.getTime();
-
-        TextView tvTime = (TextView) findViewById(R.id.task_time);
-        tvTime.setText(new SimpleDateFormat("hh:mm a").format(date));
+        if (picker == 0) {
+            due.set(Calendar.HOUR_OF_DAY, hourOfDay);
+            due.set(Calendar.MINUTE, minute);
+            Date date = due.getTime();
+            tvDueTime.setText(new SimpleDateFormat("hh:mm a").format(date));
+        } else {
+            remind.set(Calendar.HOUR_OF_DAY, hourOfDay);
+            remind.set(Calendar.MINUTE, minute);
+            Date date = remind.getTime();
+            tvRemindTime.setText(new SimpleDateFormat("hh:mm a").format(date));
+        }
     }
 
     // add task to database
@@ -174,12 +209,23 @@ public class AddTaskActivity extends AppCompatActivity implements FragmentTimePi
             db.addList(new List(listName));
         }
 
+        // get due date
         long millis = -1;
 
-        if (selectedMinute != -1) {
-            Calendar cal = Calendar.getInstance();
-            cal.set(selectedYear, selectedMonth, selectedDay, selectedHour, selectedMinute);
-            millis = cal.getTimeInMillis();
+        if (due != null) {
+            millis = due.getTimeInMillis();
+        }
+
+        // check reminder
+        if (remind != null) {
+            Intent intent = new Intent(this, NotifService.class);
+            PendingIntent pendingIntent = PendingIntent.getService(this, 0, intent, 0);
+
+            pref.edit().putString("notif_name", etName.getText().toString()).apply();
+            pref.edit().putString("notif_details", etText.getText().toString()).apply();
+
+            AlarmManager alarmManager = (AlarmManager)getSystemService(ALARM_SERVICE);
+            alarmManager.set(AlarmManager.RTC, remind.getTimeInMillis(), pendingIntent);
         }
 
         // add task & return to main activity
@@ -190,8 +236,21 @@ public class AddTaskActivity extends AppCompatActivity implements FragmentTimePi
         startActivity(intent);
     }
 
+    // get index of item in spinner
+    private int getIndex(String item) {
+        int index = 0;
+
+        for (int i = 0; i < listSpinner.getCount(); i++) {
+            if (listSpinner.getItemAtPosition(i).toString().equalsIgnoreCase(item)) {
+                index = i;
+                break;
+            }
+        }
+        return index;
+    }
+
     // find height of status bar
-    public int getStatusBarHeight() {
+    private int getStatusBarHeight() {
         int result = 0;
         int resourceId = getResources().getIdentifier("status_bar_height", "dimen", "android");
         if (resourceId > 0) {

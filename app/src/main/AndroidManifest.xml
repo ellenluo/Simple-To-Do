@@ -2,6 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.ellenluo.simpleto_do">
 
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -20,15 +22,19 @@
             android:name=".AddTaskActivity"
             android:label="@string/title_activity_add_task"
             android:windowSoftInputMode="adjustPan"
-            android:parentActivityName=".MainActivity"></activity>
+            android:parentActivityName=".MainActivity"/>
         <activity
             android:name=".TaskDetailsActivity"
             android:label="@string/title_activity_task_details"
-            android:parentActivityName=".MainActivity"></activity>
+            android:parentActivityName=".MainActivity"/>
         <activity
             android:name=".EditTaskActivity"
             android:label="@string/title_activity_edit_task"
-            android:parentActivityName=".TaskDetailsActivity"></activity>
+            android:parentActivityName=".TaskDetailsActivity"/>
+
+        <service android:name=".NotifService"
+            android:enabled="true" />
+
     </application>
 
 </manifest>

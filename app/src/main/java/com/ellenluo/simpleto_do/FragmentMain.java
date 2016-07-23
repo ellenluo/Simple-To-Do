@@ -56,7 +56,6 @@ public class FragmentMain extends Fragment {
             @Override
             public void onItemClick(AdapterView<?> adapter, View view, int position, long id) {
                 Task curTask = taskList.get(position);
-
                 pref.edit().putInt("id", curTask.getId()).apply();
 
                 Intent intent = new Intent(getActivity(), TaskDetailsActivity.class);
