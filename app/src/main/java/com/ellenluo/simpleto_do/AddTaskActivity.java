@@ -1,6 +1,5 @@
 package com.ellenluo.simpleto_do;
 
-import android.app.Activity;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.support.v4.app.DialogFragment;
@@ -27,7 +26,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 
-public class AddTaskActivity extends AppCompatActivity implements FragmentTimePicker.OnTimeSetListener, FragmentDatePicker.OnDateSetListener {
+public class AddTaskActivity extends AppCompatActivity implements TimePickerFragment.OnTimeSetListener, DatePickerFragment.OnDateSetListener {
 
     DBHandler db;
     SharedPreferences pref;
@@ -151,13 +150,13 @@ public class AddTaskActivity extends AppCompatActivity implements FragmentTimePi
 
     public void setDate(View view) {
         picker = 0;
-        DialogFragment datePicker = new FragmentDatePicker();
+        DialogFragment datePicker = new DatePickerFragment();
         datePicker.show(getSupportFragmentManager(), "datePicker");
     }
 
     public void setRemind(View view) {
         picker = 1;
-        DialogFragment datePicker = new FragmentDatePicker();
+        DialogFragment datePicker = new DatePickerFragment();
         datePicker.show(getSupportFragmentManager(), "datePicker");
     }
 
@@ -177,7 +176,7 @@ public class AddTaskActivity extends AppCompatActivity implements FragmentTimePi
         }
 
         // show time picker
-        DialogFragment timePicker = new FragmentTimePicker();
+        DialogFragment timePicker = new TimePickerFragment();
         timePicker.show(getSupportFragmentManager(), "timePicker");
     }
 

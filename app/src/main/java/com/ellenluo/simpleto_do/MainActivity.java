@@ -3,26 +3,18 @@ package com.ellenluo.simpleto_do;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
-import android.graphics.Paint;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.view.GravityCompat;
-import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.ListView;
-import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -73,7 +65,7 @@ public class MainActivity extends AppCompatActivity {
         Fragment fragment = null;
 
         try {
-            fragment = (Fragment) FragmentMain.class.newInstance();
+            fragment = (Fragment) MainFragment.class.newInstance();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -131,7 +123,7 @@ public class MainActivity extends AppCompatActivity {
         if (menuItem.getItemId() != 0) {
             switch (menuItem.getItemId()) {
                 case R.id.nav_all:
-                    fragmentClass = FragmentMain.class;
+                    fragmentClass = MainFragment.class;
                     pref = getSharedPreferences("Settings", PREFERENCE_MODE_PRIVATE);
                     pref.edit().putString("current_list", "All Tasks").apply();
                     break;
@@ -156,7 +148,7 @@ public class MainActivity extends AppCompatActivity {
             mDrawer.closeDrawers();
         } else {
             try {
-                fragment = (Fragment) FragmentMain.class.newInstance();
+                fragment = (Fragment) MainFragment.class.newInstance();
             } catch (Exception e) {
                 e.printStackTrace();
             }

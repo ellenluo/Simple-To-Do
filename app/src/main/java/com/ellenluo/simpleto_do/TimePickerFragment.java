@@ -14,7 +14,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
-public class FragmentTimePicker extends DialogFragment {
+public class TimePickerFragment extends DialogFragment {
 
     SharedPreferences pref;
     private static final int PREFERENCE_MODE_PRIVATE = 0;

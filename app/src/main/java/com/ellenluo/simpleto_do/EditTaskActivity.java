@@ -124,7 +124,7 @@ public class EditTaskActivity extends AppCompatActivity {
     }
 
     public void setDate(View view) {
-        DialogFragment datePicker = new FragmentDatePicker();
+        DialogFragment datePicker = new DatePickerFragment();
         datePicker.show(getSupportFragmentManager(), "datePicker");
     }
 

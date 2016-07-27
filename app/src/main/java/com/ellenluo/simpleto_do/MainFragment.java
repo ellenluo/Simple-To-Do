@@ -21,7 +21,7 @@ import java.util.Collections;
 import java.util.Comparator;
 
 
-public class FragmentMain extends Fragment {
+public class MainFragment extends Fragment {
 
     static ArrayList<Task> taskList;
     DBHandler db;
@@ -46,7 +46,7 @@ public class FragmentMain extends Fragment {
         else
             taskList = db.getTasksFromList(curList);
 
-        sortByDate();
+        //sortByDate();
 
         final TaskListAdapter taskAdapter = new TaskListAdapter(getActivity(), taskList);
         lvTasks.setAdapter(taskAdapter);
@@ -97,7 +97,7 @@ public class FragmentMain extends Fragment {
     }
 
     // sort tasks by due date
-    private static void sortByDate() {
+    /*private static void sortByDate() {
         Collections.sort(taskList, new Comparator<Task>() {
             public int compare(Task t1, Task t2) {
                 if (t2.getDue() == -1)
@@ -109,5 +109,5 @@ public class FragmentMain extends Fragment {
                 return 0;
             }
         });
-    }
+    }*/
 }

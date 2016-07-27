@@ -74,10 +74,20 @@ public class DBHandler extends SQLiteOpenHelper {
 
     public ArrayList<Task> getAllTasks() {
         SQLiteDatabase db = this.getReadableDatabase();
-        String selectQuery =  "SELECT * FROM " + TABLE_TASKS;
+        String selectQuery =  "SELECT * FROM " + TABLE_TASKS + " WHERE " + KEY_TASK_DUE + " != -1 ORDER BY " + KEY_TASK_DUE + ", " + KEY_TASK_NAME;
         Cursor cursor = db.rawQuery(selectQuery, null);
 
         ArrayList<Task> taskList = new ArrayList<Task>();
+
+        if (cursor.moveToFirst()) {
+            do {
+                Task task = new Task(Integer.parseInt(cursor.getString(0)), cursor.getString(1), cursor.getString(2), Long.parseLong(cursor.getString(3)), cursor.getString(4));
+                taskList.add(task);
+            } while (cursor.moveToNext());
+        }
+
+        selectQuery =  "SELECT * FROM " + TABLE_TASKS + " WHERE " + KEY_TASK_DUE + " = -1 ORDER BY " + KEY_TASK_NAME;
+        cursor = db.rawQuery(selectQuery, null);
 
         if (cursor.moveToFirst()) {
             do {
@@ -161,11 +171,21 @@ public class DBHandler extends SQLiteOpenHelper {
     }
 
     public ArrayList<Task> getTasksFromList(String listName) {
-        String selectQuery = "SELECT  * FROM " + TABLE_TASKS + " t1, " + TABLE_LISTS + " t2 WHERE t2." + KEY_LIST_NAME + " = '" + listName + "'" + " AND t1." + KEY_TASK_LIST + " = " + "t2." + KEY_LIST_NAME;
         SQLiteDatabase db = this.getReadableDatabase();
+        String selectQuery = "SELECT  * FROM " + TABLE_TASKS + " t1, " + TABLE_LISTS + " t2 WHERE t2." + KEY_LIST_NAME + " = '" + listName + "' AND t1." + KEY_TASK_LIST + " = t2." + KEY_LIST_NAME + " AND " + KEY_TASK_DUE + " != -1 ORDER BY " + KEY_TASK_DUE + ", " + KEY_TASK_NAME;
         Cursor cursor = db.rawQuery(selectQuery, null);
 
         ArrayList<Task> tasks = new ArrayList<Task>();
+
+        if (cursor.moveToFirst()) {
+            do {
+                Task task = new Task(Integer.parseInt(cursor.getString(0)), cursor.getString(1), cursor.getString(2), Long.parseLong(cursor.getString(3)), cursor.getString(4));
+                tasks.add(task);
+            } while (cursor.moveToNext());
+        }
+
+        selectQuery = "SELECT  * FROM " + TABLE_TASKS + " t1, " + TABLE_LISTS + " t2 WHERE t2." + KEY_LIST_NAME + " = '" + listName + "' AND t1." + KEY_TASK_LIST + " = t2." + KEY_LIST_NAME + " AND " + KEY_TASK_DUE + " = -1 ORDER BY " + KEY_TASK_NAME;
+        cursor = db.rawQuery(selectQuery, null);
 
         if (cursor.moveToFirst()) {
             do {
