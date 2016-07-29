@@ -46,8 +46,6 @@ public class MainFragment extends Fragment {
         else
             taskList = db.getTasksFromList(curList);
 
-        //sortByDate();
-
         final TaskListAdapter taskAdapter = new TaskListAdapter(getActivity(), taskList);
         lvTasks.setAdapter(taskAdapter);
 
@@ -56,7 +54,7 @@ public class MainFragment extends Fragment {
             @Override
             public void onItemClick(AdapterView<?> adapter, View view, int position, long id) {
                 Task curTask = taskList.get(position);
-                pref.edit().putInt("id", curTask.getId()).apply();
+                pref.edit().putLong("id", curTask.getId()).apply();
 
                 Intent intent = new Intent(getActivity(), TaskDetailsActivity.class);
                 startActivity(intent);
@@ -96,18 +94,4 @@ public class MainFragment extends Fragment {
         return v;
     }
 
-    // sort tasks by due date
-    /*private static void sortByDate() {
-        Collections.sort(taskList, new Comparator<Task>() {
-            public int compare(Task t1, Task t2) {
-                if (t2.getDue() == -1)
-                    return -1;
-                else if (t1.getDue() > t2.getDue() || t1.getDue() == -1)
-                    return 1;
-                else if (t1.getDue() < t2.getDue())
-                    return -1;
-                return 0;
-            }
-        });
-    }*/
 }

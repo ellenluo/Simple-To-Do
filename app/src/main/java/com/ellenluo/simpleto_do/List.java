@@ -2,11 +2,11 @@ package com.ellenluo.simpleto_do;
 
 public class List {
 
-    private int id;
+    private long id;
     private String name;
 
     // constructors
-    public List(int id, String name) {
+    public List(long id, String name) {
         this.id = id;
         this.name = name;
     }
@@ -20,7 +20,7 @@ public class List {
         return this.name;
     }
 
-    public int getId() {
+    public long getId() {
         return this.id;
     }
 

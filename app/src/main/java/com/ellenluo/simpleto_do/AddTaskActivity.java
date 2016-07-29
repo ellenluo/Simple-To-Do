@@ -2,12 +2,14 @@ package com.ellenluo.simpleto_do;
 
 import android.app.AlarmManager;
 import android.app.PendingIntent;
+import android.content.Context;
 import android.support.v4.app.DialogFragment;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -85,6 +87,10 @@ public class AddTaskActivity extends AppCompatActivity implements TimePickerFrag
                     btnSetRemind.setVisibility(View.VISIBLE);
                     tvRemindDate.setText(tvDueDate.getText());
                     tvRemindTime.setText(tvDueTime.getText());
+
+                    if (due != null) {
+                        remind = due;
+                    }
                 } else {
                     tvRemindDate.setVisibility(View.GONE);
                     tvRemindTime.setVisibility(View.GONE);
@@ -215,21 +221,21 @@ public class AddTaskActivity extends AppCompatActivity implements TimePickerFrag
             millis = due.getTimeInMillis();
         }
 
-        // check reminder
-        if (remind != null) {
-            Intent intent = new Intent(this, NotifService.class);
-            PendingIntent pendingIntent = PendingIntent.getService(this, 0, intent, 0);
-
-            pref.edit().putString("notif_name", etName.getText().toString()).apply();
-            pref.edit().putString("notif_details", etText.getText().toString()).apply();
-
-            AlarmManager alarmManager = (AlarmManager)getSystemService(ALARM_SERVICE);
-            alarmManager.set(AlarmManager.RTC, remind.getTimeInMillis(), pendingIntent);
-        }
 
         // add task & return to main activity
-        db.addTask(new Task(etName.getText().toString(), etText.getText().toString(), millis, listName));
+        Task newTask = new Task(etName.getText().toString(), etText.getText().toString(), millis, listName);
+        db.addTask(newTask);
         Toast.makeText(this, "New task successfully added", Toast.LENGTH_SHORT).show();
+
+        // set reminder
+        if (remind != null) {
+            AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+            Intent intent = new Intent(AddTaskActivity.this, AlarmManagerReceiver.class);
+            intent.putExtra("text", etName.getText().toString());
+            intent.putExtra("id", newTask.getId());
+            PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 0, intent, 0);
+            alarmManager.set(AlarmManager.RTC, millis, pendingIntent);
+        }
 
         Intent intent = new Intent(AddTaskActivity.this, MainActivity.class);
         startActivity(intent);

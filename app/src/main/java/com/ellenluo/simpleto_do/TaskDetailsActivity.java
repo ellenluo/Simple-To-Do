@@ -22,7 +22,7 @@ import java.util.Date;
 public class TaskDetailsActivity extends AppCompatActivity {
 
     DBHandler db = new DBHandler(this);
-    int id;
+    long id;
     Task curTask;
 
     SharedPreferences pref;
@@ -41,7 +41,7 @@ public class TaskDetailsActivity extends AppCompatActivity {
 
         // get task from database
         pref = getSharedPreferences("Settings", PREFERENCE_MODE_PRIVATE);
-        id = pref.getInt("id", 0);
+        id = pref.getLong("id", 0);
         curTask = db.getTask(id);
 
         // set task info
