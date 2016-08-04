@@ -3,7 +3,6 @@
     package="com.ellenluo.simpleto_do">
 
     <uses-permission android:name="android.permission.VIBRATE" />
-    <!-- maybe needs wakelock -->
 
     <application
         android:allowBackup="true"

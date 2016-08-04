@@ -47,6 +47,7 @@ public class TaskDetailsActivity extends AppCompatActivity {
         // set task info
         TextView tvName = (TextView) findViewById(R.id.task_details_name);
         TextView tvDue = (TextView) findViewById(R.id.task_details_due);
+        TextView tvRemind = (TextView) findViewById(R.id.task_details_remind);
         TextView tvList = (TextView) findViewById(R.id.task_details_list);
         TextView tvDetails = (TextView) findViewById(R.id.task_details_details);
 
@@ -60,6 +61,14 @@ public class TaskDetailsActivity extends AppCompatActivity {
             cal.setTimeInMillis(curTask.getDue());
             Date date = cal.getTime();
             tvDue.setText(new SimpleDateFormat("MMMM dd, yyyy").format(date) + " at " + new SimpleDateFormat("hh:mm a").format(date));
+        }
+
+        // set remind
+        if (curTask.getRemind() != -1) {
+            Calendar cal = Calendar.getInstance();
+            cal.setTimeInMillis(curTask.getRemind());
+            Date date = cal.getTime();
+            tvRemind.setText(new SimpleDateFormat("MMMM dd, yyyy").format(date) + " at " + new SimpleDateFormat("hh:mm a").format(date));
         }
     }
 

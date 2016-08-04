@@ -215,15 +215,22 @@ public class AddTaskActivity extends AppCompatActivity implements TimePickerFrag
         }
 
         // get due date
-        long millis = -1;
+        long dueMillis = -1;
 
         if (due != null) {
-            millis = due.getTimeInMillis();
+            dueMillis = due.getTimeInMillis();
+        }
+
+        // get reminder
+        long remindMillis = -1;
+
+        if (remind != null) {
+            remindMillis = remind.getTimeInMillis();
         }
 
 
         // add task & return to main activity
-        Task newTask = new Task(etName.getText().toString(), etText.getText().toString(), millis, listName);
+        Task newTask = new Task(etName.getText().toString(), etText.getText().toString(), dueMillis, remindMillis, listName);
         db.addTask(newTask);
         Toast.makeText(this, "New task successfully added", Toast.LENGTH_SHORT).show();
 
@@ -234,7 +241,7 @@ public class AddTaskActivity extends AppCompatActivity implements TimePickerFrag
             intent.putExtra("text", etName.getText().toString());
             intent.putExtra("id", newTask.getId());
             PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 0, intent, 0);
-            alarmManager.set(AlarmManager.RTC, millis, pendingIntent);
+            alarmManager.set(AlarmManager.RTC, remindMillis, pendingIntent);
         }
 
         Intent intent = new Intent(AddTaskActivity.this, MainActivity.class);
