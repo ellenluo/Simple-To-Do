@@ -175,12 +175,6 @@
                 android:minLines="4"
                 android:scrollbars="vertical" />
 
-            <Button
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:onClick="addTask"
-                android:text="@string/add_task_button" />
-
         </LinearLayout>
 
     </ScrollView>
