@@ -3,11 +3,15 @@ package com.ellenluo.simpleto_do;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -19,6 +23,7 @@ public class TaskDetailsActivity extends AppCompatActivity {
     DBHandler db = new DBHandler(this);
     long id;
     Task curTask;
+    private Handler handler = new Handler();
 
     SharedPreferences pref;
     private static final int PREFERENCE_MODE_PRIVATE = 0;
@@ -65,6 +70,34 @@ public class TaskDetailsActivity extends AppCompatActivity {
             Date date = cal.getTime();
             tvRemind.setText(new SimpleDateFormat("MMMM dd, yyyy").format(date) + " at " + new SimpleDateFormat("hh:mm a").format(date));
         }
+
+        // task completed checkbox
+        CheckBox cbComplete = (CheckBox) findViewById(R.id.cb_complete);
+
+        cbComplete.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked) {
+                    Toast.makeText(TaskDetailsActivity.this, "'" + curTask.getName() + "' successfully removed", Toast.LENGTH_SHORT).show();
+
+                    // delay deletion
+                    handler.postDelayed(new Runnable() {
+                        public void run() {
+                            if (db.getTasksFromList(curTask.getList()).size() == 1) {
+                                pref.edit().putString("current_list", "All Tasks").apply();
+                                db.deleteList(db.getList(curTask.getList()));
+                                db.deleteTask(curTask);
+                            } else {
+                                db.deleteTask(curTask);
+                            }
+
+                            Intent intent = new Intent(TaskDetailsActivity.this, MainActivity.class);
+                            startActivity(intent);
+                        }
+                    }, 500);
+                }
+            }
+        });
     }
 
     // inflates action bar menu
