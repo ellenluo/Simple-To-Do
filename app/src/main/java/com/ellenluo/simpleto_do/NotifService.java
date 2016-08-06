@@ -7,6 +7,9 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
+import android.provider.Settings;
+import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
 public class NotifService extends IntentService {
@@ -30,14 +33,17 @@ public class NotifService extends IntentService {
         Intent newIntent = new Intent(this, TaskDetailsActivity.class);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, newIntent, 0);
 
-        Notification notif = new Notification.Builder(this)
-                .setContentTitle("Task Reminder")
-                .setContentText(text)
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(this)
                 .setSmallIcon(R.mipmap.ic_launcher)
+                .setContentTitle("Lists")
+                .setContentText(text)
                 .setContentIntent(pendingIntent)
-                .build();
+                .setVibrate(new long[]{0, 1000})
+                .setAutoCancel(true)
+                .setSound(Settings.System.DEFAULT_NOTIFICATION_URI)
+                .setLights(Color.rgb(0, 191, 255), 2000, 3000);
 
-        notif.flags = Notification.FLAG_AUTO_CANCEL;
+        Notification notif = builder.build();
 
         NotificationManager manager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
         manager.notify(0, notif);
