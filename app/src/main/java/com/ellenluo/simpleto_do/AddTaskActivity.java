@@ -9,7 +9,6 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -63,7 +62,7 @@ public class AddTaskActivity extends AppCompatActivity implements TimePickerFrag
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
-        toolbar.setPadding(0, getStatusBarHeight(), 0, 0);
+        toolbar.setPadding(0, Reference.getStatusBarHeight(this), 0, 0);
 
         // initialize due date/time
         tvDueDate = (TextView) findViewById(R.id.task_date);
@@ -97,6 +96,7 @@ public class AddTaskActivity extends AppCompatActivity implements TimePickerFrag
                     tvRemindDate.setVisibility(View.GONE);
                     tvRemindTime.setVisibility(View.GONE);
                     btnSetRemind.setVisibility(View.GONE);
+                    remind = null;
                 }
             }
         });
@@ -231,21 +231,24 @@ public class AddTaskActivity extends AppCompatActivity implements TimePickerFrag
         }
 
 
-        // add task & return to main activity
+        // add task & print completion message
         Task newTask = new Task(etName.getText().toString(), etText.getText().toString(), dueMillis, remindMillis, listName);
         db.addTask(newTask);
         Toast.makeText(this, "New task successfully added", Toast.LENGTH_SHORT).show();
 
         // set reminder
-        if (remind != null) {
+        /*if (remind != null) {
             AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
             Intent intent = new Intent(AddTaskActivity.this, AlarmManagerReceiver.class);
             intent.putExtra("text", etName.getText().toString());
             intent.putExtra("id", newTask.getId());
             PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 0, intent, 0);
             alarmManager.set(AlarmManager.RTC, remindMillis, pendingIntent);
-        }
+        }*/
+        AlarmManagerReceiver alarmManagerReceiver = new AlarmManagerReceiver();
+        alarmManagerReceiver.setReminders(this);
 
+        // return to main activity
         Intent intent = new Intent(AddTaskActivity.this, MainActivity.class);
         startActivity(intent);
     }
@@ -263,20 +266,10 @@ public class AddTaskActivity extends AppCompatActivity implements TimePickerFrag
         return index;
     }
 
-    // find height of status bar
-    private int getStatusBarHeight() {
-        int result = 0;
-        int resourceId = getResources().getIdentifier("status_bar_height", "dimen", "android");
-        if (resourceId > 0) {
-            result = getResources().getDimensionPixelSize(resourceId);
-        }
-        return result;
-    }
-
     // inflates action bar menu
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.add_task_toolbar, menu);
+        getMenuInflater().inflate(R.menu.checkmark_toolbar, menu);
         return true;
     }
 

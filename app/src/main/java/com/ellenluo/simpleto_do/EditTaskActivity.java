@@ -1,17 +1,28 @@
 package com.ellenluo.simpleto_do;
 
+import android.app.AlarmManager;
+import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.CompoundButton;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.Spinner;
+import android.widget.Switch;
 import android.widget.TextView;
+import android.widget.TimePicker;
 import android.widget.Toast;
 
 import java.text.SimpleDateFormat;
@@ -19,22 +30,32 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 
-public class EditTaskActivity extends AppCompatActivity {
+public class EditTaskActivity extends AppCompatActivity implements TimePickerFragment.OnTimeSetListener, DatePickerFragment.OnDateSetListener{
 
-    DBHandler db = new DBHandler(this);
+    DBHandler db;
     SharedPreferences pref;
     private static final int PREFERENCE_MODE_PRIVATE = 0;
 
-    EditText etName, etDetails, etAddList;
-    Spinner listSpinner;
-    TextView tvAddList;
+    Calendar due;
+    Calendar remind;
     Task curTask;
 
-    int id;
+    EditText etName;
+    EditText etDetails;
+    EditText etAddList;
+    Spinner listSpinner;
+    TextView tvAddList;
+    TextView tvDueDate;
+    TextView tvDueTime;
+    TextView tvRemindDate;
+    TextView tvRemindTime;
+
+    long id;
+    int picker = 0;
+    int size = 0;
     String[] spinnerItem;
     ArrayList<List> listList;
     String listName = "";
-    int size = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,11 +67,12 @@ public class EditTaskActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
-        toolbar.setPadding(0, getStatusBarHeight(), 0, 0);
+        toolbar.setPadding(0, Reference.getStatusBarHeight(this), 0, 0);
 
         // get task from database
         pref = getSharedPreferences("Settings", PREFERENCE_MODE_PRIVATE);
-        id = pref.getInt("id", 0);
+        id = pref.getLong("id", 0);
+        db = new DBHandler(this);
         curTask = db.getTask(id);
 
         // set fields to current values
@@ -61,16 +83,62 @@ public class EditTaskActivity extends AppCompatActivity {
 
         // set up current date & time
         if (curTask.getDue() != -1) {
-            TextView tvDate = (TextView) findViewById(R.id.task_date);
-            TextView tvTime = (TextView) findViewById(R.id.task_time);
+            tvDueDate = (TextView) findViewById(R.id.task_date);
+            tvDueTime = (TextView) findViewById(R.id.task_time);
 
             Calendar cal = Calendar.getInstance();
             cal.setTimeInMillis(curTask.getDue());
             Date date = cal.getTime();
+            due = cal;
 
-            tvDate.setText(new SimpleDateFormat("MMM dd, yyyy").format(date));
-            tvTime.setText(new SimpleDateFormat("hh:mm a").format(date));
+            tvDueDate.setText(new SimpleDateFormat("MMM dd, yyyy").format(date));
+            tvDueTime.setText(new SimpleDateFormat("hh:mm a").format(date));
         }
+
+        // set up current reminder
+        final Button btnSetRemind = (Button) findViewById(R.id.remind_set);
+        Switch remindSwitch = (Switch) findViewById(R.id.remind_switch);
+        tvRemindDate = (TextView) findViewById(R.id.remind_date);
+        tvRemindTime = (TextView) findViewById(R.id.remind_time);
+
+        if (curTask.getRemind() == -1) {
+            // make reminder date invisible
+            tvRemindDate.setVisibility(View.GONE);
+            tvRemindTime.setVisibility(View.GONE);
+            btnSetRemind.setVisibility(View.GONE);
+        } else {
+            Calendar cal = Calendar.getInstance();
+            cal.setTimeInMillis(curTask.getRemind());
+            Date date = cal.getTime();
+            remind = cal;
+
+            tvRemindDate.setText(new SimpleDateFormat("MMM dd, yyyy").format(date));
+            tvRemindTime.setText(new SimpleDateFormat("hh:mm a").format(date));
+            remindSwitch.setChecked(true);
+        }
+
+        // set up reminder switch
+        remindSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked) {
+                    tvRemindDate.setVisibility(View.VISIBLE);
+                    tvRemindTime.setVisibility(View.VISIBLE);
+                    btnSetRemind.setVisibility(View.VISIBLE);
+                    tvRemindDate.setText(tvDueDate.getText());
+                    tvRemindTime.setText(tvDueTime.getText());
+
+                    if (due != null) {
+                        remind = due;
+                    }
+                } else {
+                    tvRemindDate.setVisibility(View.GONE);
+                    tvRemindTime.setVisibility(View.GONE);
+                    btnSetRemind.setVisibility(View.GONE);
+                    remind = null;
+                }
+            }
+        });
 
         // make new list edittext & textview invisible
         tvAddList = (TextView) findViewById(R.id.edit_task_instructions);
@@ -124,8 +192,107 @@ public class EditTaskActivity extends AppCompatActivity {
     }
 
     public void setDate(View view) {
+        picker = 0;
         DialogFragment datePicker = new DatePickerFragment();
         datePicker.show(getSupportFragmentManager(), "datePicker");
+    }
+
+    public void setRemind(View view) {
+        picker = 1;
+        DialogFragment datePicker = new DatePickerFragment();
+        datePicker.show(getSupportFragmentManager(), "datePicker");
+    }
+
+    // when date is set
+    @Override
+    public void onDateSet(DatePicker view, int year, int month, int day) {
+        String[] monthArray = {"Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
+
+        if (picker == 0) {
+            due = Calendar.getInstance();
+            due.set(year, month, day);
+            tvDueDate.setText(monthArray[month] + " " + day + ", " + year);
+        } else {
+            remind = Calendar.getInstance();
+            remind.set(year, month, day);
+            tvRemindDate.setText(monthArray[month] + " " + day + ", " + year);
+        }
+
+        // show time picker
+        DialogFragment timePicker = new TimePickerFragment();
+        timePicker.show(getSupportFragmentManager(), "timePicker");
+    }
+
+    // when time is set
+    @Override
+    public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
+        if (picker == 0) {
+            due.set(Calendar.HOUR_OF_DAY, hourOfDay);
+            due.set(Calendar.MINUTE, minute);
+            Date date = due.getTime();
+            tvDueTime.setText(new SimpleDateFormat("hh:mm a").format(date));
+        } else {
+            remind.set(Calendar.HOUR_OF_DAY, hourOfDay);
+            remind.set(Calendar.MINUTE, minute);
+            Date date = remind.getTime();
+            tvRemindTime.setText(new SimpleDateFormat("hh:mm a").format(date));
+        }
+    }
+
+    // save changes
+    public void saveChanges() {
+        String newName = etName.getText().toString();
+        String newDetails = etDetails.getText().toString();
+
+        // check if new list was added
+        if (tvAddList.getVisibility() == View.VISIBLE && etAddList.getVisibility() == View.VISIBLE) {
+            listName = etAddList.getText().toString();
+            db.addList(new List(listName));
+        }
+
+        // get time & date
+        long dueMillis = -1;
+
+        if (due != null) {
+            dueMillis = due.getTimeInMillis();
+        }
+
+        // get reminder
+        long remindMillis = -1;
+
+        if (remind != null) {
+            remindMillis = remind.getTimeInMillis();
+        }
+
+        // set reminder
+        if (remindMillis != curTask.getRemind()) {
+            /*if (remindMillis == -1) {
+                Log.d("EditTaskActivity", "Reminder cancelled");
+            } else {
+
+            }*/
+            AlarmManagerReceiver alarmManagerReceiver = new AlarmManagerReceiver();
+            alarmManagerReceiver.setReminders(this);
+        }
+
+        // update task
+        curTask.setName(newName);
+        curTask.setList(listName);
+        curTask.setDetails(newDetails);
+        curTask.setDue(dueMillis);
+        curTask.setRemind(remindMillis);
+        db.updateTask(curTask);
+
+        // return to list that edited task belongs to
+        if (curTask.getList().equals(""))
+            pref.edit().putString("current_list", "All Tasks").apply();
+        else
+            pref.edit().putString("current_list", listName).apply();
+
+        // show completion message & return to task details
+        Toast.makeText(this, "'" + curTask.getName() + "' successfully updated", Toast.LENGTH_SHORT).show();
+        Intent intent = new Intent(EditTaskActivity.this, TaskDetailsActivity.class);
+        startActivity(intent);
     }
 
     // get index of item in spinner
@@ -142,70 +309,23 @@ public class EditTaskActivity extends AppCompatActivity {
         return index;
     }
 
-    // find height of status bar
-    public int getStatusBarHeight() {
-        int result = 0;
-        int resourceId = getResources().getIdentifier("status_bar_height", "dimen", "android");
-        if (resourceId > 0) {
-            result = getResources().getDimensionPixelSize(resourceId);
-        }
-        return result;
+    // inflates action bar menu
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.checkmark_toolbar, menu);
+        return true;
     }
 
-    // save changes
-    public void saveChanges(View view) {
-        String newName = etName.getText().toString();
-        String newDetails = etDetails.getText().toString();
+    // if action bar item is selected
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
 
-        // check if new list was added
-        if (tvAddList.getVisibility() == View.VISIBLE && etAddList.getVisibility() == View.VISIBLE) {
-            listName = etAddList.getText().toString();
-            db.addList(new List(listName));
+        if (id == R.id.action_add) {
+            saveChanges();
         }
 
-        // get time & date
-        int hour = pref.getInt("hour", 0);
-        int minutes = pref.getInt("minutes", 0);
-        int day = pref.getInt("day", -1);
-        int month = pref.getInt("month", -1);
-        int year = pref.getInt("year", -1);
-        long millis = -1;
-
-        if (day != -1) {
-            Calendar calendar = Calendar.getInstance();
-            calendar.set(Calendar.YEAR, year);
-            calendar.set(Calendar.MONTH, month);
-            calendar.set(Calendar.DAY_OF_MONTH, day);
-            calendar.set(Calendar.HOUR_OF_DAY, hour);
-            calendar.set(Calendar.MINUTE, minutes);
-            millis = calendar.getTimeInMillis();
-        }
-
-        // reset preferences
-        pref.edit().remove("hour").apply();
-        pref.edit().remove("minutes").apply();
-        pref.edit().remove("day").apply();
-        pref.edit().remove("month").apply();
-        pref.edit().remove("year").apply();
-
-        // update task
-        curTask.setName(newName);
-        curTask.setList(listName);
-        curTask.setDetails(newDetails);
-        curTask.setDue(millis);
-        db.updateTask(curTask);
-
-        // return to list that edited task belongs to
-        if (curTask.getList().equals(""))
-            pref.edit().putString("current_list", "All Tasks").apply();
-        else
-            pref.edit().putString("current_list", listName).apply();
-
-        // show completion message & return to task details
-        Toast.makeText(this, "'" + curTask.getName() + "' successfully updated", Toast.LENGTH_SHORT).show();
-
-        Intent intent = new Intent(EditTaskActivity.this, TaskDetailsActivity.class);
-        startActivity(intent);
+        return super.onOptionsItemSelected(item);
     }
 
 }

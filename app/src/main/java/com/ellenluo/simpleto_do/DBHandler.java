@@ -216,4 +216,5 @@ public class DBHandler extends SQLiteOpenHelper {
         cursor.close();
         return tasks;
     }
+
 }

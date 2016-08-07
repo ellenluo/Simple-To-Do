@@ -7,6 +7,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 
+import java.util.ArrayList;
+
 public class AlarmManagerReceiver extends BroadcastReceiver {
 
     public void onReceive(Context context, Intent intent) {
@@ -28,18 +30,27 @@ public class AlarmManagerReceiver extends BroadcastReceiver {
         alarmManager.cancel(pendingIntent);
     }
 
-    public void setAlarm(Context context, long millis) {
-        AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
-        Intent intent = new Intent(context, AlarmManagerReceiver.class);
+    public void setReminders(Context context) {
+        Log.d("AlarmManagerReceiver", "Reminders are being set");
+        // cancel existing reminders
+        Intent intent = new Intent(context, NotifService.class);
         PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, intent, 0);
-        alarmManager.set(AlarmManager.RTC, millis, pendingIntent);
-    }
+        AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+        alarmManager.cancel(pendingIntent);
 
-    /*public void setRepeatingAlarm(Context context) {
-        AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
-        Intent intent = new Intent(context, AlarmManagerReceiver.class);
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, intent, 0);
-        alarmManager.setRepeating(AlarmManager.RTC, System.currentTimeMillis(), pendingIntent);
-    }*/
+        // set new reminders
+        DBHandler db = new DBHandler(context);
+        ArrayList<Task> taskList = db.getAllTasks();
+
+        for (int i = 0; i < taskList.size(); i++) {
+            if (taskList.get(i).getRemind() != -1) {
+                intent = new Intent(context, AlarmManagerReceiver.class);
+                intent.putExtra("text", taskList.get(i).getName());
+                intent.putExtra("id", taskList.get(i).getId());
+                pendingIntent = PendingIntent.getBroadcast(context, 0, intent, 0);
+                alarmManager.set(AlarmManager.RTC, taskList.get(i).getRemind(), pendingIntent);
+            }
+        }
+    }
 
 }

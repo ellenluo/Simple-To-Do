@@ -37,7 +37,7 @@ public class TaskDetailsActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
-        toolbar.setPadding(0, getStatusBarHeight(), 0, 0);
+        toolbar.setPadding(0, Reference.getStatusBarHeight(this), 0, 0);
 
         // get task from database
         pref = getSharedPreferences("Settings", PREFERENCE_MODE_PRIVATE);
@@ -118,16 +118,6 @@ public class TaskDetailsActivity extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
-    }
-
-    // find height of status bar
-    public int getStatusBarHeight() {
-        int result = 0;
-        int resourceId = getResources().getIdentifier("status_bar_height", "dimen", "android");
-        if (resourceId > 0) {
-            result = getResources().getDimensionPixelSize(resourceId);
-        }
-        return result;
     }
 
     // make back button return to main activity
