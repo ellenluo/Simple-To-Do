@@ -264,17 +264,6 @@ public class EditTaskActivity extends AppCompatActivity implements TimePickerFra
             remindMillis = remind.getTimeInMillis();
         }
 
-        // set reminder
-        if (remindMillis != curTask.getRemind()) {
-            /*if (remindMillis == -1) {
-                Log.d("EditTaskActivity", "Reminder cancelled");
-            } else {
-
-            }*/
-            AlarmManagerReceiver alarmManagerReceiver = new AlarmManagerReceiver();
-            alarmManagerReceiver.setReminders(this);
-        }
-
         // update task
         curTask.setName(newName);
         curTask.setList(listName);
@@ -282,6 +271,16 @@ public class EditTaskActivity extends AppCompatActivity implements TimePickerFra
         curTask.setDue(dueMillis);
         curTask.setRemind(remindMillis);
         db.updateTask(curTask);
+
+        // set reminder
+        //if (remindMillis != curTask.getRemind()) {
+            /*if (remindMillis == -1) {
+                Log.d("EditTaskActivity", "Reminder cancelled");
+            } else {
+
+            }*/
+            AlarmManagerReceiver alarmManagerReceiver = new AlarmManagerReceiver();
+            alarmManagerReceiver.setReminders(this);
 
         // return to list that edited task belongs to
         if (curTask.getList().equals(""))

@@ -33,8 +33,8 @@ public class AlarmManagerReceiver extends BroadcastReceiver {
     public void setReminders(Context context) {
         Log.d("AlarmManagerReceiver", "Reminders are being set");
         // cancel existing reminders
-        Intent intent = new Intent(context, NotifService.class);
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, intent, 0);
+        Intent oldIntent = new Intent(context, NotifService.class);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, oldIntent, 0);
         AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
         alarmManager.cancel(pendingIntent);
 
@@ -44,11 +44,13 @@ public class AlarmManagerReceiver extends BroadcastReceiver {
 
         for (int i = 0; i < taskList.size(); i++) {
             if (taskList.get(i).getRemind() != -1) {
-                intent = new Intent(context, AlarmManagerReceiver.class);
+                Intent intent = new Intent(context, AlarmManagerReceiver.class);
                 intent.putExtra("text", taskList.get(i).getName());
                 intent.putExtra("id", taskList.get(i).getId());
-                pendingIntent = PendingIntent.getBroadcast(context, 0, intent, 0);
+                pendingIntent = PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
                 alarmManager.set(AlarmManager.RTC, taskList.get(i).getRemind(), pendingIntent);
+                Log.d("AlarmManagerReceiver", "Reminder for task '" + taskList.get(i).getName() + "' has been set");
+                Log.d("AlarmManagerReceiver", "i = " + i + ", text is " + taskList.get(i).getName() + ", alarm set for " + taskList.get(i).getRemind());
             }
         }
     }
