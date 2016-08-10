@@ -5,6 +5,7 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.Build;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -30,7 +31,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 
-public class EditTaskActivity extends AppCompatActivity implements TimePickerFragment.OnTimeSetListener, DatePickerFragment.OnDateSetListener{
+public class EditTaskActivity extends AppCompatActivity implements TimePickerFragment.OnTimeSetListener, DatePickerFragment.OnDateSetListener {
 
     DBHandler db;
     SharedPreferences pref;
@@ -82,10 +83,10 @@ public class EditTaskActivity extends AppCompatActivity implements TimePickerFra
         etDetails.setText(curTask.getDetails());
 
         // set up current date & time
-        if (curTask.getDue() != -1) {
-            tvDueDate = (TextView) findViewById(R.id.task_date);
-            tvDueTime = (TextView) findViewById(R.id.task_time);
+        tvDueDate = (TextView) findViewById(R.id.task_date);
+        tvDueTime = (TextView) findViewById(R.id.task_time);
 
+        if (curTask.getDue() != -1) {
             Calendar cal = Calendar.getInstance();
             cal.setTimeInMillis(curTask.getDue());
             Date date = cal.getTime();
@@ -264,6 +265,31 @@ public class EditTaskActivity extends AppCompatActivity implements TimePickerFra
             remindMillis = remind.getTimeInMillis();
         }
 
+        // set reminder
+        if (remindMillis != curTask.getRemind()) {
+            // cancel reminder
+            Intent intent = new Intent(EditTaskActivity.this, AlarmManagerReceiver.class);
+            PendingIntent pendingIntent = PendingIntent.getBroadcast(this, (int) curTask.getId(), intent, PendingIntent.FLAG_UPDATE_CURRENT);
+            AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+            alarmManager.cancel(pendingIntent);
+
+            if (remindMillis != -1 && remindMillis > System.currentTimeMillis()) {
+                // set new reminder
+                intent = new Intent(EditTaskActivity.this, AlarmManagerReceiver.class);
+                intent.putExtra("text", curTask.getName());
+                intent.putExtra("id", curTask.getId());
+                pendingIntent = PendingIntent.getBroadcast(this, (int) curTask.getId(), intent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+                if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT) {
+                    Log.d("EditTaskActivity", "using set");
+                    alarmManager.set(AlarmManager.RTC_WAKEUP, remindMillis, pendingIntent);
+                } else {
+                    Log.d("EditTaskActivity", "Using setExact");
+                    alarmManager.setExact(AlarmManager.RTC_WAKEUP, remindMillis, pendingIntent);
+                }
+            }
+        }
+
         // update task
         curTask.setName(newName);
         curTask.setList(listName);
@@ -271,16 +297,6 @@ public class EditTaskActivity extends AppCompatActivity implements TimePickerFra
         curTask.setDue(dueMillis);
         curTask.setRemind(remindMillis);
         db.updateTask(curTask);
-
-        // set reminder
-        //if (remindMillis != curTask.getRemind()) {
-            /*if (remindMillis == -1) {
-                Log.d("EditTaskActivity", "Reminder cancelled");
-            } else {
-
-            }*/
-            AlarmManagerReceiver alarmManagerReceiver = new AlarmManagerReceiver();
-            alarmManagerReceiver.setReminders(this);
 
         // return to list that edited task belongs to
         if (curTask.getList().equals(""))
@@ -295,12 +311,11 @@ public class EditTaskActivity extends AppCompatActivity implements TimePickerFra
     }
 
     // get index of item in spinner
-    private int getIndex(String item)
-    {
+    private int getIndex(String item) {
         int index = 0;
 
-        for (int i = 0; i < listSpinner.getCount(); i++){
-            if (listSpinner.getItemAtPosition(i).toString().equalsIgnoreCase(item)){
+        for (int i = 0; i < listSpinner.getCount(); i++) {
+            if (listSpinner.getItemAtPosition(i).toString().equalsIgnoreCase(item)) {
                 index = i;
                 break;
             }

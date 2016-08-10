@@ -2,14 +2,14 @@ package com.ellenluo.simpleto_do;
 
 import android.app.AlarmManager;
 import android.app.PendingIntent;
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.support.v4.content.WakefulBroadcastReceiver;
 import android.util.Log;
 
 import java.util.ArrayList;
 
-public class AlarmManagerReceiver extends BroadcastReceiver {
+public class AlarmManagerReceiver extends WakefulBroadcastReceiver {
 
     public void onReceive(Context context, Intent intent) {
         Log.d("AlarmManagerReceiver", "received");
@@ -43,12 +43,12 @@ public class AlarmManagerReceiver extends BroadcastReceiver {
         ArrayList<Task> taskList = db.getAllTasks();
 
         for (int i = 0; i < taskList.size(); i++) {
-            if (taskList.get(i).getRemind() != -1) {
+            if (taskList.get(i).getRemind() != -1 && taskList.get(i).getRemind() > System.currentTimeMillis()) {
                 Intent intent = new Intent(context, AlarmManagerReceiver.class);
                 intent.putExtra("text", taskList.get(i).getName());
                 intent.putExtra("id", taskList.get(i).getId());
                 pendingIntent = PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-                alarmManager.set(AlarmManager.RTC, taskList.get(i).getRemind(), pendingIntent);
+                alarmManager.setExact(AlarmManager.RTC, taskList.get(i).getRemind(), pendingIntent);
                 Log.d("AlarmManagerReceiver", "Reminder for task '" + taskList.get(i).getName() + "' has been set");
                 Log.d("AlarmManagerReceiver", "i = " + i + ", text is " + taskList.get(i).getName() + ", alarm set for " + taskList.get(i).getRemind());
             }

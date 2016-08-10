@@ -7,6 +7,7 @@ import android.app.PendingIntent;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
+import android.os.PowerManager;
 import android.provider.Settings;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
@@ -45,7 +46,9 @@ public class NotifService extends IntentService {
         Notification notif = builder.build();
 
         NotificationManager manager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-        manager.notify(0, notif);
+        manager.notify((int) id, notif);
+
+        AlarmManagerReceiver.completeWakefulIntent(intent);
     }
 
 }

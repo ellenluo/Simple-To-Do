@@ -3,6 +3,7 @@ package com.ellenluo.simpleto_do;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.Context;
+import android.os.Build;
 import android.support.v4.app.DialogFragment;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -237,16 +238,19 @@ public class AddTaskActivity extends AppCompatActivity implements TimePickerFrag
         Toast.makeText(this, "New task successfully added", Toast.LENGTH_SHORT).show();
 
         // set reminder
-        /*if (remind != null) {
+        if (remindMillis != -1 && remindMillis > System.currentTimeMillis()) {
             AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
             Intent intent = new Intent(AddTaskActivity.this, AlarmManagerReceiver.class);
             intent.putExtra("text", etName.getText().toString());
             intent.putExtra("id", newTask.getId());
-            PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 0, intent, 0);
-            alarmManager.set(AlarmManager.RTC, remindMillis, pendingIntent);
-        }*/
-        AlarmManagerReceiver alarmManagerReceiver = new AlarmManagerReceiver();
-        alarmManagerReceiver.setReminders(this);
+            PendingIntent pendingIntent = PendingIntent.getBroadcast(this, (int) newTask.getId(), intent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT) {
+                alarmManager.set(AlarmManager.RTC_WAKEUP, remindMillis, pendingIntent);
+            } else {
+                alarmManager.setExact(AlarmManager.RTC_WAKEUP, remindMillis, pendingIntent);
+            }
+        }
 
         // return to main activity
         Intent intent = new Intent(AddTaskActivity.this, MainActivity.class);
