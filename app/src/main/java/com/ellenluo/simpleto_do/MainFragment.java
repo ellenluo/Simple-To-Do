@@ -40,6 +40,10 @@ public class MainFragment extends Fragment {
         pref = getActivity().getSharedPreferences("Settings", PREFERENCE_MODE_PRIVATE);
         curList = pref.getString("current_list", "All Tasks");
 
+        // set up empty view
+        TextView tvEmpty = (TextView) v.findViewById(R.id.empty_list);
+        lvTasks.setEmptyView(tvEmpty);
+
         // set list to view
         if (curList.equals("All Tasks"))
             taskList = db.getAllTasks();

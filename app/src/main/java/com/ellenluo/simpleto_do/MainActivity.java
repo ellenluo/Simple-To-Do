@@ -128,9 +128,11 @@ public class MainActivity extends AppCompatActivity {
                     pref = getSharedPreferences("Settings", PREFERENCE_MODE_PRIVATE);
                     pref.edit().putString("current_list", "All Tasks").apply();
                     break;
-                case R.id.nav_about:
+                case R.id.nav_settings:
                     break;
                 case R.id.nav_backup:
+                    break;
+                case R.id.nav_help:
                     break;
                 default:
                     break;

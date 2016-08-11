@@ -12,15 +12,19 @@
         android:id="@+id/group_settings"
         android:orderInCategory="2">
 
-        <item android:title="Settings">
+        <item android:title="More">
             <menu>
                 <item
-                    android:id="@+id/nav_about"
-                    android:title="About the Developer" />
+                    android:id="@+id/nav_settings"
+                    android:title="Settings" />
 
                 <item
                     android:id="@+id/nav_backup"
                     android:title="Backup Your Data" />
+
+                <item
+                    android:id="@+id/nav_help"
+                    android:title="Help" />
             </menu>
         </item>
     </group>
