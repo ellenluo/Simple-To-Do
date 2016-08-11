@@ -19,11 +19,11 @@ public class Reference {
     }
 
     // displays alert confirmation message
-    public static void displayAlert(final Context context, String message) {
+    public static void displayAlert(final Context context, String message, String posMsg, String negMsg) {
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setMessage(message);
 
-        builder.setNegativeButton("Discard", new DialogInterface.OnClickListener() {
+        builder.setNegativeButton(negMsg, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 dialog.dismiss();
@@ -32,7 +32,7 @@ public class Reference {
             }
         });
 
-        builder.setPositiveButton("Keep editing", new DialogInterface.OnClickListener() {
+        builder.setPositiveButton(posMsg, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 dialog.cancel();

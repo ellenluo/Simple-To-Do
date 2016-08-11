@@ -348,7 +348,7 @@ public class EditTaskActivity extends AppCompatActivity implements TimePickerFra
     // back button confirmation
     @Override
     public void onBackPressed() {
-        Reference.displayAlert(this, "Are you sure you want to discard your changes?");
+        Reference.displayAlert(this, "Are you sure you want to discard your changes?", "Keep editing", "Discard");
     }
 
 }

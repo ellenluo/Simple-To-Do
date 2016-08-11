@@ -206,14 +206,37 @@ public class AddTaskActivity extends AppCompatActivity implements TimePickerFrag
     }
 
     // add task to database
-    public void addTask() {
+    public boolean addTask() {
         EditText etName = (EditText) findViewById(R.id.add_task_task_name);
         EditText etText = (EditText) findViewById(R.id.add_task_task_details);
         DBHandler db = new DBHandler(this);
 
+        // check for empty task name
+        if (etName.getText().toString().trim().length() == 0) {
+            Reference.displayAlert(this, "Task name cannot be empty.", "Got it", "");
+            return true;
+        }
+
         // check if new list was added
         if (etText.getVisibility() == View.VISIBLE && etAddList.getVisibility() == View.VISIBLE) {
-            listName = etAddList.getText().toString();
+            listName = etAddList.getText().toString().trim();
+
+            // check for empty list name
+            if (listName.length() == 0) {
+                Reference.displayAlert(this, "New list name cannot be empty.", "Got it", "");
+                return true;
+            }
+
+            // check for duplicate list name
+            ArrayList<List> listList = db.getAllLists();
+
+            for (int i = 0; i < listList.size(); i++) {
+                if (listName.equals(listList.get(i).getName())) {
+                    Reference.displayAlert(this, "The list \"" + listName + "\" already exists. Please enter a new list name.", "Got it", "");
+                    return true;
+                }
+            }
+
             db.addList(new List(listName));
         }
 
@@ -233,7 +256,7 @@ public class AddTaskActivity extends AppCompatActivity implements TimePickerFrag
 
 
         // add task & print completion message
-        Task newTask = new Task(etName.getText().toString(), etText.getText().toString(), dueMillis, remindMillis, listName);
+        Task newTask = new Task(etName.getText().toString().trim(), etText.getText().toString(), dueMillis, remindMillis, listName);
         db.addTask(newTask);
         Toast.makeText(this, "New task successfully added", Toast.LENGTH_SHORT).show();
 
@@ -255,6 +278,8 @@ public class AddTaskActivity extends AppCompatActivity implements TimePickerFrag
         // return to main activity
         Intent intent = new Intent(AddTaskActivity.this, MainActivity.class);
         startActivity(intent);
+
+        return true;
     }
 
     // get index of item in spinner
@@ -295,6 +320,6 @@ public class AddTaskActivity extends AppCompatActivity implements TimePickerFrag
     // back button confirmation
     @Override
     public void onBackPressed() {
-        Reference.displayAlert(this, "Are you sure you want to discard this task?");
+        Reference.displayAlert(this, "Are you sure you want to discard this task?", "Keep editing", "Discard");
     }
 }
