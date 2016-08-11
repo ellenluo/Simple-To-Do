@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.widget.DatePicker;
 
+import java.sql.DatabaseMetaData;
 import java.util.Calendar;
 
 public class DatePickerFragment extends DialogFragment {

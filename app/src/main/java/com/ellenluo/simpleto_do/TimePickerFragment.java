@@ -3,21 +3,16 @@ package com.ellenluo.simpleto_do;
 import android.app.Activity;
 import android.app.Dialog;
 import android.app.TimePickerDialog;
-import android.content.SharedPreferences;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.text.format.DateFormat;
-import android.widget.TextView;
 import android.widget.TimePicker;
 
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.Date;
 
 public class TimePickerFragment extends DialogFragment {
 
-    SharedPreferences pref;
-    private static final int PREFERENCE_MODE_PRIVATE = 0;
     OnTimeSetListener listener;
 
     // interface

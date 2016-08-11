@@ -52,6 +52,8 @@ public class AddTaskActivity extends AppCompatActivity implements TimePickerFrag
     TextView tvDueTime;
     EditText etAddList;
     Spinner listSpinner;
+    Button btnClearDue;
+    Button btnClearRemind;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,16 +68,19 @@ public class AddTaskActivity extends AppCompatActivity implements TimePickerFrag
         toolbar.setPadding(0, Reference.getStatusBarHeight(this), 0, 0);
 
         // initialize due date/time
-        tvDueDate = (TextView) findViewById(R.id.task_date);
-        tvDueTime = (TextView) findViewById(R.id.task_time);
+        tvDueDate = (TextView) findViewById(R.id.due_date);
+        tvDueTime = (TextView) findViewById(R.id.due_time);
+        btnClearDue = (Button) findViewById(R.id.clear_due);
 
-        // make reminder date invisible
+        // initialize reminder date/time
         tvRemindDate = (TextView) findViewById(R.id.remind_date);
         tvRemindTime = (TextView) findViewById(R.id.remind_time);
         final Button btnSetRemind = (Button) findViewById(R.id.remind_set);
-        tvRemindDate.setVisibility(View.GONE);
-        tvRemindTime.setVisibility(View.GONE);
-        btnSetRemind.setVisibility(View.GONE);
+        btnClearRemind = (Button) findViewById(R.id.clear_remind);
+
+        // initialize new list instructions/text field
+        tvAddList = (TextView) findViewById(R.id.add_task_instructions);
+        etAddList = (EditText) findViewById(R.id.add_task_list_name);
 
         // set up reminder switch
         Switch remindSwitch = (Switch) findViewById(R.id.remind_switch);
@@ -92,6 +97,7 @@ public class AddTaskActivity extends AppCompatActivity implements TimePickerFrag
 
                     if (due != null) {
                         remind = due;
+                        btnClearRemind.setVisibility(View.VISIBLE);
                     }
                 } else {
                     tvRemindDate.setVisibility(View.GONE);
@@ -101,12 +107,6 @@ public class AddTaskActivity extends AppCompatActivity implements TimePickerFrag
                 }
             }
         });
-
-        // make new list edittext & textview invisible
-        tvAddList = (TextView) findViewById(R.id.add_task_instructions);
-        etAddList = (EditText) findViewById(R.id.add_task_list_name);
-        tvAddList.setVisibility(View.GONE);
-        etAddList.setVisibility(View.GONE);
 
         // set up list spinner
         listSpinner = (Spinner) findViewById(R.id.add_task_list_spinner);
@@ -169,6 +169,20 @@ public class AddTaskActivity extends AppCompatActivity implements TimePickerFrag
         datePicker.show(getSupportFragmentManager(), "datePicker");
     }
 
+    public void clearDue(View view) {
+        tvDueDate.setText("No date selected");
+        tvDueTime.setText("");
+        due = null;
+        btnClearDue.setVisibility(View.GONE);
+    }
+
+    public void clearRemind(View view) {
+        tvRemindDate.setText("No date selected");
+        tvRemindTime.setText("");
+        remind = null;
+        btnClearRemind.setVisibility(View.GONE);
+    }
+
     // when date is set
     @Override
     public void onDateSet(DatePicker view, int year, int month, int day) {
@@ -176,12 +190,14 @@ public class AddTaskActivity extends AppCompatActivity implements TimePickerFrag
 
         if (picker == 0) {
             due = Calendar.getInstance();
-            due.set(year, month, day);
+            due.set(year, month, day, 0, 0, 0);
             tvDueDate.setText(monthArray[month] + " " + day + ", " + year);
+            btnClearDue.setVisibility(View.VISIBLE);
         } else {
             remind = Calendar.getInstance();
-            remind.set(year, month, day);
+            remind.set(year, month, day, 0, 0, 0);
             tvRemindDate.setText(monthArray[month] + " " + day + ", " + year);
+            btnClearRemind.setVisibility(View.VISIBLE);
         }
 
         // show time picker

@@ -83,8 +83,8 @@ public class EditTaskActivity extends AppCompatActivity implements TimePickerFra
         etDetails.setText(curTask.getDetails());
 
         // set up current date & time
-        tvDueDate = (TextView) findViewById(R.id.task_date);
-        tvDueTime = (TextView) findViewById(R.id.task_time);
+        tvDueDate = (TextView) findViewById(R.id.due_date);
+        tvDueTime = (TextView) findViewById(R.id.due_time);
 
         if (curTask.getDue() != -1) {
             Calendar cal = Calendar.getInstance();
