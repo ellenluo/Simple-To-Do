@@ -15,6 +15,11 @@ public class List {
         this.name = name;
     }
 
+    // setters
+    public void setName(String name) {
+        this.name = name;
+    }
+
     // getters
     public String getName() {
         return this.name;

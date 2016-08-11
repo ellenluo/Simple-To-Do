@@ -1,5 +1,6 @@
 package com.ellenluo.simpleto_do;
 
+import android.app.Dialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
@@ -16,6 +17,9 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.WindowManager;
+import android.widget.Button;
+import android.widget.EditText;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -30,6 +34,8 @@ public class MainActivity extends AppCompatActivity {
     DBHandler db = new DBHandler(this);
     SharedPreferences pref;
     private static final int PREFERENCE_MODE_PRIVATE = 0;
+
+    boolean showEditList = true;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -114,6 +120,51 @@ public class MainActivity extends AppCompatActivity {
         if (drawerToggle.onOptionsItemSelected(item)) {
             return true;
         }
+
+        int id = item.getItemId();
+
+        if (id == R.id.action_edit) {
+            // custom dialog
+            final Dialog dialog = new Dialog(this);
+            dialog.setContentView(R.layout.dialog_edit_task);
+            dialog.setTitle("Edit List");
+
+            // set text field to current name
+            final EditText etListName = (EditText) dialog.findViewById(R.id.list_name);
+            etListName.setText(pref.getString("current_list", "All Tasks"));
+
+            // save button
+            Button btnSave = (Button) dialog.findViewById(R.id.save_changes);
+
+            btnSave.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    List curList = db.getList(pref.getString("current_list", "error"));
+                    curList.setName(etListName.getText().toString().trim());
+                    db.updateList(curList);
+                    setTitle(curList.getName());
+                    dialog.dismiss();
+                }
+            });
+
+            // delete button
+            /*Button btnDelete = (Button) dialog.findViewById(R.id.delete_list);
+
+            btnDelete.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    List curList = db.getList(pref.getString("current_list", "error"));
+                    db.deleteList(curList);
+                    dialog.dismiss();
+
+                    Intent intent = new Intent(MainActivity.this.getApplicationContext(), MainActivity.class);
+                    startActivity(intent);
+                }
+            });*/
+
+            dialog.show();
+        }
+
         return super.onOptionsItemSelected(item);
     }
 
@@ -127,12 +178,17 @@ public class MainActivity extends AppCompatActivity {
                     fragmentClass = MainFragment.class;
                     pref = getSharedPreferences("Settings", PREFERENCE_MODE_PRIVATE);
                     pref.edit().putString("current_list", "All Tasks").apply();
+                    showEditList = false;
+                    supportInvalidateOptionsMenu();
                     break;
                 case R.id.nav_settings:
+                    showEditList = false;
                     break;
                 case R.id.nav_backup:
+                    showEditList = false;
                     break;
                 case R.id.nav_help:
+                    showEditList = false;
                     break;
                 default:
                     break;
@@ -161,6 +217,8 @@ public class MainActivity extends AppCompatActivity {
 
             // set list
             pref.edit().putString("current_list", menuItem.getTitle().toString()).apply();
+            showEditList = true;
+            supportInvalidateOptionsMenu();
 
             setTitle(menuItem.getTitle());
             mDrawer.closeDrawers();
@@ -175,7 +233,7 @@ public class MainActivity extends AppCompatActivity {
 
     // set up drawer toggle
     private ActionBarDrawerToggle setupDrawerToggle() {
-        return new ActionBarDrawerToggle(this, mDrawer, toolbar, R.string.drawer_open,  R.string.drawer_close);
+        return new ActionBarDrawerToggle(this, mDrawer, toolbar, R.string.drawer_open, R.string.drawer_close);
     }
 
     @Override
@@ -184,7 +242,18 @@ public class MainActivity extends AppCompatActivity {
         drawerToggle.onConfigurationChanged(newConfig);
     }
 
-    // disable back button
+    // inflates action bar menu
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        if (pref.getString("current_list", "All Tasks").equals("All Tasks") || !showEditList) {
+            return true;
+        }
+
+        getMenuInflater().inflate(R.menu.edit_toolbar, menu);
+        return true;
+    }
+
+    // make back button return to all tasks
     @Override
     public void onBackPressed() {
         String curList = pref.getString("current_list", "All Tasks");
