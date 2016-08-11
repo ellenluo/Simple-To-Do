@@ -337,9 +337,18 @@ public class EditTaskActivity extends AppCompatActivity implements TimePickerFra
 
         if (id == R.id.action_add) {
             saveChanges();
+        } else if (id == android.R.id.home) {
+            onBackPressed();
+            return true;
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    // back button confirmation
+    @Override
+    public void onBackPressed() {
+        Reference.displayAlert(this, "Are you sure you want to discard your changes?");
     }
 
 }

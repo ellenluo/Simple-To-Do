@@ -12,6 +12,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -157,7 +158,6 @@ public class MainActivity extends AppCompatActivity {
             fragmentManager.beginTransaction().replace(R.id.frame, fragment).commit();
 
             // set list
-            pref = getSharedPreferences("Settings", PREFERENCE_MODE_PRIVATE);
             pref.edit().putString("current_list", menuItem.getTitle().toString()).apply();
 
             setTitle(menuItem.getTitle());
@@ -185,6 +185,24 @@ public class MainActivity extends AppCompatActivity {
     // disable back button
     @Override
     public void onBackPressed() {
+        String curList = pref.getString("current_list", "All Tasks");
+        Log.d("MainActivity", "Current list is " + curList);
+
+        if (!curList.equals("All Tasks")) {
+            Fragment fragment = null;
+
+            try {
+                fragment = (Fragment) MainFragment.class.newInstance();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            FragmentManager fragmentManager = getSupportFragmentManager();
+            fragmentManager.beginTransaction().replace(R.id.frame, fragment).commit();
+
+            pref.edit().putString("current_list", "All Tasks").apply();
+            setTitle("All Tasks");
+        }
     }
 
 }
