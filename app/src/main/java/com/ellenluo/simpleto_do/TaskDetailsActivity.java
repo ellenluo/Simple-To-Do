@@ -1,5 +1,8 @@
 package com.ellenluo.simpleto_do;
 
+import android.app.AlarmManager;
+import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -80,6 +83,12 @@ public class TaskDetailsActivity extends AppCompatActivity {
                 if (isChecked) {
                     Toast.makeText(TaskDetailsActivity.this, "'" + curTask.getName() + "' successfully removed", Toast.LENGTH_SHORT).show();
 
+                    // cancel any reminders
+                    Intent intent = new Intent(TaskDetailsActivity.this, AlarmManagerReceiver.class);
+                    PendingIntent pendingIntent = PendingIntent.getBroadcast(TaskDetailsActivity.this, (int) curTask.getId(), intent, PendingIntent.FLAG_UPDATE_CURRENT);
+                    AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+                    alarmManager.cancel(pendingIntent);
+
                     // delay deletion
                     handler.postDelayed(new Runnable() {
                         public void run() {
@@ -103,7 +112,7 @@ public class TaskDetailsActivity extends AppCompatActivity {
     // inflates action bar menu
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.task_details_toolbar, menu);
+        getMenuInflater().inflate(R.menu.edit_toolbar, menu);
         return true;
     }
 
@@ -115,6 +124,9 @@ public class TaskDetailsActivity extends AppCompatActivity {
         if (id == R.id.action_edit) {
             Intent intent = new Intent(TaskDetailsActivity.this, EditTaskActivity.class);
             startActivity(intent);
+        } else if (id == android.R.id.home) {
+            onBackPressed();
+            return true;
         }
 
         return super.onOptionsItemSelected(item);

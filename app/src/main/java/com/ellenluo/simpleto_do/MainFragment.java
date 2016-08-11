@@ -1,5 +1,8 @@
 package com.ellenluo.simpleto_do;
 
+import android.app.AlarmManager;
+import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Movie;
@@ -23,7 +26,7 @@ import java.util.Comparator;
 
 public class MainFragment extends Fragment {
 
-    static ArrayList<Task> taskList;
+    ArrayList<Task> taskList;
     DBHandler db;
     String curList;
     private Handler handler = new Handler();
@@ -73,6 +76,12 @@ public class MainFragment extends Fragment {
                 tvName.setPaintFlags(tvName.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
                 Toast.makeText(getActivity(), "'" + taskList.get(pos).getName() + "' successfully removed", Toast.LENGTH_SHORT).show();
 
+                // cancel any reminders
+                Intent intent = new Intent(getActivity(), AlarmManagerReceiver.class);
+                PendingIntent pendingIntent = PendingIntent.getBroadcast(getActivity(), (int) taskList.get(pos).getId(), intent, PendingIntent.FLAG_UPDATE_CURRENT);
+                AlarmManager alarmManager = (AlarmManager) getActivity().getSystemService(Context.ALARM_SERVICE);
+                alarmManager.cancel(pendingIntent);
+
                 // delay deletion
                 handler.postDelayed(new Runnable() {
                     public void run() {
@@ -84,6 +93,7 @@ public class MainFragment extends Fragment {
 
                             Intent intent = new Intent(getActivity(), MainActivity.class);
                             startActivity(intent);
+                            getActivity().overridePendingTransition(0, 0);
                         } else {
                             db.deleteTask(taskList.remove(pos));
                             taskAdapter.notifyDataSetChanged();

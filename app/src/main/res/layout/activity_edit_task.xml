@@ -76,6 +76,14 @@
                     android:onClick="setDate"
                     android:text="Set Date" />
 
+                <Button
+                    android:id="@+id/clear_due"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:onClick="clearDue"
+                    android:visibility="gone"
+                    android:text="Clear" />
+
             </LinearLayout>
 
             <LinearLayout
@@ -133,6 +141,14 @@
                     android:layout_height="wrap_content"
                     android:onClick="setRemind"
                     android:text="Set Date" />
+
+                <Button
+                    android:id="@+id/clear_remind"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:onClick="clearRemind"
+                    android:visibility="gone"
+                    android:text="Clear" />
 
             </LinearLayout>
 

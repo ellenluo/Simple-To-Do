@@ -41,7 +41,7 @@ public class NotifService extends IntentService {
                 .setVibrate(new long[]{0, 1000})
                 .setAutoCancel(true)
                 .setSound(Settings.System.DEFAULT_NOTIFICATION_URI)
-                .setLights(Color.rgb(0, 191, 255), 2000, 3000);
+                .setLights(Color.rgb(0, 191, 255), 2000, 2000);
 
         Notification notif = builder.build();
 

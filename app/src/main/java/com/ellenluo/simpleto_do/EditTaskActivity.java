@@ -50,6 +50,8 @@ public class EditTaskActivity extends AppCompatActivity implements TimePickerFra
     TextView tvDueTime;
     TextView tvRemindDate;
     TextView tvRemindTime;
+    Button btnClearDue;
+    Button btnClearRemind;
 
     long id;
     int picker = 0;
@@ -82,9 +84,10 @@ public class EditTaskActivity extends AppCompatActivity implements TimePickerFra
         etName.setText(curTask.getName());
         etDetails.setText(curTask.getDetails());
 
-        // set up current date & time
+        // set up current due date/time
         tvDueDate = (TextView) findViewById(R.id.due_date);
         tvDueTime = (TextView) findViewById(R.id.due_time);
+        btnClearDue = (Button) findViewById(R.id.clear_due);
 
         if (curTask.getDue() != -1) {
             Calendar cal = Calendar.getInstance();
@@ -94,6 +97,7 @@ public class EditTaskActivity extends AppCompatActivity implements TimePickerFra
 
             tvDueDate.setText(new SimpleDateFormat("MMM dd, yyyy").format(date));
             tvDueTime.setText(new SimpleDateFormat("hh:mm a").format(date));
+            btnClearDue.setVisibility(View.VISIBLE);
         }
 
         // set up current reminder
@@ -101,6 +105,7 @@ public class EditTaskActivity extends AppCompatActivity implements TimePickerFra
         Switch remindSwitch = (Switch) findViewById(R.id.remind_switch);
         tvRemindDate = (TextView) findViewById(R.id.remind_date);
         tvRemindTime = (TextView) findViewById(R.id.remind_time);
+        btnClearRemind = (Button) findViewById(R.id.clear_remind);
 
         if (curTask.getRemind() == -1) {
             // make reminder date invisible
@@ -115,6 +120,7 @@ public class EditTaskActivity extends AppCompatActivity implements TimePickerFra
 
             tvRemindDate.setText(new SimpleDateFormat("MMM dd, yyyy").format(date));
             tvRemindTime.setText(new SimpleDateFormat("hh:mm a").format(date));
+            btnClearRemind.setVisibility(View.VISIBLE);
             remindSwitch.setChecked(true);
         }
 
@@ -131,6 +137,7 @@ public class EditTaskActivity extends AppCompatActivity implements TimePickerFra
 
                     if (due != null) {
                         remind = due;
+                        btnClearRemind.setVisibility(View.VISIBLE);
                     }
                 } else {
                     tvRemindDate.setVisibility(View.GONE);
@@ -204,6 +211,20 @@ public class EditTaskActivity extends AppCompatActivity implements TimePickerFra
         datePicker.show(getSupportFragmentManager(), "datePicker");
     }
 
+    public void clearDue(View view) {
+        tvDueDate.setText("No date selected");
+        tvDueTime.setText("");
+        due = null;
+        btnClearDue.setVisibility(View.GONE);
+    }
+
+    public void clearRemind(View view) {
+        tvRemindDate.setText("No date selected");
+        tvRemindTime.setText("");
+        remind = null;
+        btnClearRemind.setVisibility(View.GONE);
+    }
+
     // when date is set
     @Override
     public void onDateSet(DatePicker view, int year, int month, int day) {
@@ -213,10 +234,12 @@ public class EditTaskActivity extends AppCompatActivity implements TimePickerFra
             due = Calendar.getInstance();
             due.set(year, month, day);
             tvDueDate.setText(monthArray[month] + " " + day + ", " + year);
+            btnClearDue.setVisibility(View.VISIBLE);
         } else {
             remind = Calendar.getInstance();
             remind.set(year, month, day);
             tvRemindDate.setText(monthArray[month] + " " + day + ", " + year);
+            btnClearRemind.setVisibility(View.VISIBLE);
         }
 
         // show time picker
