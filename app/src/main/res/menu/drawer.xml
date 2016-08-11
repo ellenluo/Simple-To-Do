@@ -16,15 +16,18 @@
             <menu>
                 <item
                     android:id="@+id/nav_settings"
-                    android:title="Settings" />
+                    android:title="Settings"
+                    android:icon="@drawable/ic_settings_black_24dp" />
 
                 <item
                     android:id="@+id/nav_backup"
-                    android:title="Backup Your Data" />
+                    android:title="Backup Your Data"
+                    android:icon="@drawable/ic_backup_black_24dp" />
 
                 <item
                     android:id="@+id/nav_help"
-                    android:title="Help" />
+                    android:title="Help"
+                    android:icon="@drawable/ic_help_black_24dp" />
             </menu>
         </item>
     </group>
