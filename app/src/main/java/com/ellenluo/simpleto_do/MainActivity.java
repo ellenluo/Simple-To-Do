@@ -104,6 +104,58 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    // when add list button is clicked
+    public void addList(View view) {
+        // custom dialog
+        final Dialog dialog = new Dialog(this);
+        dialog.setContentView(R.layout.dialog_add_list);
+
+        // set dialog width
+        WindowManager wm = (WindowManager) this.getSystemService(Context.WINDOW_SERVICE);
+        Display display = wm.getDefaultDisplay();
+        Point size = new Point();
+        display.getSize(size);
+        int width = size.x;
+
+        WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
+        lp.copyFrom(dialog.getWindow().getAttributes());
+        lp.width = width;
+        dialog.getWindow().setAttributes(lp);
+
+        // set text field to current name
+        final EditText etListName = (EditText) dialog.findViewById(R.id.list_name);
+
+        // add button
+        Button btnAdd = (Button) dialog.findViewById(R.id.add_list);
+
+        btnAdd.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+                List newList = new List(etListName.getText().toString());
+                db.addList(newList);
+
+                // reset activity
+                pref.edit().putString("current_list", newList.getName()).apply();
+                Intent intent = new Intent(MainActivity.this.getApplicationContext(), MainActivity.class);
+                startActivity(intent);
+                overridePendingTransition(0, 0);
+            }
+        });
+
+        // cancel button
+        Button btnCancel = (Button) dialog.findViewById(R.id.cancel);
+
+        btnCancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.cancel();
+            }
+        });
+
+        dialog.show();
+    }
+
     // set up navigation drawer
     private void setupDrawerContent(NavigationView navigationView) {
         navigationView.setNavigationItemSelectedListener(
@@ -128,8 +180,7 @@ public class MainActivity extends AppCompatActivity {
         if (id == R.id.action_edit) {
             // custom dialog
             final Dialog dialog = new Dialog(this);
-            dialog.setContentView(R.layout.dialog_edit_task);
-            dialog.setTitle("Edit List");
+            dialog.setContentView(R.layout.dialog_edit_list);
 
             // set dialog width
             WindowManager wm = (WindowManager) this.getSystemService(Context.WINDOW_SERVICE);
