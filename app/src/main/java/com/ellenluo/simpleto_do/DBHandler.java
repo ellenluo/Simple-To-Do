@@ -34,7 +34,7 @@ public class DBHandler extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        String CREATE_TASK_TABLE = "CREATE TABLE " + TABLE_TASKS + " (" + KEY_TASK_ID + " INTEGER PRIMARY KEY, " + KEY_TASK_NAME + " TEXT, " + KEY_TASK_DETAILS + " TEXT, " + KEY_TASK_DUE + " INTEGER, " + KEY_TASK_REMIND + " INTEGER, " + KEY_TASK_LIST + " TEXT)";
+        String CREATE_TASK_TABLE = "CREATE TABLE " + TABLE_TASKS + " (" + KEY_TASK_ID + " INTEGER PRIMARY KEY, " + KEY_TASK_NAME + " TEXT, " + KEY_TASK_DETAILS + " TEXT, " + KEY_TASK_DUE + " INTEGER, " + KEY_TASK_REMIND + " INTEGER, " + KEY_TASK_LIST + " INTEGER)";
         String CREATE_LIST_TABLE = "CREATE TABLE " + TABLE_LISTS + " (" + KEY_LIST_ID + " INTEGER PRIMARY KEY, " + KEY_LIST_NAME + " TEXT)";
 
         db.execSQL(CREATE_TASK_TABLE);
@@ -79,7 +79,7 @@ public class DBHandler extends SQLiteOpenHelper {
         Cursor cursor = db.query(TABLE_TASKS, new String[]{KEY_TASK_ID, KEY_TASK_NAME, KEY_TASK_DETAILS, KEY_TASK_DUE, KEY_TASK_REMIND, KEY_TASK_LIST}, KEY_TASK_ID + "=?", new String[] { String.valueOf(id) }, null, null, null, null);
 
         if (cursor.moveToFirst()) {
-            Task task = new Task(Long.parseLong(cursor.getString(0)), cursor.getString(1), cursor.getString(2), Long.parseLong(cursor.getString(3)), Long.parseLong(cursor.getString(4)), cursor.getString(5));
+            Task task = new Task(Long.parseLong(cursor.getString(0)), cursor.getString(1), cursor.getString(2), Long.parseLong(cursor.getString(3)), Long.parseLong(cursor.getString(4)), Long.parseLong(cursor.getString(5)));
             return task;
         }
 
@@ -96,7 +96,7 @@ public class DBHandler extends SQLiteOpenHelper {
 
         if (cursor.moveToFirst()) {
             do {
-                Task task = new Task(Long.parseLong(cursor.getString(0)), cursor.getString(1), cursor.getString(2), Long.parseLong(cursor.getString(3)), Long.parseLong(cursor.getString(4)), cursor.getString(5));
+                Task task = new Task(Long.parseLong(cursor.getString(0)), cursor.getString(1), cursor.getString(2), Long.parseLong(cursor.getString(3)), Long.parseLong(cursor.getString(4)), Long.parseLong(cursor.getString(5)));
                 taskList.add(task);
             } while (cursor.moveToNext());
         }
@@ -106,7 +106,7 @@ public class DBHandler extends SQLiteOpenHelper {
 
         if (cursor.moveToFirst()) {
             do {
-                Task task = new Task(Long.parseLong(cursor.getString(0)), cursor.getString(1), cursor.getString(2), Long.parseLong(cursor.getString(3)), Long.parseLong(cursor.getString(4)), cursor.getString(5));
+                Task task = new Task(Long.parseLong(cursor.getString(0)), cursor.getString(1), cursor.getString(2), Long.parseLong(cursor.getString(3)), Long.parseLong(cursor.getString(4)), Long.parseLong(cursor.getString(5)));
                 taskList.add(task);
             } while (cursor.moveToNext());
         }
@@ -144,9 +144,22 @@ public class DBHandler extends SQLiteOpenHelper {
         db.close();
     }
 
+    public List getList(long id) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.query(TABLE_LISTS, new String[]{KEY_LIST_ID, KEY_LIST_NAME}, KEY_LIST_ID + "=?", new String[] { String.valueOf(id) }, null, null, null, null);
+
+        if (cursor.moveToFirst()) {
+            List list = new List(Long.parseLong(cursor.getString(0)), cursor.getString(1));
+            return list;
+        }
+
+        cursor.close();
+        return null;
+    }
+
     public List getList(String name) {
         SQLiteDatabase db = this.getReadableDatabase();
-        String selectQuery = "Select * FROM " + TABLE_LISTS + " WHERE " + KEY_LIST_NAME + " =  \"" + name + "\"";
+        String selectQuery = "SELECT * FROM " + TABLE_LISTS + " WHERE " + KEY_LIST_NAME + " =  \"" + name + "\"";
         Cursor cursor = db.rawQuery(selectQuery, null);
 
         if (cursor != null)
@@ -189,26 +202,26 @@ public class DBHandler extends SQLiteOpenHelper {
         db.close();
     }
 
-    public ArrayList<Task> getTasksFromList(String listName) {
+    public ArrayList<Task> getTasksFromList(long listId) {
         SQLiteDatabase db = this.getReadableDatabase();
-        String selectQuery = "SELECT  * FROM " + TABLE_TASKS + " t1, " + TABLE_LISTS + " t2 WHERE t2." + KEY_LIST_NAME + " = '" + listName + "' AND t1." + KEY_TASK_LIST + " = t2." + KEY_LIST_NAME + " AND " + KEY_TASK_DUE + " != -1 ORDER BY " + KEY_TASK_DUE + ", " + KEY_TASK_NAME;
+        String selectQuery = "SELECT  * FROM " + TABLE_TASKS + " t1, " + TABLE_LISTS + " t2 WHERE t2." + KEY_LIST_ID + " = '" + listId + "' AND t1." + KEY_TASK_LIST + " = t2." + KEY_LIST_ID + " AND " + KEY_TASK_DUE + " != -1 ORDER BY " + KEY_TASK_DUE + ", " + KEY_TASK_NAME;
         Cursor cursor = db.rawQuery(selectQuery, null);
 
         ArrayList<Task> tasks = new ArrayList<Task>();
 
         if (cursor.moveToFirst()) {
             do {
-                Task task = new Task(Long.parseLong(cursor.getString(0)), cursor.getString(1), cursor.getString(2), Long.parseLong(cursor.getString(3)), Long.parseLong(cursor.getString(4)), cursor.getString(5));
+                Task task = new Task(Long.parseLong(cursor.getString(0)), cursor.getString(1), cursor.getString(2), Long.parseLong(cursor.getString(3)), Long.parseLong(cursor.getString(4)), Long.parseLong(cursor.getString(5)));
                 tasks.add(task);
             } while (cursor.moveToNext());
         }
 
-        selectQuery = "SELECT  * FROM " + TABLE_TASKS + " t1, " + TABLE_LISTS + " t2 WHERE t2." + KEY_LIST_NAME + " = '" + listName + "' AND t1." + KEY_TASK_LIST + " = t2." + KEY_LIST_NAME + " AND " + KEY_TASK_DUE + " = -1 ORDER BY " + KEY_TASK_NAME;
+        selectQuery = "SELECT  * FROM " + TABLE_TASKS + " t1, " + TABLE_LISTS + " t2 WHERE t2." + KEY_LIST_ID + " = '" + listId + "' AND t1." + KEY_TASK_LIST + " = t2." + KEY_LIST_ID + " AND " + KEY_TASK_DUE + " = -1 ORDER BY " + KEY_TASK_NAME;
         cursor = db.rawQuery(selectQuery, null);
 
         if (cursor.moveToFirst()) {
             do {
-                Task task = new Task(Long.parseLong(cursor.getString(0)), cursor.getString(1), cursor.getString(2), Long.parseLong(cursor.getString(3)), Long.parseLong(cursor.getString(4)), cursor.getString(5));
+                Task task = new Task(Long.parseLong(cursor.getString(0)), cursor.getString(1), cursor.getString(2), Long.parseLong(cursor.getString(3)), Long.parseLong(cursor.getString(4)), Long.parseLong(cursor.getString(5)));
                 tasks.add(task);
             } while (cursor.moveToNext());
         }

@@ -19,12 +19,14 @@ import java.util.Date;
 
 public class TaskListAdapter extends ArrayAdapter {
     ArrayList<Task> taskList;
+    DBHandler db;
     Context context;
 
     public TaskListAdapter(Context context, ArrayList<Task> resource) {
         super(context, R.layout.task_row, resource);
         this.context = context;
         this.taskList = resource;
+        db = new DBHandler(getContext());
     }
 
     @Override
@@ -38,9 +40,11 @@ public class TaskListAdapter extends ArrayAdapter {
 
         // set list
         TextView tvList = (TextView) convertView.findViewById(R.id.task_row_list);
+        String list = db.getList(taskList.get(position).getList()).getName();
 
-        if (!taskList.get(position).getList().equals(""))
-            tvList.setText(taskList.get(position).getList());
+        if (!list.equals("")) {
+            tvList.setText(list);
+        }
 
         // get date & time text
         TextView tvDate = (TextView) convertView.findViewById(R.id.task_row_date);

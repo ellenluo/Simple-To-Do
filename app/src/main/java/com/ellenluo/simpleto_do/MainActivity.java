@@ -89,10 +89,7 @@ public class MainActivity extends AppCompatActivity {
         Menu menu = nvDrawer.getMenu();
 
         for (int i = 0; i < listList.size(); i++) {
-            if (db.getTasksFromList(listList.get(i).getName()).size() > 0)
-                listName.add(listList.get(i).getName());
-            else
-                db.deleteList(listList.get(i));
+            listName.add(listList.get(i).getName());
         }
 
         Collections.sort(listName, String.CASE_INSENSITIVE_ORDER);
@@ -139,11 +136,17 @@ public class MainActivity extends AppCompatActivity {
             btnSave.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    // update list name
                     List curList = db.getList(pref.getString("current_list", "error"));
                     curList.setName(etListName.getText().toString().trim());
                     db.updateList(curList);
-                    setTitle(curList.getName());
+
+                    pref.edit().putString("current_list", etListName.getText().toString().trim()).apply();
                     dialog.dismiss();
+
+                    Intent intent = new Intent(MainActivity.this.getApplicationContext(), MainActivity.class);
+                    startActivity(intent);
+                    overridePendingTransition(0, 0);
                 }
             });
 

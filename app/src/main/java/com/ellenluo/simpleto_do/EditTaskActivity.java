@@ -172,7 +172,7 @@ public class EditTaskActivity extends AppCompatActivity implements TimePickerFra
 
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item, spinnerItem);
         listSpinner.setAdapter(adapter);
-        listSpinner.setSelection(getIndex(curTask.getList()));
+        listSpinner.setSelection(getIndex(db.getList(curTask.getList()).getName()));
 
         // if spinner item is selected
         listSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -315,14 +315,14 @@ public class EditTaskActivity extends AppCompatActivity implements TimePickerFra
 
         // update task
         curTask.setName(newName);
-        curTask.setList(listName);
+        curTask.setList(db.getList(listName).getId());
         curTask.setDetails(newDetails);
         curTask.setDue(dueMillis);
         curTask.setRemind(remindMillis);
         db.updateTask(curTask);
 
         // return to list that edited task belongs to
-        if (curTask.getList().equals(""))
+        if (db.getList(curTask.getList()).getName().equals(""))
             pref.edit().putString("current_list", "All Tasks").apply();
         else
             pref.edit().putString("current_list", listName).apply();

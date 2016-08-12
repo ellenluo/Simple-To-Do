@@ -28,7 +28,6 @@ public class MainFragment extends Fragment {
 
     ArrayList<Task> taskList;
     DBHandler db;
-    String curList;
     private Handler handler = new Handler();
 
     SharedPreferences pref;
@@ -41,17 +40,18 @@ public class MainFragment extends Fragment {
         db = new DBHandler(getActivity());
         ListView lvTasks = (ListView) v.findViewById(R.id.task_list);
         pref = getActivity().getSharedPreferences("Settings", PREFERENCE_MODE_PRIVATE);
-        curList = pref.getString("current_list", "All Tasks");
+
+        // set list to view
+        if (pref.getString("current_list", "All Tasks").equals("All Tasks")) {
+            taskList = db.getAllTasks();
+        } else {
+            List curList = db.getList(pref.getString("current_list", "All Tasks"));
+            taskList = db.getTasksFromList(curList.getId());
+        }
 
         // set up empty view
         TextView tvEmpty = (TextView) v.findViewById(R.id.empty_list);
         lvTasks.setEmptyView(tvEmpty);
-
-        // set list to view
-        if (curList.equals("All Tasks"))
-            taskList = db.getAllTasks();
-        else
-            taskList = db.getTasksFromList(curList);
 
         final TaskListAdapter taskAdapter = new TaskListAdapter(getActivity(), taskList);
         lvTasks.setAdapter(taskAdapter);

@@ -272,7 +272,7 @@ public class AddTaskActivity extends AppCompatActivity implements TimePickerFrag
 
 
         // add task & print completion message
-        Task newTask = new Task(etName.getText().toString().trim(), etText.getText().toString(), dueMillis, remindMillis, listName);
+        Task newTask = new Task(etName.getText().toString().trim(), etText.getText().toString(), dueMillis, remindMillis, db.getList(listName).getId());
         db.addTask(newTask);
         Toast.makeText(this, "New task successfully added", Toast.LENGTH_SHORT).show();
 

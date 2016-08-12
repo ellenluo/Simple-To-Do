@@ -55,7 +55,7 @@ public class TaskDetailsActivity extends AppCompatActivity {
         TextView tvDetails = (TextView) findViewById(R.id.task_details_details);
 
         tvName.setText(curTask.getName());
-        tvList.setText(curTask.getList());
+        tvList.setText(db.getList(curTask.getList()).getName());
         tvDetails.setText(curTask.getDetails());
 
         // set due date
