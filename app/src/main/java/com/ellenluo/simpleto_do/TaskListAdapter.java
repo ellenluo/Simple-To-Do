@@ -40,9 +40,9 @@ public class TaskListAdapter extends ArrayAdapter {
 
         // set list
         TextView tvList = (TextView) convertView.findViewById(R.id.task_row_list);
-        String list = db.getList(taskList.get(position).getList()).getName();
 
-        if (!list.equals("")) {
+        if (taskList.get(position).getList() != -1) {
+            String list = db.getList(taskList.get(position).getList()).getName();
             tvList.setText(list);
         }
 

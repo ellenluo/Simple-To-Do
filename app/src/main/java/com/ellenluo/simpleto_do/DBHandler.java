@@ -230,4 +230,10 @@ public class DBHandler extends SQLiteOpenHelper {
         return tasks;
     }
 
+    public void deleteTasksFromList(long id) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.delete(TABLE_TASKS, KEY_TASK_LIST + " = ?", new String[] { String.valueOf(id) });
+        db.close();
+    }
+
 }

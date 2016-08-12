@@ -55,8 +55,12 @@ public class TaskDetailsActivity extends AppCompatActivity {
         TextView tvDetails = (TextView) findViewById(R.id.task_details_details);
 
         tvName.setText(curTask.getName());
-        tvList.setText(db.getList(curTask.getList()).getName());
         tvDetails.setText(curTask.getDetails());
+
+        // set list
+        if (curTask.getList() != -1) {
+            tvList.setText(db.getList(curTask.getList()).getName());
+        }
 
         // set due date
         if (curTask.getDue() != -1) {
@@ -92,14 +96,7 @@ public class TaskDetailsActivity extends AppCompatActivity {
                     // delay deletion
                     handler.postDelayed(new Runnable() {
                         public void run() {
-                            if (db.getTasksFromList(curTask.getList()).size() == 1) {
-                                pref.edit().putString("current_list", "All Tasks").apply();
-                                db.deleteList(db.getList(curTask.getList()));
-                                db.deleteTask(curTask);
-                            } else {
-                                db.deleteTask(curTask);
-                            }
-
+                            db.deleteTask(curTask);
                             Intent intent = new Intent(TaskDetailsActivity.this, MainActivity.class);
                             startActivity(intent);
                         }

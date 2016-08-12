@@ -85,19 +85,8 @@ public class MainFragment extends Fragment {
                 // delay deletion
                 handler.postDelayed(new Runnable() {
                     public void run() {
-                        if (db.getTasksFromList(taskList.get(pos).getList()).size() == 1) {
-                            pref.edit().putString("current_list", "All Tasks").apply();
-                            db.deleteList(db.getList(taskList.get(pos).getList()));
-                            db.deleteTask(taskList.remove(pos));
-                            taskAdapter.notifyDataSetChanged();
-
-                            Intent intent = new Intent(getActivity(), MainActivity.class);
-                            startActivity(intent);
-                            getActivity().overridePendingTransition(0, 0);
-                        } else {
-                            db.deleteTask(taskList.remove(pos));
-                            taskAdapter.notifyDataSetChanged();
-                        }
+                        db.deleteTask(taskList.remove(pos));
+                        taskAdapter.notifyDataSetChanged();
                     }
                 }, 500);
 

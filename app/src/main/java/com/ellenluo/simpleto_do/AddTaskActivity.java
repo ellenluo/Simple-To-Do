@@ -38,7 +38,7 @@ public class AddTaskActivity extends AppCompatActivity implements TimePickerFrag
 
     String[] listSpinnerItem;
     ArrayList<List> listList;
-    String listName = "";
+    long listId = -1;
     int size = 0;
     int picker = 0;
 
@@ -120,9 +120,11 @@ public class AddTaskActivity extends AppCompatActivity implements TimePickerFrag
         listSpinnerItem[0] = "Select one";
         listSpinnerItem[size + 1] = "Add new list";
 
-        if (size > 0)
-            for (int i = 0; i < listList.size(); i++)
+        if (size > 0) {
+            for (int i = 0; i < listList.size(); i++) {
                 listSpinnerItem[i + 1] = listList.get(i).getName();
+            }
+        }
 
         ArrayAdapter<String> listAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item, listSpinnerItem);
         listSpinner.setAdapter(listAdapter);
@@ -142,17 +144,17 @@ public class AddTaskActivity extends AppCompatActivity implements TimePickerFrag
                 } else if (position == 0) {
                     tvAddList.setVisibility(View.GONE);
                     etAddList.setVisibility(View.GONE);
-                    listName = "";
+                    listId = -1;
                 } else {
                     tvAddList.setVisibility(View.GONE);
                     etAddList.setVisibility(View.GONE);
-                    listName = listSpinnerItem[position];
+                    listId = db.getList(listSpinnerItem[position]).getId();
                 }
             }
 
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
-                listName = "";
+                listId = -1;
             }
         });
     }
@@ -221,6 +223,19 @@ public class AddTaskActivity extends AppCompatActivity implements TimePickerFrag
         }
     }
 
+    // get index of item in spinner
+    private int getIndex(String item) {
+        int index = 0;
+
+        for (int i = 0; i < listSpinner.getCount(); i++) {
+            if (listSpinner.getItemAtPosition(i).toString().equalsIgnoreCase(item)) {
+                index = i;
+                break;
+            }
+        }
+        return index;
+    }
+
     // add task to database
     public boolean addTask() {
         EditText etName = (EditText) findViewById(R.id.add_task_task_name);
@@ -235,7 +250,7 @@ public class AddTaskActivity extends AppCompatActivity implements TimePickerFrag
 
         // check if new list was added
         if (etText.getVisibility() == View.VISIBLE && etAddList.getVisibility() == View.VISIBLE) {
-            listName = etAddList.getText().toString().trim();
+            String listName = etAddList.getText().toString().trim();
 
             // check for empty list name
             if (listName.length() == 0) {
@@ -248,12 +263,20 @@ public class AddTaskActivity extends AppCompatActivity implements TimePickerFrag
 
             for (int i = 0; i < listList.size(); i++) {
                 if (listName.equals(listList.get(i).getName())) {
-                    Reference.displayAlert(this, "The list \"" + listName + "\" already exists. Please enter a new list name.", "Got it", "");
+                    Reference.displayAlert(this, "List name already exists. Please enter a new list name.", "Got it", "");
                     return true;
                 }
             }
 
-            db.addList(new List(listName));
+            // check for "All Tasks" name
+            if (listName.equals("All Tasks")) {
+                Reference.displayAlert(this, "List name already exists. Please enter a new list name.", "Got it", "");
+                return true;
+            }
+
+            List newList = new List(listName);
+            db.addList(newList);
+            listId = db.getList(listName).getId();
         }
 
         // get due date
@@ -270,9 +293,8 @@ public class AddTaskActivity extends AppCompatActivity implements TimePickerFrag
             remindMillis = remind.getTimeInMillis();
         }
 
-
         // add task & print completion message
-        Task newTask = new Task(etName.getText().toString().trim(), etText.getText().toString(), dueMillis, remindMillis, db.getList(listName).getId());
+        Task newTask = new Task(etName.getText().toString().trim(), etText.getText().toString(), dueMillis, remindMillis, listId);
         db.addTask(newTask);
         Toast.makeText(this, "New task successfully added", Toast.LENGTH_SHORT).show();
 
@@ -296,19 +318,6 @@ public class AddTaskActivity extends AppCompatActivity implements TimePickerFrag
         startActivity(intent);
 
         return true;
-    }
-
-    // get index of item in spinner
-    private int getIndex(String item) {
-        int index = 0;
-
-        for (int i = 0; i < listSpinner.getCount(); i++) {
-            if (listSpinner.getItemAtPosition(i).toString().equalsIgnoreCase(item)) {
-                index = i;
-                break;
-            }
-        }
-        return index;
     }
 
     // inflates action bar menu

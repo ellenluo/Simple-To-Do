@@ -1,9 +1,13 @@
 package com.ellenluo.simpleto_do;
 
+import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
+import android.graphics.Point;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
@@ -14,6 +18,7 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Display;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -126,6 +131,18 @@ public class MainActivity extends AppCompatActivity {
             dialog.setContentView(R.layout.dialog_edit_task);
             dialog.setTitle("Edit List");
 
+            // set dialog width
+            WindowManager wm = (WindowManager) this.getSystemService(Context.WINDOW_SERVICE);
+            Display display = wm.getDefaultDisplay();
+            Point size = new Point();
+            display.getSize(size);
+            int width = size.x;
+
+            WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
+            lp.copyFrom(dialog.getWindow().getAttributes());
+            lp.width = width;
+            dialog.getWindow().setAttributes(lp);
+
             // set text field to current name
             final EditText etListName = (EditText) dialog.findViewById(R.id.list_name);
             etListName.setText(pref.getString("current_list", "All Tasks"));
@@ -144,6 +161,7 @@ public class MainActivity extends AppCompatActivity {
                     pref.edit().putString("current_list", etListName.getText().toString().trim()).apply();
                     dialog.dismiss();
 
+                    // reset activity
                     Intent intent = new Intent(MainActivity.this.getApplicationContext(), MainActivity.class);
                     startActivity(intent);
                     overridePendingTransition(0, 0);
@@ -151,19 +169,47 @@ public class MainActivity extends AppCompatActivity {
             });
 
             // delete button
-            /*Button btnDelete = (Button) dialog.findViewById(R.id.delete_list);
+            Button btnDelete = (Button) dialog.findViewById(R.id.delete_list);
 
             btnDelete.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    List curList = db.getList(pref.getString("current_list", "error"));
-                    db.deleteList(curList);
                     dialog.dismiss();
 
-                    Intent intent = new Intent(MainActivity.this.getApplicationContext(), MainActivity.class);
-                    startActivity(intent);
+                    // display confirmation dialog
+                    AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+                    builder.setMessage("Are you sure you want to delete this list and all corresponding tasks?");
+
+                    builder.setNegativeButton("Delete", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss();
+
+                            // delete list
+                            List curList = db.getList(pref.getString("current_list", "error"));
+                            db.deleteList(curList);
+
+                            // delete all tasks in list
+                            db.deleteTasksFromList(curList.getId());
+
+                            // reset activity
+                            pref.edit().putString("current_list", "All Tasks").apply();
+                            Intent intent = new Intent(MainActivity.this.getApplicationContext(), MainActivity.class);
+                            startActivity(intent);
+                        }
+                    });
+
+                    builder.setPositiveButton("Cancel", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.cancel();
+                        }
+                    });
+
+                    AlertDialog warning = builder.create();
+                    warning.show();
                 }
-            });*/
+            });
 
             dialog.show();
         }

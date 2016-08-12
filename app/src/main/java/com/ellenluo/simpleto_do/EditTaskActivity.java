@@ -58,7 +58,7 @@ public class EditTaskActivity extends AppCompatActivity implements TimePickerFra
     int size = 0;
     String[] spinnerItem;
     ArrayList<List> listList;
-    String listName = "";
+    long listId = -1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -148,11 +148,9 @@ public class EditTaskActivity extends AppCompatActivity implements TimePickerFra
             }
         });
 
-        // make new list edittext & textview invisible
+        // initialize new list instructions/text field
         tvAddList = (TextView) findViewById(R.id.edit_task_instructions);
         etAddList = (EditText) findViewById(R.id.edit_task_list_name);
-        tvAddList.setVisibility(View.GONE);
-        etAddList.setVisibility(View.GONE);
 
         // set up spinner
         listSpinner = (Spinner) findViewById(R.id.edit_task_list_spinner);
@@ -166,13 +164,20 @@ public class EditTaskActivity extends AppCompatActivity implements TimePickerFra
         spinnerItem[0] = "Select one";
         spinnerItem[size + 1] = "Add new list";
 
-        if (size > 0)
-            for (int i = 0; i < listList.size(); i++)
+        if (size > 0) {
+            for (int i = 0; i < listList.size(); i++) {
                 spinnerItem[i + 1] = listList.get(i).getName();
+            }
+        }
 
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item, spinnerItem);
         listSpinner.setAdapter(adapter);
-        listSpinner.setSelection(getIndex(db.getList(curTask.getList()).getName()));
+
+        if (curTask.getList() == -1) {
+            listSpinner.setSelection(getIndex("All Tasks"));
+        } else {
+            listSpinner.setSelection(getIndex(db.getList(curTask.getList()).getName()));
+        }
 
         // if spinner item is selected
         listSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -184,17 +189,17 @@ public class EditTaskActivity extends AppCompatActivity implements TimePickerFra
                 } else if (position == 0) {
                     tvAddList.setVisibility(View.GONE);
                     etAddList.setVisibility(View.GONE);
-                    listName = "";
+                    listId = -1;
                 } else {
                     tvAddList.setVisibility(View.GONE);
                     etAddList.setVisibility(View.GONE);
-                    listName = spinnerItem[position];
+                    listId = db.getList(spinnerItem[position]).getId();
                 }
             }
 
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
-                listName = "";
+                listId = -1;
             }
         });
     }
@@ -263,15 +268,53 @@ public class EditTaskActivity extends AppCompatActivity implements TimePickerFra
         }
     }
 
+    // get index of item in spinner
+    private int getIndex(String item) {
+        int index = 0;
+
+        for (int i = 0; i < listSpinner.getCount(); i++) {
+            if (listSpinner.getItemAtPosition(i).toString().equalsIgnoreCase(item)) {
+                index = i;
+                break;
+            }
+        }
+        return index;
+    }
+
     // save changes
-    public void saveChanges() {
+    public boolean saveChanges() {
         String newName = etName.getText().toString();
         String newDetails = etDetails.getText().toString();
 
         // check if new list was added
         if (tvAddList.getVisibility() == View.VISIBLE && etAddList.getVisibility() == View.VISIBLE) {
-            listName = etAddList.getText().toString();
-            db.addList(new List(listName));
+            String listName = etAddList.getText().toString();
+
+            // check for empty list name
+            if (listName.length() == 0) {
+                Reference.displayAlert(this, "New list name cannot be empty.", "Got it", "");
+                return true;
+            }
+
+            // check for duplicate list name
+            ArrayList<List> listList = db.getAllLists();
+
+            for (int i = 0; i < listList.size(); i++) {
+                if (listName.equals(listList.get(i).getName())) {
+                    Reference.displayAlert(this, "List name already exists. Please enter a new list name.", "Got it", "");
+                    return true;
+                }
+            }
+
+            // check for "All Tasks" name
+            if (listName.equals("All Tasks")) {
+                Reference.displayAlert(this, "List name already exists. Please enter a new list name.", "Got it", "");
+                return true;
+            }
+
+            List newList = new List(listName);
+            db.addList(newList);
+            listId = db.getList(listName).getId();
         }
 
         // get time & date
@@ -313,37 +356,27 @@ public class EditTaskActivity extends AppCompatActivity implements TimePickerFra
             }
         }
 
-        // update task
+        // update task & print completion message
         curTask.setName(newName);
-        curTask.setList(db.getList(listName).getId());
         curTask.setDetails(newDetails);
         curTask.setDue(dueMillis);
         curTask.setRemind(remindMillis);
+        curTask.setList(listId);
         db.updateTask(curTask);
+        Toast.makeText(this, "'" + curTask.getName() + "' successfully updated", Toast.LENGTH_SHORT).show();
 
         // return to list that edited task belongs to
-        if (db.getList(curTask.getList()).getName().equals(""))
+        if (listId == -1) {
             pref.edit().putString("current_list", "All Tasks").apply();
-        else
-            pref.edit().putString("current_list", listName).apply();
+        } else {
+            pref.edit().putString("current_list", db.getList(listId).getName()).apply();
+        }
 
-        // show completion message & return to task details
-        Toast.makeText(this, "'" + curTask.getName() + "' successfully updated", Toast.LENGTH_SHORT).show();
+        // return to task details
         Intent intent = new Intent(EditTaskActivity.this, TaskDetailsActivity.class);
         startActivity(intent);
-    }
 
-    // get index of item in spinner
-    private int getIndex(String item) {
-        int index = 0;
-
-        for (int i = 0; i < listSpinner.getCount(); i++) {
-            if (listSpinner.getItemAtPosition(i).toString().equalsIgnoreCase(item)) {
-                index = i;
-                break;
-            }
-        }
-        return index;
+        return true;
     }
 
     // inflates action bar menu

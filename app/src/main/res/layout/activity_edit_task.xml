@@ -169,7 +169,8 @@
                 android:id="@+id/edit_task_instructions"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Enter name of new list:" />
+                android:text="Enter name of new list:"
+                android:visibility="gone" />
 
             <EditText
                 android:id="@+id/edit_task_list_name"
@@ -177,7 +178,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="@dimen/activity_vertical_margin"
                 android:inputType="text"
-                android:maxLines="1" />
+                android:maxLines="1"
+                android:visibility="gone" />
 
             <TextView
                 android:layout_width="match_parent"
