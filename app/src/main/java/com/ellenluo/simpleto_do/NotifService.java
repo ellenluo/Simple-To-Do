@@ -27,7 +27,7 @@ public class NotifService extends IntentService {
         String text = intent.getExtras().getString("text");
         Log.d("NotifService", "id is " + id + ", text is " + text + ", time is " + System.currentTimeMillis());
 
-        pref = getSharedPreferences("Settings", PREFERENCE_MODE_PRIVATE);
+        pref = getSharedPreferences("Main", PREFERENCE_MODE_PRIVATE);
         pref.edit().putLong("id", id).apply();
 
         Intent newIntent = new Intent(this, TaskDetailsActivity.class);

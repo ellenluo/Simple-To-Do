@@ -71,7 +71,7 @@ public class MainActivity extends AppCompatActivity {
         });
 
         // set main fragment
-        pref = getSharedPreferences("Settings", PREFERENCE_MODE_PRIVATE);
+        pref = getSharedPreferences("Main", PREFERENCE_MODE_PRIVATE);
         String curList = pref.getString("current_list", "All Tasks");
 
         Fragment fragment = null;
@@ -276,7 +276,6 @@ public class MainActivity extends AppCompatActivity {
             switch (menuItem.getItemId()) {
                 case R.id.nav_all:
                     fragmentClass = MainFragment.class;
-                    pref = getSharedPreferences("Settings", PREFERENCE_MODE_PRIVATE);
                     pref.edit().putString("current_list", "All Tasks").apply();
                     showEditList = false;
                     supportInvalidateOptionsMenu();

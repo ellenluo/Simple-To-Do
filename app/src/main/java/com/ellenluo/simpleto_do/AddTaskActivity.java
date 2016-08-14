@@ -130,7 +130,7 @@ public class AddTaskActivity extends AppCompatActivity implements TimePickerFrag
         listSpinner.setAdapter(listAdapter);
 
         // set default list option
-        pref = getSharedPreferences("Settings", PREFERENCE_MODE_PRIVATE);
+        pref = getSharedPreferences("Main", PREFERENCE_MODE_PRIVATE);
         String curList = pref.getString("current_list", "All Tasks");
         listSpinner.setSelection(getIndex(curList));
 

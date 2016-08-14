@@ -73,7 +73,7 @@ public class EditTaskActivity extends AppCompatActivity implements TimePickerFra
         toolbar.setPadding(0, Reference.getStatusBarHeight(this), 0, 0);
 
         // get task from database
-        pref = getSharedPreferences("Settings", PREFERENCE_MODE_PRIVATE);
+        pref = getSharedPreferences("Main", PREFERENCE_MODE_PRIVATE);
         id = pref.getLong("id", 0);
         db = new DBHandler(this);
         curTask = db.getTask(id);

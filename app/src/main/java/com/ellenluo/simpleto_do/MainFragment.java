@@ -39,7 +39,7 @@ public class MainFragment extends Fragment {
         // set up task list
         db = new DBHandler(getActivity());
         ListView lvTasks = (ListView) v.findViewById(R.id.task_list);
-        pref = getActivity().getSharedPreferences("Settings", PREFERENCE_MODE_PRIVATE);
+        pref = getActivity().getSharedPreferences("Main", PREFERENCE_MODE_PRIVATE);
 
         // set list to view
         if (pref.getString("current_list", "All Tasks").equals("All Tasks")) {
