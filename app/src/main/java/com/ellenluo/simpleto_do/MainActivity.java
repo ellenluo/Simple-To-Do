@@ -1,7 +1,9 @@
 package com.ellenluo.simpleto_do;
 
+import android.app.AlarmManager;
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -236,11 +238,19 @@ public class MainActivity extends AppCompatActivity {
                         public void onClick(DialogInterface dialog, int which) {
                             dialog.dismiss();
 
-                            // delete list
                             List curList = db.getList(pref.getString("current_list", "error"));
-                            db.deleteList(curList);
+                            ArrayList<Task> taskList = db.getTasksFromList(curList.getId());
 
-                            // delete all tasks in list
+                            // cancel all reminders
+                            for (int i = 0; i < taskList.size(); i++) {
+                                Intent alarmIntent = new Intent(getApplicationContext(), AlarmManagerReceiver.class);
+                                PendingIntent pendingIntent = PendingIntent.getBroadcast(getApplicationContext(), (int) taskList.get(i).getId(), alarmIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+                                AlarmManager alarmManager = (AlarmManager) getApplicationContext().getSystemService(Context.ALARM_SERVICE);
+                                alarmManager.cancel(pendingIntent);
+                            }
+
+                            // delete list & tasks
+                            db.deleteList(curList);
                             db.deleteTasksFromList(curList.getId());
 
                             // reset activity

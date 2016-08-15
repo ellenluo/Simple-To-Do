@@ -20,9 +20,9 @@
                     android:icon="@drawable/ic_settings_black_24dp" />
 
                 <item
-                    android:id="@+id/nav_backup"
-                    android:title="Backup Your Data"
-                    android:icon="@drawable/ic_backup_black_24dp" />
+                    android:id="@+id/nav_feedback"
+                    android:title="Send Feedback"
+                    android:icon="@drawable/ic_feedback_black_24dp" />
 
                 <item
                     android:id="@+id/nav_help"

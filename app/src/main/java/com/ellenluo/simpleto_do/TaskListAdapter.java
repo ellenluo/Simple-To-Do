@@ -3,6 +3,7 @@ package com.ellenluo.simpleto_do;
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import android.text.format.DateUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -33,6 +34,10 @@ public class TaskListAdapter extends ArrayAdapter {
     public View getView(int position, View convertView, ViewGroup parent) {
         LayoutInflater inflater = ((Activity) context).getLayoutInflater();
         convertView = inflater.inflate(R.layout.task_row, parent, false);
+
+        // get settings from preferences
+        SharedPreferences prefSettings = PreferenceManager.getDefaultSharedPreferences(getContext());
+        boolean militaryTime = prefSettings.getBoolean("24h", false);
 
         // set name
         TextView tvName = (TextView) convertView.findViewById(R.id.task_row_name);
@@ -66,7 +71,11 @@ public class TaskListAdapter extends ArrayAdapter {
             if (due.before(now))
                 tvDate.setText("Overdue");
             else {
-                tvTime.setText(new SimpleDateFormat("hh:mm a").format(date));
+                if (militaryTime) {
+                    tvTime.setText(new SimpleDateFormat("HH:mm").format(date));
+                } else {
+                    tvTime.setText(new SimpleDateFormat("hh:mm a").format(date));
+                }
 
                 if (now.get(Calendar.DAY_OF_YEAR) == due.get(Calendar.DAY_OF_YEAR) && now.get(Calendar.YEAR) == due.get(Calendar.YEAR))
                     tvDate.setText("Today");

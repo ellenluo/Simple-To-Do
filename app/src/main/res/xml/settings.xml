@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:content="http://schemas.android.com/apk/res-auto">
 
     <PreferenceCategory android:title="General Settings">
 
         <SwitchPreference
             android:defaultValue="false"
-            android:key="settings_24h"
+            android:key="24h"
             android:summary="If selected, all due/reminder dates will be displayed in 24-hour time."
             android:title="24-Hour Time" />
 
@@ -15,25 +16,31 @@
 
         <SwitchPreference
             android:defaultValue="true"
-            android:key="settings_vibration"
+            android:key="vibration"
             android:summary="If selected, reminders will cause phone to vibrate."
             android:title="Vibration" />
 
         <SwitchPreference
             android:defaultValue="true"
-            android:key="settings_sound"
-            android:summary="If selected, reminders will use your default notification sound."
-            android:title="Sound" />
+            android:key="light"
+            android:summary="If selected, reminders will cause phone LED light to blink."
+            android:title="LED Light" />
+
+        <RingtonePreference
+            android:defaultValue="content://settings/system/notification_sound"
+            android:key="sound"
+            android:ringtoneType="notification"
+            android:showDefault="true"
+            android:summary="Select a ringtone for reminders (or turn sound off)."
+            android:title="Notification Sound" />
 
     </PreferenceCategory>
 
     <PreferenceCategory android:title="Other">
 
         <Preference
-            android:title="Delete all tasks and lists">
-            <intent android:action="android.intent.action.VIEW"
-                android:data="http://codepath.com/" />
-        </Preference>
+            android:key="delete_all"
+            android:title="Delete all tasks and lists" />
 
     </PreferenceCategory>
 

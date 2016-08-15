@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
+import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
@@ -28,7 +29,6 @@ public class TaskDetailsActivity extends AppCompatActivity {
     Task curTask;
     private Handler handler = new Handler();
 
-    SharedPreferences pref;
     private static final int PREFERENCE_MODE_PRIVATE = 0;
 
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,8 +42,12 @@ public class TaskDetailsActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayShowHomeEnabled(true);
         toolbar.setPadding(0, Reference.getStatusBarHeight(this), 0, 0);
 
+        // get settings from preferences
+        SharedPreferences prefSettings = PreferenceManager.getDefaultSharedPreferences(this);
+        boolean militaryTime = prefSettings.getBoolean("24h", false);
+
         // get task from database
-        pref = getSharedPreferences("Main", PREFERENCE_MODE_PRIVATE);
+        SharedPreferences pref = getSharedPreferences("Main", PREFERENCE_MODE_PRIVATE);
         id = pref.getLong("id", 0);
         curTask = db.getTask(id);
 
@@ -67,7 +71,12 @@ public class TaskDetailsActivity extends AppCompatActivity {
             Calendar cal = Calendar.getInstance();
             cal.setTimeInMillis(curTask.getDue());
             Date date = cal.getTime();
-            tvDue.setText(new SimpleDateFormat("MMMM dd, yyyy").format(date) + " at " + new SimpleDateFormat("hh:mm a").format(date));
+
+            if (militaryTime) {
+                tvDue.setText(new SimpleDateFormat("MMMM dd, yyyy").format(date) + " at " + new SimpleDateFormat("HH:mm").format(date));
+            } else {
+                tvDue.setText(new SimpleDateFormat("MMMM dd, yyyy").format(date) + " at " + new SimpleDateFormat("hh:mm a").format(date));
+            }
         }
 
         // set remind
@@ -75,7 +84,12 @@ public class TaskDetailsActivity extends AppCompatActivity {
             Calendar cal = Calendar.getInstance();
             cal.setTimeInMillis(curTask.getRemind());
             Date date = cal.getTime();
-            tvRemind.setText(new SimpleDateFormat("MMMM dd, yyyy").format(date) + " at " + new SimpleDateFormat("hh:mm a").format(date));
+
+            if (militaryTime) {
+                tvRemind.setText(new SimpleDateFormat("MMMM dd, yyyy").format(date) + " at " + new SimpleDateFormat("HH:mm").format(date));
+            } else {
+                tvRemind.setText(new SimpleDateFormat("MMMM dd, yyyy").format(date) + " at " + new SimpleDateFormat("hh:mm a").format(date));
+            }
         }
 
         // task completed checkbox

@@ -4,6 +4,7 @@ import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.os.Build;
+import android.preference.PreferenceManager;
 import android.support.v4.app.DialogFragment;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -41,6 +42,7 @@ public class AddTaskActivity extends AppCompatActivity implements TimePickerFrag
     long listId = -1;
     int size = 0;
     int picker = 0;
+    boolean militaryTime = false;
 
     Calendar due;
     Calendar remind;
@@ -66,6 +68,10 @@ public class AddTaskActivity extends AppCompatActivity implements TimePickerFrag
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
         toolbar.setPadding(0, Reference.getStatusBarHeight(this), 0, 0);
+
+        // get settings from preferences
+        SharedPreferences prefSettings = PreferenceManager.getDefaultSharedPreferences(this);
+        militaryTime = prefSettings.getBoolean("24h", false);
 
         // initialize due date/time
         tvDueDate = (TextView) findViewById(R.id.due_date);
@@ -214,12 +220,22 @@ public class AddTaskActivity extends AppCompatActivity implements TimePickerFrag
             due.set(Calendar.HOUR_OF_DAY, hourOfDay);
             due.set(Calendar.MINUTE, minute);
             Date date = due.getTime();
-            tvDueTime.setText(new SimpleDateFormat("hh:mm a").format(date));
+
+            if (militaryTime) {
+                tvDueTime.setText(new SimpleDateFormat("HH:mm").format(date));
+            } else {
+                tvDueTime.setText(new SimpleDateFormat("hh:mm a").format(date));
+            }
         } else {
             remind.set(Calendar.HOUR_OF_DAY, hourOfDay);
             remind.set(Calendar.MINUTE, minute);
             Date date = remind.getTime();
-            tvRemindTime.setText(new SimpleDateFormat("hh:mm a").format(date));
+
+            if (militaryTime) {
+                tvRemindTime.setText(new SimpleDateFormat("HH:mm").format(date));
+            } else {
+                tvRemindTime.setText(new SimpleDateFormat("hh:mm a").format(date));
+            }
         }
     }
 

@@ -4,7 +4,9 @@ import android.app.Activity;
 import android.app.Dialog;
 import android.app.TimePickerDialog;
 import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.DialogFragment;
 import android.text.format.DateFormat;
 import android.widget.TimePicker;
@@ -27,7 +29,11 @@ public class TimePickerFragment extends DialogFragment {
         int initHour = c.get(Calendar.HOUR_OF_DAY);
         int initMin = c.get(Calendar.MINUTE);
 
-        return new TimePickerDialog(getActivity(), listener, initHour, initMin, DateFormat.is24HourFormat(getActivity()));
+        // get notification settings from preferences
+        SharedPreferences prefSettings = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        boolean militaryTime = prefSettings.getBoolean("24h", false);
+
+        return new TimePickerDialog(getActivity(), listener, initHour, initMin, militaryTime);
     }
 
     @Override

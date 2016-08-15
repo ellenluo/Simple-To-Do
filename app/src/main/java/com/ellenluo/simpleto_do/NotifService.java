@@ -7,14 +7,15 @@ import android.app.PendingIntent;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.PowerManager;
+import android.preference.PreferenceManager;
 import android.provider.Settings;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
 public class NotifService extends IntentService {
 
-    SharedPreferences pref;
     private static final int PREFERENCE_MODE_PRIVATE = 0;
 
     public NotifService() {
@@ -27,9 +28,17 @@ public class NotifService extends IntentService {
         String text = intent.getExtras().getString("text");
         Log.d("NotifService", "id is " + id + ", text is " + text + ", time is " + System.currentTimeMillis());
 
-        pref = getSharedPreferences("Main", PREFERENCE_MODE_PRIVATE);
+        // store id in preferences
+        SharedPreferences pref = getSharedPreferences("Main", PREFERENCE_MODE_PRIVATE);
         pref.edit().putLong("id", id).apply();
 
+        // get notification settings from preferences
+        SharedPreferences prefSettings = PreferenceManager.getDefaultSharedPreferences(this);
+        String sound = prefSettings.getString("sound", "DEFAULT_NOTIFICATION_URI");
+        boolean vibration = prefSettings.getBoolean("vibration", true);
+        boolean light = prefSettings.getBoolean("light", true);
+
+        // set up notification
         Intent newIntent = new Intent(this, TaskDetailsActivity.class);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, newIntent, 0);
 
@@ -38,10 +47,20 @@ public class NotifService extends IntentService {
                 .setContentTitle("Lists")
                 .setContentText(text)
                 .setContentIntent(pendingIntent)
-                .setVibrate(new long[]{0, 1000})
-                .setAutoCancel(true)
-                .setSound(Settings.System.DEFAULT_NOTIFICATION_URI)
-                .setLights(Color.rgb(0, 191, 255), 2000, 2000);
+                .setAutoCancel(true);
+
+        if (vibration) {
+            builder.setVibrate(new long[]{0, 1000});
+        }
+
+        if (light) {
+            builder.setLights(Color.rgb(0, 191, 255), 2000, 2000);
+        }
+
+        if (sound.length() > 0) {
+            Uri notifUri = Uri.parse(sound);
+            builder.setSound(notifUri);
+        }
 
         Notification notif = builder.build();
 
