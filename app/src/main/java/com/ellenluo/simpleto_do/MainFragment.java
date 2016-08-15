@@ -5,7 +5,6 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Movie;
 import android.graphics.Paint;
 import android.os.Bundle;
 import android.os.Handler;
@@ -20,8 +19,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 
 
 public class MainFragment extends Fragment {
@@ -35,6 +32,10 @@ public class MainFragment extends Fragment {
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_main, container, false);
+
+        if (container != null) {
+            container.removeAllViews();
+        }
 
         // set up task list
         db = new DBHandler(getActivity());

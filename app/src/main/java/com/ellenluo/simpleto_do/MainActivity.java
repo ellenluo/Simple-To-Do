@@ -282,6 +282,11 @@ public class MainActivity extends AppCompatActivity {
                     break;
                 case R.id.nav_settings:
                     showEditList = false;
+                    getFragmentManager().beginTransaction()
+                            .replace(R.id.frame, new SettingsFragment())
+                            .commit();
+                    setTitle(menuItem.getTitle());
+                    mDrawer.closeDrawers();
                     break;
                 case R.id.nav_backup:
                     showEditList = false;
@@ -293,17 +298,19 @@ public class MainActivity extends AppCompatActivity {
                     break;
             }
 
-            try {
-                fragment = (Fragment) fragmentClass.newInstance();
-            } catch (Exception e) {
-                e.printStackTrace();
+            if (fragmentClass != null) {
+                try {
+                    fragment = (Fragment) fragmentClass.newInstance();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+                FragmentManager fragmentManager = getSupportFragmentManager();
+                fragmentManager.beginTransaction().replace(R.id.frame, fragment).commit();
+
+                setTitle(menuItem.getTitle());
+                mDrawer.closeDrawers();
             }
-
-            FragmentManager fragmentManager = getSupportFragmentManager();
-            fragmentManager.beginTransaction().replace(R.id.frame, fragment).commit();
-
-            setTitle(menuItem.getTitle());
-            mDrawer.closeDrawers();
         } else {
             try {
                 fragment = (Fragment) MainFragment.class.newInstance();
@@ -355,24 +362,19 @@ public class MainActivity extends AppCompatActivity {
     // make back button return to all tasks
     @Override
     public void onBackPressed() {
-        String curList = pref.getString("current_list", "All Tasks");
-        Log.d("MainActivity", "Current list is " + curList);
+        Fragment fragment = null;
 
-        if (!curList.equals("All Tasks")) {
-            Fragment fragment = null;
-
-            try {
-                fragment = (Fragment) MainFragment.class.newInstance();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-
-            FragmentManager fragmentManager = getSupportFragmentManager();
-            fragmentManager.beginTransaction().replace(R.id.frame, fragment).commit();
-
-            pref.edit().putString("current_list", "All Tasks").apply();
-            setTitle("All Tasks");
+        try {
+            fragment = MainFragment.class.newInstance();
+        } catch (Exception e) {
+            e.printStackTrace();
         }
+
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        fragmentManager.beginTransaction().replace(R.id.frame, fragment).commit();
+
+        pref.edit().putString("current_list", "All Tasks").apply();
+        setTitle("All Tasks");
     }
 
 }
