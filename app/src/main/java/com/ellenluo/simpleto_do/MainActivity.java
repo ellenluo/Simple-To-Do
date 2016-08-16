@@ -298,7 +298,7 @@ public class MainActivity extends AppCompatActivity {
                     setTitle(menuItem.getTitle());
                     mDrawer.closeDrawers();
                     break;
-                case R.id.nav_backup:
+                case R.id.nav_feedback:
                     showEditList = false;
                     break;
                 case R.id.nav_help:
