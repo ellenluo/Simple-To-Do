@@ -28,10 +28,6 @@ public class NotifService extends IntentService {
         String text = intent.getExtras().getString("text");
         Log.d("NotifService", "id is " + id + ", text is " + text + ", time is " + System.currentTimeMillis());
 
-        // store id in preferences
-        SharedPreferences pref = getSharedPreferences("Main", PREFERENCE_MODE_PRIVATE);
-        pref.edit().putLong("id", id).apply();
-
         // get notification settings from preferences
         SharedPreferences prefSettings = PreferenceManager.getDefaultSharedPreferences(this);
         String sound = prefSettings.getString("sound", "DEFAULT_NOTIFICATION_URI");
@@ -40,6 +36,7 @@ public class NotifService extends IntentService {
 
         // set up notification
         Intent newIntent = new Intent(this, TaskDetailsActivity.class);
+        newIntent.putExtra("id", id);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, newIntent, 0);
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this)

@@ -17,7 +17,8 @@
 
     <ListView
         android:id="@+id/task_list"
-        android:divider="#757575"
+        android:divider="#CFCFCF"
+        android:dividerHeight="2px"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 

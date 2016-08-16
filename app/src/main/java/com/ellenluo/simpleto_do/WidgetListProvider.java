@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
+import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import android.util.TypedValue;
@@ -127,6 +128,11 @@ public class WidgetListProvider implements RemoteViewsService.RemoteViewsFactory
                     remoteView.setTextViewText(R.id.task_row_date, new SimpleDateFormat("MMM dd, yyyy").format(date));
             }
         }
+
+        // make clickable
+        Intent intent = new Intent();
+        intent.putExtra("id", task.getId());
+        remoteView.setOnClickFillInIntent(R.id.task_row, intent);
 
         return remoteView;
     }

@@ -47,8 +47,7 @@ public class TaskDetailsActivity extends AppCompatActivity {
         boolean militaryTime = prefSettings.getBoolean("24h", false);
 
         // get task from database
-        SharedPreferences pref = getSharedPreferences("Main", PREFERENCE_MODE_PRIVATE);
-        id = pref.getLong("id", 0);
+        id = getIntent().getExtras().getLong("id");
         curTask = db.getTask(id);
 
         // set task info

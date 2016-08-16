@@ -20,7 +20,7 @@ public class WidgetProvider extends AppWidgetProvider {
             service.setData(Uri.parse(service.toUri(Intent.URI_INTENT_SCHEME)));
 
             RemoteViews remoteViews = new RemoteViews(context.getPackageName(), R.layout.widget);
-            remoteViews.setRemoteAdapter(appWidgetIds[i], R.id.task_list, service);
+            remoteViews.setRemoteAdapter(R.id.task_list, service);
             remoteViews.setEmptyView(R.id.task_list, R.id.empty_list);
 
             Intent intent = new Intent(context, TaskDetailsActivity.class);
