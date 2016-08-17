@@ -129,12 +129,13 @@ public class TaskDetailsActivity extends AppCompatActivity {
     // if action bar item is selected
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
+        int itemId = item.getItemId();
 
-        if (id == R.id.action_edit) {
+        if (itemId == R.id.action_edit) {
             Intent intent = new Intent(TaskDetailsActivity.this, EditTaskActivity.class);
+            intent.putExtra("id", id);
             startActivity(intent);
-        } else if (id == android.R.id.home) {
+        } else if (itemId == android.R.id.home) {
             onBackPressed();
             return true;
         }

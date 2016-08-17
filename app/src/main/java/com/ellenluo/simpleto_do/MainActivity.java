@@ -37,6 +37,7 @@ public class MainActivity extends AppCompatActivity {
     private Toolbar toolbar;
     private NavigationView nvDrawer;
     private ActionBarDrawerToggle drawerToggle;
+    private FloatingActionButton fab;
 
     DBHandler db = new DBHandler(this);
     SharedPreferences pref;
@@ -64,7 +65,7 @@ public class MainActivity extends AppCompatActivity {
         refreshLists();
 
         // set up add button
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
                 Intent intent = new Intent(MainActivity.this, AddTaskActivity.class);
@@ -288,17 +289,20 @@ public class MainActivity extends AppCompatActivity {
                     fragmentClass = MainFragment.class;
                     pref.edit().putString("current_list", "All Tasks").apply();
                     showEditList = false;
-                    supportInvalidateOptionsMenu();
                     break;
                 case R.id.nav_settings:
                     showEditList = false;
+                    fab.setVisibility(View.GONE);
                     getFragmentManager().beginTransaction()
                             .replace(R.id.frame, new SettingsFragment())
                             .commit();
                     setTitle(menuItem.getTitle());
                     mDrawer.closeDrawers();
+                    supportInvalidateOptionsMenu();
                     break;
                 case R.id.nav_feedback:
+                    fab.setVisibility(View.GONE);
+                    fragmentClass = FeedbackFragment.class;
                     showEditList = false;
                     break;
                 case R.id.nav_help:
@@ -320,6 +324,7 @@ public class MainActivity extends AppCompatActivity {
 
                 setTitle(menuItem.getTitle());
                 mDrawer.closeDrawers();
+                supportInvalidateOptionsMenu();
             }
         } else {
             try {

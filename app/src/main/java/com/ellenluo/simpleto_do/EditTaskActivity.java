@@ -74,7 +74,7 @@ public class EditTaskActivity extends AppCompatActivity implements TimePickerFra
 
         // get task from database
         pref = getSharedPreferences("Main", PREFERENCE_MODE_PRIVATE);
-        id = pref.getLong("id", 0);
+        id = getIntent().getExtras().getLong("id");
         db = new DBHandler(this);
         curTask = db.getTask(id);
 
@@ -374,6 +374,7 @@ public class EditTaskActivity extends AppCompatActivity implements TimePickerFra
 
         // return to task details
         Intent intent = new Intent(EditTaskActivity.this, TaskDetailsActivity.class);
+        intent.putExtra("id", id);
         startActivity(intent);
 
         return true;

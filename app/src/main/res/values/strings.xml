@@ -15,4 +15,9 @@
 
     <string name="drawer_open">Open navigation drawer</string>
     <string name="drawer_close">Close navigation drawer</string>
+
+    <string name="feedback_1">Report Bug</string>
+    <string name="feedback_2">Request Feature</string>
+    <string name="feedback_3">Complaint</string>
+    <string name="feedback_4">Praise</string>
 </resources>
