@@ -1,4 +1,4 @@
-package com.ellenluo.simpleto_do;
+package com.ellenluo.minimaList;
 
 import android.app.IntentService;
 import android.app.Notification;
@@ -8,9 +8,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.net.Uri;
-import android.os.PowerManager;
 import android.preference.PreferenceManager;
-import android.provider.Settings;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
@@ -41,8 +39,9 @@ public class NotifService extends IntentService {
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this)
                 .setSmallIcon(R.mipmap.ic_launcher)
-                .setContentTitle("Lists")
-                .setContentText(text)
+                .setContentTitle(text)
+                .setContentText("Tap for more details")
+                .setPriority(Notification.PRIORITY_HIGH)
                 .setContentIntent(pendingIntent)
                 .setAutoCancel(true);
 

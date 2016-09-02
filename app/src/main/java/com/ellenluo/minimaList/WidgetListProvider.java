@@ -1,11 +1,10 @@
-package com.ellenluo.simpleto_do;
+package com.ellenluo.minimaList;
 
 import android.appwidget.AppWidgetManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
-import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import android.util.TypedValue;
@@ -21,17 +20,23 @@ public class WidgetListProvider implements RemoteViewsService.RemoteViewsFactory
 
     private ArrayList<Task> taskList;
     private Context context = null;
-    private int appWidgetId;
 
     DBHandler db;
 
     public WidgetListProvider(Context context, Intent intent) {
         Log.w("WidgetListProvider", "Created");
         this.context = context;
-        appWidgetId = intent.getIntExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, AppWidgetManager.INVALID_APPWIDGET_ID);
+        int appWidgetId = intent.getIntExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, AppWidgetManager.INVALID_APPWIDGET_ID);
 
+        SharedPreferences pref = context.getSharedPreferences("Main", 0);
+        String list = pref.getString("widget_list", "All Tasks");
         db = new DBHandler(context);
-        taskList = db.getAllTasks();
+
+        if (list.equals("All Tasks")) {
+            taskList = db.getAllTasks();
+        } else {
+            taskList = db.getTasksFromList(db.getList(list).getId());
+        }
         Log.w("WidgetListProvider", "Size of taskList is " + taskList.size());
     }
 
@@ -92,8 +97,12 @@ public class WidgetListProvider implements RemoteViewsService.RemoteViewsFactory
         }
 
         remoteView.setTextViewText(R.id.task_row_name, task.getName());
+
         remoteView.setTextViewTextSize(R.id.task_row_name, TypedValue.COMPLEX_UNIT_SP, 14);
+        remoteView.setTextViewTextSize(R.id.task_row_time, TypedValue.COMPLEX_UNIT_SP, 12);
+        remoteView.setTextViewTextSize(R.id.task_row_date, TypedValue.COMPLEX_UNIT_SP, 12);
         remoteView.setTextColor(R.id.task_row_name, Color.parseColor("#757575"));
+        remoteView.setTextColor(R.id.task_row_time, Color.parseColor("#757575"));
 
         // set date & time
         long millis = task.getDue();

@@ -1,14 +1,12 @@
-package com.ellenluo.simpleto_do;
+package com.ellenluo.minimaList;
 
 import android.app.Activity;
 import android.app.Dialog;
 import android.app.TimePickerDialog;
-import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.DialogFragment;
-import android.text.format.DateFormat;
 import android.widget.TimePicker;
 
 import java.util.Calendar;

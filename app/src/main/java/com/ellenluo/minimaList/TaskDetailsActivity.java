@@ -1,4 +1,4 @@
-package com.ellenluo.simpleto_do;
+package com.ellenluo.minimaList;
 
 import android.app.AlarmManager;
 import android.app.PendingIntent;
@@ -47,7 +47,9 @@ public class TaskDetailsActivity extends AppCompatActivity {
         boolean militaryTime = prefSettings.getBoolean("24h", false);
 
         // get task from database
-        id = getIntent().getExtras().getLong("id");
+        if (getIntent().getExtras() != null) {
+            id = getIntent().getExtras().getLong("id");
+        }
         curTask = db.getTask(id);
 
         // set task info
@@ -141,6 +143,16 @@ public class TaskDetailsActivity extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        setIntent(intent);
+
+        if (intent.hasExtra("id")) {
+            id = getIntent().getExtras().getLong("id");
+        }
     }
 
     // make back button return to main activity

@@ -1,4 +1,4 @@
-package com.ellenluo.simpleto_do;
+package com.ellenluo.minimaList;
 
 import android.content.Intent;
 import android.net.Uri;

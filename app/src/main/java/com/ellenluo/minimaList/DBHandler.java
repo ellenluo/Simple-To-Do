@@ -1,4 +1,4 @@
-package com.ellenluo.simpleto_do;
+package com.ellenluo.minimaList;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -84,6 +84,7 @@ public class DBHandler extends SQLiteOpenHelper {
         }
 
         cursor.close();
+        db.close();
         return null;
     }
 
@@ -112,6 +113,7 @@ public class DBHandler extends SQLiteOpenHelper {
         }
 
         cursor.close();
+        db.close();
         return taskList;
     }
 
@@ -154,6 +156,7 @@ public class DBHandler extends SQLiteOpenHelper {
         }
 
         cursor.close();
+        db.close();
         return null;
     }
 
@@ -167,6 +170,7 @@ public class DBHandler extends SQLiteOpenHelper {
 
         List list = new List(Long.parseLong(cursor.getString(0)), cursor.getString(1));
         cursor.close();
+        db.close();
         return list;
     }
 
@@ -185,6 +189,7 @@ public class DBHandler extends SQLiteOpenHelper {
         }
 
         cursor.close();
+        db.close();
         return listList;
     }
 
@@ -227,6 +232,7 @@ public class DBHandler extends SQLiteOpenHelper {
         }
 
         cursor.close();
+        db.close();
         return tasks;
     }
 

@@ -1,4 +1,4 @@
-package com.ellenluo.simpleto_do;
+package com.ellenluo.minimaList;
 
 public class Task {
 

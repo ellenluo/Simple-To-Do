@@ -1,12 +1,13 @@
-package com.ellenluo.simpleto_do;
+package com.ellenluo.minimaList;
 
 import android.app.PendingIntent;
 import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProvider;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.net.Uri;
-import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.widget.RemoteViews;
 
@@ -22,11 +23,17 @@ public class WidgetProvider extends AppWidgetProvider {
             RemoteViews remoteViews = new RemoteViews(context.getPackageName(), R.layout.widget);
             remoteViews.setRemoteAdapter(R.id.task_list, service);
             remoteViews.setEmptyView(R.id.task_list, R.id.empty_list);
+            remoteViews.setTextColor(R.id.empty_list, Color.parseColor("#757575"));
+
+            SharedPreferences pref = context.getSharedPreferences("Main", 0);
+            String list = pref.getString("widget_list", "All Tasks");
+            remoteViews.setTextViewText(R.id.widget_title, list);
 
             Intent intent = new Intent(context, TaskDetailsActivity.class);
             PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
             remoteViews.setPendingIntentTemplate(R.id.task_list, pendingIntent);
 
+            //appWidgetManager.notifyAppWidgetViewDataChanged(appWidgetIds[i], R.id.task_list);
             appWidgetManager.updateAppWidget(appWidgetIds[i], remoteViews);
         }
 

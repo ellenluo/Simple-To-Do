@@ -1,4 +1,4 @@
-package com.ellenluo.simpleto_do;
+package com.ellenluo.minimaList;
 
 import android.app.Activity;
 import android.app.DatePickerDialog;
@@ -7,7 +7,6 @@ import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.widget.DatePicker;
 
-import java.sql.DatabaseMetaData;
 import java.util.Calendar;
 
 public class DatePickerFragment extends DialogFragment {

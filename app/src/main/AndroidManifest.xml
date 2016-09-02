@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.ellenluo.simpleto_do"
+    package="com.ellenluo.minimaList"
     android:installLocation="internalOnly">
 
     <uses-permission android:name="android.permission.VIBRATE" />
@@ -33,6 +33,7 @@
         <activity
             android:name=".TaskDetailsActivity"
             android:label="@string/title_activity_task_details"
+            android:launchMode="singleTop"
             android:parentActivityName=".MainActivity"/>
 
         <activity
@@ -40,6 +41,15 @@
             android:label="@string/title_activity_edit_task"
             android:windowSoftInputMode="adjustPan"
             android:parentActivityName=".TaskDetailsActivity"/>
+
+        <activity
+            android:name=".WidgetConfigureActivity"
+            android:label="@string/title_activity_widget_configure">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE" />
+            </intent-filter>
+        </activity>
+
 
         <service
             android:name=".NotifService"

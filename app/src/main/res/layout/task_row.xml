@@ -20,6 +20,7 @@
             android:id="@+id/task_row_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginBottom="2dp"
             android:ellipsize="end"
             android:focusable="false"
             android:maxLines="1"
@@ -50,24 +51,24 @@
             android:id="@+id/task_row_date"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="right"
+            android:layout_gravity="end"
             android:focusable="false"
             android:maxLines="1"
             android:text="Someday"
             android:textAllCaps="true"
             android:textColor="@color/colorPrimary"
-            android:textSize="12sp"
+            android:textSize="14sp"
             android:textStyle="bold" />
 
         <TextView
             android:id="@+id/task_row_time"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="right"
+            android:layout_gravity="end"
             android:focusable="false"
             android:maxLines="1"
             android:text=""
-            android:textSize="12sp" />
+            android:textSize="14sp" />
 
     </LinearLayout>
 

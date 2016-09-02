@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:context="com.ellenluo.simpleto_do.AddTaskActivity">
+    tools:context="com.ellenluo.minimaList.AddTaskActivity">
 
     <include
         android:id="@+id/toolbar"

@@ -1,6 +1,5 @@
-package com.ellenluo.simpleto_do;
+package com.ellenluo.minimaList;
 
-import android.appwidget.AppWidgetManager;
 import android.content.Intent;
 import android.util.Log;
 import android.widget.RemoteViewsService;
