@@ -1,6 +1,8 @@
 package com.ellenluo.minimaList;
 
 import android.app.AlertDialog;
+import android.appwidget.AppWidgetManager;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -40,6 +42,13 @@ public class Reference {
 
         AlertDialog dialog = builder.create();
         dialog.show();
+    }
+
+    public static void updateWidgets(Context context) {
+        // update widgets
+        AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
+        int appWidgetIds[] = appWidgetManager.getAppWidgetIds(new ComponentName(context, WidgetProvider.class));
+        appWidgetManager.notifyAppWidgetViewDataChanged(appWidgetIds, R.id.task_list);
     }
 
 }

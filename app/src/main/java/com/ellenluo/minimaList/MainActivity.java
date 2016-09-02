@@ -253,6 +253,8 @@ public class MainActivity extends AppCompatActivity {
                             db.deleteList(curList);
                             db.deleteTasksFromList(curList.getId());
 
+
+
                             // reset activity
                             pref.edit().putString("current_list", "All Tasks").apply();
                             Intent intent = new Intent(MainActivity.this.getApplicationContext(), MainActivity.class);

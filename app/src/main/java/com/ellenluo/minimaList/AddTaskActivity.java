@@ -333,11 +333,7 @@ public class AddTaskActivity extends AppCompatActivity implements TimePickerFrag
         }
 
         // update widgets
-        Intent intent = new Intent(this, WidgetProvider.class);
-        intent.setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE);
-        int[] ids = AppWidgetManager.getInstance(getApplication()).getAppWidgetIds(new ComponentName(getApplication(), WidgetProvider.class));
-        intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, ids);
-        sendBroadcast(intent);
+        Reference.updateWidgets(this);
 
         // return to main activity
         Intent returnIntent = new Intent(AddTaskActivity.this, MainActivity.class);

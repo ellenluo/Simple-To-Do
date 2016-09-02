@@ -22,14 +22,17 @@ public class WidgetListProvider implements RemoteViewsService.RemoteViewsFactory
     private Context context = null;
 
     DBHandler db;
+    SharedPreferences pref;
+
+    String list;
 
     public WidgetListProvider(Context context, Intent intent) {
         Log.w("WidgetListProvider", "Created");
         this.context = context;
         int appWidgetId = intent.getIntExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, AppWidgetManager.INVALID_APPWIDGET_ID);
 
-        SharedPreferences pref = context.getSharedPreferences("Main", 0);
-        String list = pref.getString("widget_list", "All Tasks");
+        pref = context.getSharedPreferences("Main", 0);
+        list = pref.getString("widget_list", "All Tasks");
         db = new DBHandler(context);
 
         if (list.equals("All Tasks")) {
@@ -37,17 +40,20 @@ public class WidgetListProvider implements RemoteViewsService.RemoteViewsFactory
         } else {
             taskList = db.getTasksFromList(db.getList(list).getId());
         }
-        Log.w("WidgetListProvider", "Size of taskList is " + taskList.size());
     }
 
     @Override
     public void onCreate() {
-        // no-op
     }
 
     @Override
     public void onDataSetChanged() {
-        // no-op
+        if (list.equals("All Tasks")) {
+            taskList = db.getAllTasks();
+        } else {
+            taskList = db.getTasksFromList(db.getList(list).getId());
+        }
+        Log.w("WidgetListProvider", "Tasklist updated");
     }
 
     @Override
@@ -97,7 +103,6 @@ public class WidgetListProvider implements RemoteViewsService.RemoteViewsFactory
         }
 
         remoteView.setTextViewText(R.id.task_row_name, task.getName());
-
         remoteView.setTextViewTextSize(R.id.task_row_name, TypedValue.COMPLEX_UNIT_SP, 14);
         remoteView.setTextViewTextSize(R.id.task_row_time, TypedValue.COMPLEX_UNIT_SP, 12);
         remoteView.setTextViewTextSize(R.id.task_row_date, TypedValue.COMPLEX_UNIT_SP, 12);

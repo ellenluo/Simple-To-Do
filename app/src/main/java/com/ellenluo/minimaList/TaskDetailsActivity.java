@@ -116,6 +116,9 @@ public class TaskDetailsActivity extends AppCompatActivity {
                             startActivity(intent);
                         }
                     }, 500);
+
+                    // update widgets
+                    Reference.updateWidgets(TaskDetailsActivity.this);
                 }
             }
         });

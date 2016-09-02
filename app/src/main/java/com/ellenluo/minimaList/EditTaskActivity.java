@@ -2,6 +2,8 @@ package com.ellenluo.minimaList;
 
 import android.app.AlarmManager;
 import android.app.PendingIntent;
+import android.appwidget.AppWidgetManager;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -365,6 +367,9 @@ public class EditTaskActivity extends AppCompatActivity implements TimePickerFra
         curTask.setList(listId);
         db.updateTask(curTask);
         Toast.makeText(this, "'" + curTask.getName() + "' successfully updated", Toast.LENGTH_SHORT).show();
+
+        // update widgets
+        Reference.updateWidgets(this);
 
         // return to list that edited task belongs to
         if (listId == -1) {

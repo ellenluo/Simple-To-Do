@@ -89,6 +89,9 @@ public class MainFragment extends Fragment {
                     }
                 }, 500);
 
+                // update widgets
+                Reference.updateWidgets(getActivity());
+
                 return true;
             }
         });

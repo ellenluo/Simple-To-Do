@@ -13,12 +13,15 @@ import android.widget.RemoteViews;
 
 public class WidgetProvider extends AppWidgetProvider {
 
+    public static String UPDATE_LIST = "UPDATE_LIST";
+
     public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
         for(int i = 0; i < appWidgetIds.length; i++){
             Log.w("WidgetProvider", "i = " + i + ", appWidgetIds length = " + appWidgetIds.length);
             Intent service = new Intent(context, WidgetService.class);
             service.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetIds[i]);
             service.setData(Uri.parse(service.toUri(Intent.URI_INTENT_SCHEME)));
+            //service.setAction(UPDATE_LIST);
 
             RemoteViews remoteViews = new RemoteViews(context.getPackageName(), R.layout.widget);
             remoteViews.setRemoteAdapter(R.id.task_list, service);
@@ -33,7 +36,6 @@ public class WidgetProvider extends AppWidgetProvider {
             PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
             remoteViews.setPendingIntentTemplate(R.id.task_list, pendingIntent);
 
-            //appWidgetManager.notifyAppWidgetViewDataChanged(appWidgetIds[i], R.id.task_list);
             appWidgetManager.updateAppWidget(appWidgetIds[i], remoteViews);
         }
 
