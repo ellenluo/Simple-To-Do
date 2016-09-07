@@ -335,6 +335,13 @@ public class AddTaskActivity extends AppCompatActivity implements TimePickerFrag
         // update widgets
         Reference.updateWidgets(this);
 
+        // return to list that new task belongs to
+        if (listId == -1) {
+            pref.edit().putString("current_list", "All Tasks").apply();
+        } else {
+            pref.edit().putString("current_list", db.getList(listId).getName()).apply();
+        }
+
         // return to main activity
         Intent returnIntent = new Intent(AddTaskActivity.this, MainActivity.class);
         startActivity(returnIntent);

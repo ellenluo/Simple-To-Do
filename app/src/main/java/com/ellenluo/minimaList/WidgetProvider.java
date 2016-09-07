@@ -17,19 +17,18 @@ public class WidgetProvider extends AppWidgetProvider {
 
     public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
         for(int i = 0; i < appWidgetIds.length; i++){
-            Log.w("WidgetProvider", "i = " + i + ", appWidgetIds length = " + appWidgetIds.length);
             Intent service = new Intent(context, WidgetService.class);
             service.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetIds[i]);
             service.setData(Uri.parse(service.toUri(Intent.URI_INTENT_SCHEME)));
-            //service.setAction(UPDATE_LIST);
 
             RemoteViews remoteViews = new RemoteViews(context.getPackageName(), R.layout.widget);
             remoteViews.setRemoteAdapter(R.id.task_list, service);
             remoteViews.setEmptyView(R.id.task_list, R.id.empty_list);
             remoteViews.setTextColor(R.id.empty_list, Color.parseColor("#757575"));
 
-            SharedPreferences pref = context.getSharedPreferences("Main", 0);
+            SharedPreferences pref = context.getSharedPreferences(String.valueOf(appWidgetIds[i]), 0);
             String list = pref.getString("widget_list", "All Tasks");
+            Log.w("WidgetProvider", "appWidgetId is " + appWidgetIds[i] + ", list name is " + list);
             remoteViews.setTextViewText(R.id.widget_title, list);
 
             Intent intent = new Intent(context, TaskDetailsActivity.class);

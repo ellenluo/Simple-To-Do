@@ -6,9 +6,11 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ArrayAdapter;
+import android.widget.RemoteViews;
 import android.widget.Spinner;
 
 import java.util.ArrayList;
@@ -74,8 +76,14 @@ public class WidgetConfigureActivity extends AppCompatActivity {
     // adding the widget
     private void addWidget() {
         // store preferences
-        SharedPreferences pref = getSharedPreferences("Main", PREFERENCE_MODE_PRIVATE);
+        SharedPreferences pref = getSharedPreferences(String.valueOf(appWidgetId), PREFERENCE_MODE_PRIVATE);
         pref.edit().putString("widget_list", listSpinner.getSelectedItem().toString()).apply();
+        Log.w("WidgetConfigureActivity", "appWidgetId is " + String.valueOf(appWidgetId));
+
+        // call widget update
+        Intent updateIntent = new Intent(AppWidgetManager.ACTION_APPWIDGET_UPDATE, null, this, WidgetProvider.class);
+        updateIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, new int[] {appWidgetId});
+        sendBroadcast(updateIntent);
 
         // launch widget
         Intent intent = new Intent();

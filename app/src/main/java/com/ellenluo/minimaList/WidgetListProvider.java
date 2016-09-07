@@ -31,8 +31,10 @@ public class WidgetListProvider implements RemoteViewsService.RemoteViewsFactory
         this.context = context;
         int appWidgetId = intent.getIntExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, AppWidgetManager.INVALID_APPWIDGET_ID);
 
-        pref = context.getSharedPreferences("Main", 0);
+        pref = context.getSharedPreferences(String.valueOf(appWidgetId), 0);
+        Log.w("WidgetListProvider", "appWidgetId is " + String.valueOf(appWidgetId));
         list = pref.getString("widget_list", "All Tasks");
+        Log.w("WidgetListProvider", "List is " + pref.getString("widget_list", "All Tasks"));
         db = new DBHandler(context);
 
         if (list.equals("All Tasks")) {
