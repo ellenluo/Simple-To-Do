@@ -1,6 +1,8 @@
 package com.ellenluo.minimaList;
 
+import android.app.PendingIntent;
 import android.appwidget.AppWidgetManager;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -27,18 +29,24 @@ public class WidgetListProvider implements RemoteViewsService.RemoteViewsFactory
     String list;
 
     public WidgetListProvider(Context context, Intent intent) {
-        Log.w("WidgetListProvider", "Created");
         this.context = context;
         int appWidgetId = intent.getIntExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, AppWidgetManager.INVALID_APPWIDGET_ID);
 
         pref = context.getSharedPreferences(String.valueOf(appWidgetId), 0);
-        Log.w("WidgetListProvider", "appWidgetId is " + String.valueOf(appWidgetId));
         list = pref.getString("widget_list", "All Tasks");
-        Log.w("WidgetListProvider", "List is " + pref.getString("widget_list", "All Tasks"));
         db = new DBHandler(context);
 
         if (list.equals("All Tasks")) {
             taskList = db.getAllTasks();
+        } else if (!db.checkIfListExists(list)) {
+            pref.edit().putString("widget_list", "All Tasks").apply();
+            taskList = db.getAllTasks();
+
+            // update widgets
+            Log.w("WidgetListProvider", "Updating widgets..");
+            Intent updateWidgetIntent = new Intent(context, WidgetProvider.class);
+            updateWidgetIntent.setAction(WidgetProvider.UPDATE_LIST);
+            context.sendBroadcast(updateWidgetIntent);
         } else {
             taskList = db.getTasksFromList(db.getList(list).getId());
         }
@@ -52,10 +60,18 @@ public class WidgetListProvider implements RemoteViewsService.RemoteViewsFactory
     public void onDataSetChanged() {
         if (list.equals("All Tasks")) {
             taskList = db.getAllTasks();
+        } else if (!db.checkIfListExists(list)) {
+            pref.edit().putString("widget_list", "All Tasks").apply();
+            taskList = db.getAllTasks();
+
+            // update widgets
+            Log.w("WidgetListProvider", "Updating widgets..");
+            Intent updateWidgetIntent = new Intent(context, WidgetProvider.class);
+            updateWidgetIntent.setAction(WidgetProvider.UPDATE_LIST);
+            context.sendBroadcast(updateWidgetIntent);
         } else {
             taskList = db.getTasksFromList(db.getList(list).getId());
         }
-        Log.w("WidgetListProvider", "Tasklist updated");
     }
 
     @Override
@@ -98,10 +114,10 @@ public class WidgetListProvider implements RemoteViewsService.RemoteViewsFactory
         boolean militaryTime = prefSettings.getBoolean("24h", false);
 
         // set name and list
-        Log.w("WidgetListProvider", "Task name is " + task.getName());
-
         if (task.getList() != -1) {
             remoteView.setTextViewText(R.id.task_row_list, db.getList(task.getList()).getName());
+        } else {
+            remoteView.setTextViewText(R.id.task_row_list, "No List");
         }
 
         remoteView.setTextViewText(R.id.task_row_name, task.getName());

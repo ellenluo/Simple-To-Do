@@ -236,6 +236,22 @@ public class DBHandler extends SQLiteOpenHelper {
         return tasks;
     }
 
+    public boolean checkIfListExists(String name) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        String selectQuery = "SELECT * FROM " + TABLE_LISTS + " WHERE " + KEY_LIST_NAME + " =  \"" + name + "\"";
+        Cursor cursor = db.rawQuery(selectQuery, null);
+
+        if(cursor.getCount() <= 0) {
+            cursor.close();
+            db.close();
+            return false;
+        }
+
+        cursor.close();
+        db.close();
+        return true;
+    }
+
     public void deleteTasksFromList(long id) {
         SQLiteDatabase db = this.getWritableDatabase();
         db.delete(TABLE_TASKS, KEY_TASK_LIST + " = ?", new String[] { String.valueOf(id) });

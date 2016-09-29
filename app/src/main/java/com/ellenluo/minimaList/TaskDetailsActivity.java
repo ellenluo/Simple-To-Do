@@ -112,13 +112,14 @@ public class TaskDetailsActivity extends AppCompatActivity {
                     handler.postDelayed(new Runnable() {
                         public void run() {
                             db.deleteTask(curTask);
+
+                            // update widgets
+                            Reference.updateWidgets(TaskDetailsActivity.this);
+
                             Intent intent = new Intent(TaskDetailsActivity.this, MainActivity.class);
                             startActivity(intent);
                         }
                     }, 500);
-
-                    // update widgets
-                    Reference.updateWidgets(TaskDetailsActivity.this);
                 }
             }
         });

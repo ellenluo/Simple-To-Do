@@ -253,7 +253,8 @@ public class MainActivity extends AppCompatActivity {
                             db.deleteList(curList);
                             db.deleteTasksFromList(curList.getId());
 
-
+                            // update widgets
+                            Reference.updateWidgets(getApplicationContext());
 
                             // reset activity
                             pref.edit().putString("current_list", "All Tasks").apply();
@@ -289,6 +290,7 @@ public class MainActivity extends AppCompatActivity {
                 case R.id.nav_all:
                     fragmentClass = MainFragment.class;
                     pref.edit().putString("current_list", "All Tasks").apply();
+                    fab.setVisibility(View.VISIBLE);
                     showEditList = false;
                     break;
                 case R.id.nav_settings:

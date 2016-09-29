@@ -86,11 +86,11 @@ public class MainFragment extends Fragment {
                     public void run() {
                         db.deleteTask(taskList.remove(pos));
                         taskAdapter.notifyDataSetChanged();
+
+                        // update widgets
+                        Reference.updateWidgets(getActivity());
                     }
                 }, 500);
-
-                // update widgets
-                Reference.updateWidgets(getActivity());
 
                 return true;
             }

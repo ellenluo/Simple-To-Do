@@ -51,6 +51,9 @@ public class SettingsFragment extends PreferenceFragment {
                         // delete all lists & tasks
                         db.deleteAll();
 
+                        // update widgets
+                        Reference.updateWidgets(getActivity());
+
                         // reset activity
                         pref.edit().putString("current_list", "All Tasks").apply();
                         Intent intent = new Intent(getActivity(), MainActivity.class);
