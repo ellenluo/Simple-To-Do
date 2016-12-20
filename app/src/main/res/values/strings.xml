@@ -2,10 +2,18 @@
     <string name="app_name">MinimaList</string>
 
     <string name="title_activity_add_task">Create New Task</string>
-    <string name="add_task_name">What is your task?</string>
-    <string name="add_task_details">Additional details:</string>
+
+    <string name="add_edit_task_name">What is your task?</string>
     <string name="add_task_button">Add Task</string>
-    <string name="add_task_list">Add to list:</string>
+
+    <string name="add_edit_task_details">Additional details:</string>
+    <string name="add_edit_task_list">Add to list:</string>
+    <string name="add_edit_due">When is it due?</string>
+    <string name="add_edit_reminder">Remind me?</string>
+    <string name="add_edit_no_date">No date selected</string>
+    <string name="add_edit_set_date">Set Date</string>
+    <string name="add_edit_clear">Clear</string>
+    <string name="add_edit_list_name">Enter name of new list:</string>
 
     <string name="title_activity_task_details">Task Details</string>
     <string name="task_details_name">Task:</string>
@@ -17,6 +25,8 @@
 
     <string name="drawer_open">Open navigation drawer</string>
     <string name="drawer_close">Close navigation drawer</string>
+
+
 
     <string name="feedback_1">Report Bug</string>
     <string name="feedback_2">Request Feature</string>

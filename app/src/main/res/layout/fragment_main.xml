@@ -10,7 +10,17 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>
 
-    <TextView
+    <ImageView
+        android:id="@+id/empty_list"
+        android:layout_width="200dp"
+        android:layout_height="200dp"
+        android:src="@drawable/no_tasks"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:layout_centerInParent="true"
+        android:visibility="gone"/>
+
+    <!--<TextView
         android:id="@+id/empty_list"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -20,6 +30,6 @@
         android:visibility="gone"
         android:textSize="24sp"
         android:color="#C4C4C4"
-        android:text="All complete!"/>
+        android:text="All complete!"/>-->
 
 </RelativeLayout>

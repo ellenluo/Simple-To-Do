@@ -4,10 +4,10 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="horizontal"
-    android:paddingBottom="@dimen/widget_margin"
+    android:paddingBottom="@dimen/thin_margin"
     android:paddingLeft="12dp"
     android:paddingRight="12dp"
-    android:paddingTop="@dimen/widget_margin">
+    android:paddingTop="@dimen/thin_margin">
 
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="wrap_content"

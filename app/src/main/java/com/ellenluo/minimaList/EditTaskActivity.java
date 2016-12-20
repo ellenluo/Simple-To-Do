@@ -81,8 +81,8 @@ public class EditTaskActivity extends AppCompatActivity implements TimePickerFra
         curTask = db.getTask(id);
 
         // set fields to current values
-        etName = (EditText) findViewById(R.id.edit_task_task_name);
-        etDetails = (EditText) findViewById(R.id.edit_task_task_details);
+        etName = (EditText) findViewById(R.id.task_name);
+        etDetails = (EditText) findViewById(R.id.task_details);
         etName.setText(curTask.getName());
         etDetails.setText(curTask.getDetails());
 
@@ -103,7 +103,7 @@ public class EditTaskActivity extends AppCompatActivity implements TimePickerFra
         }
 
         // set up current reminder
-        final Button btnSetRemind = (Button) findViewById(R.id.remind_set);
+        final Button btnSetRemind = (Button) findViewById(R.id.set_remind);
         Switch remindSwitch = (Switch) findViewById(R.id.remind_switch);
         tvRemindDate = (TextView) findViewById(R.id.remind_date);
         tvRemindTime = (TextView) findViewById(R.id.remind_time);
@@ -152,11 +152,11 @@ public class EditTaskActivity extends AppCompatActivity implements TimePickerFra
         });
 
         // initialize new list instructions/text field
-        tvAddList = (TextView) findViewById(R.id.edit_task_instructions);
-        etAddList = (EditText) findViewById(R.id.edit_task_list_name);
+        tvAddList = (TextView) findViewById(R.id.new_list_instructions);
+        etAddList = (EditText) findViewById(R.id.list_name);
 
         // set up spinner
-        listSpinner = (Spinner) findViewById(R.id.edit_task_list_spinner);
+        listSpinner = (Spinner) findViewById(R.id.list_spinner);
 
         db = new DBHandler(this);
         //db.getReadableDatabase();

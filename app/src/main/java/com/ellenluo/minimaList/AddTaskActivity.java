@@ -83,12 +83,12 @@ public class AddTaskActivity extends AppCompatActivity implements TimePickerFrag
         // initialize reminder date/time
         tvRemindDate = (TextView) findViewById(R.id.remind_date);
         tvRemindTime = (TextView) findViewById(R.id.remind_time);
-        final Button btnSetRemind = (Button) findViewById(R.id.remind_set);
+        final Button btnSetRemind = (Button) findViewById(R.id.set_remind);
         btnClearRemind = (Button) findViewById(R.id.clear_remind);
 
         // initialize new list instructions/text field
-        tvAddList = (TextView) findViewById(R.id.add_task_instructions);
-        etAddList = (EditText) findViewById(R.id.add_task_list_name);
+        tvAddList = (TextView) findViewById(R.id.new_list_instructions);
+        etAddList = (EditText) findViewById(R.id.list_name);
 
         // set up reminder switch
         Switch remindSwitch = (Switch) findViewById(R.id.remind_switch);
@@ -118,7 +118,7 @@ public class AddTaskActivity extends AppCompatActivity implements TimePickerFrag
         });
 
         // set up list spinner
-        listSpinner = (Spinner) findViewById(R.id.add_task_list_spinner);
+        listSpinner = (Spinner) findViewById(R.id.list_spinner);
 
         db = new DBHandler(this);
         //db.getReadableDatabase();
@@ -257,8 +257,8 @@ public class AddTaskActivity extends AppCompatActivity implements TimePickerFrag
 
     // add task to database
     public boolean addTask() {
-        EditText etName = (EditText) findViewById(R.id.add_task_task_name);
-        EditText etText = (EditText) findViewById(R.id.add_task_task_details);
+        EditText etName = (EditText) findViewById(R.id.task_name);
+        EditText etText = (EditText) findViewById(R.id.task_details);
         DBHandler db = new DBHandler(this);
 
         // check for empty task name

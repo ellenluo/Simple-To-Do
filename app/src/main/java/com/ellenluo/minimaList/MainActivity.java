@@ -310,6 +310,7 @@ public class MainActivity extends AppCompatActivity {
                     break;
                 case R.id.nav_help:
                     showEditList = false;
+                    fab.setVisibility(View.GONE);
                     break;
                 default:
                     break;

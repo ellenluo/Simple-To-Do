@@ -18,17 +18,17 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:orientation="vertical"
             android:padding="16dp">
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/add_task_name" />
+                android:text="@string/add_edit_task_name" />
 
             <EditText
-                android:id="@+id/edit_task_task_name"
+                android:id="@+id/task_name"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="@dimen/activity_vertical_margin"
@@ -39,8 +39,8 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="8dp"
-                android:text="When is it due?" />
+                android:layout_marginBottom="@dimen/thin_margin"
+                android:text="@string/add_edit_due" />
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -48,7 +48,7 @@
                 android:orientation="horizontal">
 
                 <LinearLayout
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:orientation="vertical">
@@ -57,17 +57,17 @@
                         android:id="@+id/due_date"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="No date selected"
-                        android:textColor="#000000"
-                        android:textSize="16dp" />
+                        android:text="@string/add_edit_no_date"
+                        android:textColor="@android:color/black"
+                        android:textSize="16sp" />
 
                     <TextView
                         android:id="@+id/due_time"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text=""
-                        android:textColor="#000000"
-                        android:textSize="16dp" />
+                        android:textColor="@android:color/black"
+                        android:textSize="16sp" />
 
                 </LinearLayout>
 
@@ -75,30 +75,30 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:onClick="setDate"
-                    android:text="Set Date" />
+                    android:text="@string/add_edit_set_date" />
 
                 <Button
                     android:id="@+id/clear_due"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:onClick="clearDue"
-                    android:visibility="gone"
-                    android:text="Clear" />
+                    android:text="@string/add_edit_clear"
+                    android:visibility="gone" />
 
             </LinearLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="8dp"
+                android:layout_marginBottom="@dimen/thin_margin"
                 android:layout_marginTop="@dimen/activity_vertical_margin"
                 android:orientation="horizontal">
 
                 <TextView
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="Remind me?" />
+                    android:text="@string/add_edit_reminder" />
 
                 <Switch
                     android:id="@+id/remind_switch"
@@ -113,7 +113,7 @@
                 android:orientation="horizontal">
 
                 <LinearLayout
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:orientation="vertical">
@@ -122,34 +122,34 @@
                         android:id="@+id/remind_date"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="No date selected"
-                        android:textColor="#000000"
-                        android:textSize="16dp" />
+                        android:text="@string/add_edit_no_date"
+                        android:textColor="@android:color/black"
+                        android:textSize="16sp" />
 
                     <TextView
                         android:id="@+id/remind_time"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text=""
-                        android:textColor="#000000"
-                        android:textSize="16dp" />
+                        android:textColor="@android:color/black"
+                        android:textSize="16sp" />
 
                 </LinearLayout>
 
                 <Button
-                    android:id="@+id/remind_set"
+                    android:id="@+id/set_remind"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:onClick="setRemind"
-                    android:text="Set Date" />
+                    android:text="@string/add_edit_set_date" />
 
                 <Button
                     android:id="@+id/clear_remind"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:onClick="clearRemind"
-                    android:visibility="gone"
-                    android:text="Clear" />
+                    android:text="@string/add_edit_clear"
+                    android:visibility="gone" />
 
             </LinearLayout>
 
@@ -157,24 +157,23 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/activity_vertical_margin"
-                android:text="@string/add_task_list" />
+                android:text="@string/add_edit_task_list" />
 
             <Spinner
-                android:id="@+id/edit_task_list_spinner"
+                android:id="@+id/list_spinner"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-
-                android:paddingBottom="16dp" />
+                android:paddingBottom="@dimen/activity_vertical_margin" />
 
             <TextView
-                android:id="@+id/edit_task_instructions"
+                android:id="@+id/new_list_instructions"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Enter name of new list:"
+                android:text="@string/add_edit_list_name"
                 android:visibility="gone" />
 
             <EditText
-                android:id="@+id/edit_task_list_name"
+                android:id="@+id/list_name"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="@dimen/activity_vertical_margin"
@@ -185,13 +184,13 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/add_task_details" />
+                android:text="@string/add_edit_task_details" />
 
             <EditText
-                android:id="@+id/edit_task_task_details"
+                android:id="@+id/task_details"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:gravity="top|left"
+                android:gravity="top|start"
                 android:inputType="textMultiLine|textAutoCorrect"
                 android:maxLines="6"
                 android:minLines="4"
