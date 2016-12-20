@@ -53,11 +53,11 @@ public class TaskDetailsActivity extends AppCompatActivity {
         curTask = db.getTask(id);
 
         // set task info
-        TextView tvName = (TextView) findViewById(R.id.task_details_name);
-        TextView tvDue = (TextView) findViewById(R.id.task_details_due);
-        TextView tvRemind = (TextView) findViewById(R.id.task_details_remind);
-        TextView tvList = (TextView) findViewById(R.id.task_details_list);
-        TextView tvDetails = (TextView) findViewById(R.id.task_details_details);
+        TextView tvName = (TextView) findViewById(R.id.task_name);
+        TextView tvDue = (TextView) findViewById(R.id.due_date);
+        TextView tvRemind = (TextView) findViewById(R.id.reminder);
+        TextView tvList = (TextView) findViewById(R.id.list);
+        TextView tvDetails = (TextView) findViewById(R.id.details);
 
         tvName.setText(curTask.getName());
         tvDetails.setText(curTask.getDetails());

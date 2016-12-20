@@ -5,14 +5,14 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:orientation="vertical"
         android:padding="@dimen/activity_horizontal_margin">
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="What is your name?" />
+            android:text="@string/feedback_name" />
 
         <EditText
             android:id="@+id/user_name"
@@ -25,7 +25,7 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="What is your email?" />
+            android:text="@string/feedback_email" />
 
         <EditText
             android:id="@+id/user_email"
@@ -38,7 +38,7 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="What type of feedback are you sending?" />
+            android:text="@string/feedback_type" />
 
         <Spinner
             android:id="@+id/feedback_type"
@@ -51,14 +51,14 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Enter your message here:" />
+            android:text="@string/feedback_message" />
 
         <EditText
             android:id="@+id/message"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="top|left"
-            android:hint="Please include relevant details such as phone model, Android version, etc."
+            android:gravity="top|start"
+            android:hint="@string/feedback_hint"
             android:inputType="textMultiLine|textAutoCorrect"
             android:maxLines="8"
             android:minLines="6"
@@ -68,7 +68,7 @@
             android:id="@+id/send_feedback"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Submit" />
+            android:text="@string/feedback_submit" />
 
     </LinearLayout>
 

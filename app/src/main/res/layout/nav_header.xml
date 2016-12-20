@@ -1,27 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="horizontal"
     android:layout_width="match_parent"
     android:layout_height="120dp"
-    android:gravity="bottom"
     android:background="@drawable/nav_header_bg"
-    android:padding="16dp"
+    android:gravity="bottom"
+    android:orientation="horizontal"
+    android:padding="@dimen/activity_vertical_margin"
     android:theme="@style/ThemeOverlay.AppCompat.Dark">
 
     <TextView
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:textSize="18dp"
-        android:text="Lists"
         android:layout_weight="1"
-        android:textAppearance="@style/TextAppearance.AppCompat.Body1" />
+        android:text="@string/drawer_title"
+        android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+        android:textSize="18sp" />
 
     <ImageButton
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@drawable/ic_add_white_24dp"
         android:background="@android:color/transparent"
-        android:contentDescription="Add List"
-        android:onClick="addList"/>
+        android:contentDescription="@string/add_list_title"
+        android:onClick="addList"
+        android:src="@drawable/ic_add_white_24dp" />
 
 </LinearLayout>

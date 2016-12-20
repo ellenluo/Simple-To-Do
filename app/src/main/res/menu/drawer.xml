@@ -1,33 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
 
     <group android:id="@+id/group_lists">
         <item
             android:id="@+id/nav_all"
-            android:title="All Tasks" />
+            android:title="@string/drawer_all" />
     </group>
 
     <group
         android:id="@+id/group_settings"
         android:orderInCategory="2">
 
-        <item android:title="More">
+        <item android:title="@string/drawer_more">
             <menu>
                 <item
                     android:id="@+id/nav_settings"
-                    android:title="Settings"
-                    android:icon="@drawable/ic_settings_black_24dp" />
+                    android:icon="@drawable/ic_settings_black_24dp"
+                    android:title="@string/drawer_settings" />
 
                 <item
                     android:id="@+id/nav_help"
-                    android:title="Help"
-                    android:icon="@drawable/ic_help_black_24dp" />
+                    android:icon="@drawable/ic_help_black_24dp"
+                    android:title="@string/drawer_help" />
 
                 <item
                     android:id="@+id/nav_feedback"
-                    android:title="Send Feedback"
-                    android:icon="@drawable/ic_feedback_black_24dp" />
+                    android:icon="@drawable/ic_feedback_black_24dp"
+                    android:title="@string/drawer_feedback" />
             </menu>
         </item>
     </group>

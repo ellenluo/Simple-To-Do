@@ -3,14 +3,15 @@
     android:id="@+id/task_row"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:baselineAligned="false"
     android:orientation="horizontal"
     android:paddingBottom="@dimen/thin_margin"
-    android:paddingLeft="12dp"
-    android:paddingRight="12dp"
+    android:paddingLeft="@dimen/med_margin"
+    android:paddingRight="@dimen/med_margin"
     android:paddingTop="@dimen/thin_margin">
 
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_marginRight="@dimen/activity_horizontal_margin"
         android:layout_weight="1"
@@ -24,7 +25,7 @@
             android:ellipsize="end"
             android:focusable="false"
             android:maxLines="1"
-            android:text="Task Name"
+            android:text=""
             android:textSize="18sp" />
 
         <TextView
@@ -34,7 +35,7 @@
             android:ellipsize="end"
             android:focusable="false"
             android:maxLines="1"
-            android:text="No List"
+            android:text="@string/details_no_list"
             android:textAllCaps="true"
             android:textColor="@color/colorPrimary"
             android:textSize="12sp"
@@ -54,7 +55,7 @@
             android:layout_gravity="end"
             android:focusable="false"
             android:maxLines="1"
-            android:text="Someday"
+            android:text="@string/task_row_no_date"
             android:textAllCaps="true"
             android:textColor="@color/colorPrimary"
             android:textSize="14sp"

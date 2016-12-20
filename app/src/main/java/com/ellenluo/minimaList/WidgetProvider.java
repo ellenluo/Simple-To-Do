@@ -26,7 +26,6 @@ public class WidgetProvider extends AppWidgetProvider {
             RemoteViews remoteViews = new RemoteViews(context.getPackageName(), R.layout.widget);
             remoteViews.setRemoteAdapter(R.id.task_list, service);
             remoteViews.setEmptyView(R.id.task_list, R.id.empty_list);
-            remoteViews.setTextColor(R.id.empty_list, Color.parseColor("#757575"));
 
             // set widget title
             SharedPreferences pref = context.getSharedPreferences(String.valueOf(appWidgetIds[i]), 0);
