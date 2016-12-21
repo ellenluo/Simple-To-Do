@@ -10,6 +10,8 @@ import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.net.Uri;
 import android.util.Log;
+import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.RemoteViews;
 
 public class WidgetProvider extends AppWidgetProvider {
@@ -32,16 +34,6 @@ public class WidgetProvider extends AppWidgetProvider {
             String list = pref.getString("widget_list", "All Tasks");
             Log.w("WidgetProvider", "appWidgetId is " + appWidgetIds[i] + ", list name is " + list);
             remoteViews.setTextViewText(R.id.widget_title, list);
-
-            /*DBHandler db = new DBHandler(context);
-            if (!db.checkIfListExists(list)) {
-                pref.edit().putString("widget_list", "All Tasks").apply();
-                remoteViews.setTextViewText(R.id.widget_title, "All Tasks");
-                Log.w("WidgetProvider", "Showing All Tasks");
-            } else {
-                remoteViews.setTextViewText(R.id.widget_title, list);
-                Log.w("WidgetProvider", "List does exist");
-            }*/
 
             Intent intent = new Intent(context, TaskDetailsActivity.class);
             PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
