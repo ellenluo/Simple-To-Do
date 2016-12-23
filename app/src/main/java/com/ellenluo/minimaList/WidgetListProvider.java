@@ -32,6 +32,7 @@ public class WidgetListProvider implements RemoteViewsService.RemoteViewsFactory
 
         pref = context.getSharedPreferences(String.valueOf(appWidgetId), 0);
         list = pref.getString("widget_list", "All Tasks");
+        Log.w("WidgetListProvider", "parameter is " + list);
         db = new DBHandler(context);
 
         if (list.equals("All Tasks")) {

@@ -4,6 +4,8 @@ import android.app.AlarmManager;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.PendingIntent;
+import android.appwidget.AppWidgetManager;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -19,6 +21,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Display;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -37,6 +40,7 @@ public class MainActivity extends AppCompatActivity {
     private NavigationView nvDrawer;
     private ActionBarDrawerToggle drawerToggle;
     private FloatingActionButton fab;
+    private EditText etListName;
 
     DBHandler db = new DBHandler(this);
     SharedPreferences pref;
@@ -125,7 +129,7 @@ public class MainActivity extends AppCompatActivity {
         dialog.getWindow().setAttributes(lp);
 
         // set text field to current name
-        final EditText etListName = (EditText) dialog.findViewById(R.id.list_name);
+        etListName = (EditText) dialog.findViewById(R.id.list_name);
 
         // add button
         Button btnAdd = (Button) dialog.findViewById(R.id.add_list);
@@ -180,102 +184,7 @@ public class MainActivity extends AppCompatActivity {
         int id = item.getItemId();
 
         if (id == R.id.action_edit) {
-            // custom dialog
-            final Dialog dialog = new Dialog(this);
-            dialog.setContentView(R.layout.dialog_edit_list);
-
-            // set dialog width
-            WindowManager wm = (WindowManager) this.getSystemService(Context.WINDOW_SERVICE);
-            Display display = wm.getDefaultDisplay();
-            Point size = new Point();
-            display.getSize(size);
-            int width = size.x;
-
-            WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
-            lp.copyFrom(dialog.getWindow().getAttributes());
-            lp.width = width;
-            dialog.getWindow().setAttributes(lp);
-
-            // set text field to current name
-            final EditText etListName = (EditText) dialog.findViewById(R.id.list_name);
-            etListName.setText(pref.getString("current_list", "All Tasks"));
-
-            // save button
-            Button btnSave = (Button) dialog.findViewById(R.id.save_changes);
-
-            btnSave.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    // update list name
-                    List curList = db.getList(pref.getString("current_list", "error"));
-                    curList.setName(etListName.getText().toString().trim());
-                    db.updateList(curList);
-
-                    pref.edit().putString("current_list", etListName.getText().toString().trim()).apply();
-                    dialog.dismiss();
-
-                    // reset activity
-                    Intent intent = new Intent(MainActivity.this.getApplicationContext(), MainActivity.class);
-                    startActivity(intent);
-                    overridePendingTransition(0, 0);
-                }
-            });
-
-            // delete button
-            Button btnDelete = (Button) dialog.findViewById(R.id.delete_list);
-
-            btnDelete.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    dialog.dismiss();
-
-                    // display confirmation dialog
-                    AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
-                    builder.setMessage("Are you sure you want to delete this list and all corresponding tasks?");
-
-                    builder.setNegativeButton("Delete", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            dialog.dismiss();
-
-                            List curList = db.getList(pref.getString("current_list", "error"));
-                            ArrayList<Task> taskList = db.getTasksFromList(curList.getId());
-
-                            // cancel all reminders
-                            for (int i = 0; i < taskList.size(); i++) {
-                                Intent alarmIntent = new Intent(getApplicationContext(), AlarmManagerReceiver.class);
-                                PendingIntent pendingIntent = PendingIntent.getBroadcast(getApplicationContext(), (int) taskList.get(i).getId(), alarmIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-                                AlarmManager alarmManager = (AlarmManager) getApplicationContext().getSystemService(Context.ALARM_SERVICE);
-                                alarmManager.cancel(pendingIntent);
-                            }
-
-                            // delete list & tasks
-                            db.deleteList(curList);
-                            db.deleteTasksFromList(curList.getId());
-
-                            // update widgets
-                            Reference.updateWidgets(getApplicationContext());
-
-                            // reset activity
-                            pref.edit().putString("current_list", "All Tasks").apply();
-                            Intent intent = new Intent(MainActivity.this.getApplicationContext(), MainActivity.class);
-                            startActivity(intent);
-                        }
-                    });
-
-                    builder.setPositiveButton("Cancel", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            dialog.cancel();
-                        }
-                    });
-
-                    AlertDialog warning = builder.create();
-                    warning.show();
-                }
-            });
-
-            dialog.show();
+            showEditDialog();
         }
 
         return super.onOptionsItemSelected(item);
@@ -394,6 +303,185 @@ public class MainActivity extends AppCompatActivity {
 
         pref.edit().putString("current_list", "All Tasks").apply();
         setTitle("All Tasks");
+    }
+
+    public void showEditDialog() {
+        // custom dialog
+        final Dialog dialog = new Dialog(this);
+        dialog.setContentView(R.layout.dialog_edit_list);
+
+        // set dialog width
+        WindowManager wm = (WindowManager) this.getSystemService(Context.WINDOW_SERVICE);
+        Display display = wm.getDefaultDisplay();
+        Point size = new Point();
+        display.getSize(size);
+        int width = size.x;
+
+        WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
+        lp.copyFrom(dialog.getWindow().getAttributes());
+        lp.width = width;
+        dialog.getWindow().setAttributes(lp);
+
+        // set text field to current name
+        etListName = (EditText) dialog.findViewById(R.id.list_name);
+        etListName.setText(pref.getString("current_list", "All Tasks"));
+
+        // save button
+        Button btnSave = (Button) dialog.findViewById(R.id.save_changes);
+
+        btnSave.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String listName = etListName.getText().toString().trim();
+
+                // check for empty list name
+                if (listName.length() == 0) {
+                    dialog.dismiss();
+
+                    AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+                    builder.setMessage("New list name cannot be empty.");
+
+                    builder.setPositiveButton("Got it", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.cancel();
+                            showEditDialog();
+                        }
+                    });
+
+                    AlertDialog dialog = builder.create();
+                    dialog.show();
+                    return;
+                }
+
+                // check for duplicate list name
+                ArrayList<List> listList = db.getAllLists();
+
+                for (int i = 0; i < listList.size(); i++) {
+                    if (listName.equals(listList.get(i).getName())) {
+                        dialog.dismiss();
+
+                        AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+                        builder.setMessage("List name already exists. Please enter a new list name.");
+
+                        builder.setPositiveButton("Got it", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.cancel();
+                                showEditDialog();
+                            }
+                        });
+
+                        AlertDialog dialog = builder.create();
+                        dialog.show();
+                        return;
+                    }
+                }
+
+                // check for "All Tasks" name
+                if (listName.equals("All Tasks")) {
+                    dialog.dismiss();
+
+                    AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+                    builder.setMessage("List name already exists. Please enter a new list name.");
+
+                    builder.setPositiveButton("Got it", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.cancel();
+                            showEditDialog();
+                        }
+                    });
+
+                    AlertDialog dialog = builder.create();
+                    dialog.show();
+                    return;
+                }
+
+                List curList = db.getList(pref.getString("current_list", "error"));
+                String oldListName = curList.getName();
+                curList.setName(listName);
+                db.updateList(curList);
+
+                pref.edit().putString("current_list", etListName.getText().toString().trim()).apply();
+
+                // update widgets
+                AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(getApplicationContext());
+                int appWidgetIds[] = appWidgetManager.getAppWidgetIds(new ComponentName(getApplicationContext(), WidgetProvider.class));
+
+                for (int appWidgetId : appWidgetIds) {
+                    SharedPreferences widgetPref = getSharedPreferences(String.valueOf(appWidgetId), PREFERENCE_MODE_PRIVATE);
+                    if (widgetPref.getString("widget_list", "All Tasks").equals(oldListName)) {
+                        widgetPref.edit().putString("widget_list", curList.getName()).apply();
+                        Log.d("MainActivity", "updating widget_list parameter to " + curList.getName());
+                    }
+                }
+
+                appWidgetManager.notifyAppWidgetViewDataChanged(appWidgetIds, R.id.task_list);
+
+                // reset activity
+                Intent intent = new Intent(MainActivity.this.getApplicationContext(), MainActivity.class);
+                startActivity(intent);
+                overridePendingTransition(0, 0);
+            }
+        });
+
+        // delete button
+        Button btnDelete = (Button) dialog.findViewById(R.id.delete_list);
+
+        btnDelete.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+
+                // display confirmation dialog
+                AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+                builder.setMessage("Are you sure you want to delete this list and all corresponding tasks?");
+
+                builder.setNegativeButton("Delete", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+
+                        List curList = db.getList(pref.getString("current_list", "error"));
+                        ArrayList<Task> taskList = db.getTasksFromList(curList.getId());
+
+                        // cancel all reminders
+                        for (int i = 0; i < taskList.size(); i++) {
+                            Intent alarmIntent = new Intent(getApplicationContext(), AlarmManagerReceiver.class);
+                            PendingIntent pendingIntent = PendingIntent.getBroadcast(getApplicationContext(), (int) taskList.get(i).getId(), alarmIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+                            AlarmManager alarmManager = (AlarmManager) getApplicationContext().getSystemService(Context.ALARM_SERVICE);
+                            alarmManager.cancel(pendingIntent);
+                        }
+
+                        // delete list & tasks
+                        db.deleteList(curList);
+                        db.deleteTasksFromList(curList.getId());
+
+                        // update widgets
+                        Reference.updateWidgets(getApplicationContext());
+
+                        // reset activity
+                        pref.edit().putString("current_list", "All Tasks").apply();
+                        Intent intent = new Intent(MainActivity.this.getApplicationContext(), MainActivity.class);
+                        startActivity(intent);
+                    }
+                });
+
+                builder.setPositiveButton("Cancel", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.cancel();
+                        showEditDialog();
+                    }
+                });
+
+                AlertDialog warning = builder.create();
+                warning.show();
+            }
+        });
+
+        dialog.show();
     }
 
 }
