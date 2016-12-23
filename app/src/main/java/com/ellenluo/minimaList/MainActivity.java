@@ -112,54 +112,7 @@ public class MainActivity extends AppCompatActivity {
 
     // when add list button is clicked
     public void addList(View view) {
-        // custom dialog
-        final Dialog dialog = new Dialog(this);
-        dialog.setContentView(R.layout.dialog_add_list);
-
-        // set dialog width
-        WindowManager wm = (WindowManager) this.getSystemService(Context.WINDOW_SERVICE);
-        Display display = wm.getDefaultDisplay();
-        Point size = new Point();
-        display.getSize(size);
-        int width = size.x;
-
-        WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
-        lp.copyFrom(dialog.getWindow().getAttributes());
-        lp.width = width;
-        dialog.getWindow().setAttributes(lp);
-
-        // set text field to current name
-        etListName = (EditText) dialog.findViewById(R.id.list_name);
-
-        // add button
-        Button btnAdd = (Button) dialog.findViewById(R.id.add_list);
-
-        btnAdd.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                dialog.dismiss();
-                List newList = new List(etListName.getText().toString());
-                db.addList(newList);
-
-                // reset activity
-                pref.edit().putString("current_list", newList.getName()).apply();
-                Intent intent = new Intent(MainActivity.this.getApplicationContext(), MainActivity.class);
-                startActivity(intent);
-                overridePendingTransition(0, 0);
-            }
-        });
-
-        // cancel button
-        Button btnCancel = (Button) dialog.findViewById(R.id.cancel);
-
-        btnCancel.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                dialog.cancel();
-            }
-        });
-
-        dialog.show();
+        showAddDialog();
     }
 
     // set up navigation drawer
@@ -478,6 +431,122 @@ public class MainActivity extends AppCompatActivity {
 
                 AlertDialog warning = builder.create();
                 warning.show();
+            }
+        });
+
+        dialog.show();
+    }
+
+    public void showAddDialog() {
+        // custom dialog
+        final Dialog dialog = new Dialog(this);
+        dialog.setContentView(R.layout.dialog_add_list);
+
+        // set dialog width
+        WindowManager wm = (WindowManager) this.getSystemService(Context.WINDOW_SERVICE);
+        Display display = wm.getDefaultDisplay();
+        Point size = new Point();
+        display.getSize(size);
+        int width = size.x;
+
+        WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
+        lp.copyFrom(dialog.getWindow().getAttributes());
+        lp.width = width;
+        dialog.getWindow().setAttributes(lp);
+
+        // set text field to current name
+        etListName = (EditText) dialog.findViewById(R.id.list_name);
+
+        // add button
+        Button btnAdd = (Button) dialog.findViewById(R.id.add_list);
+
+        btnAdd.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String listName = etListName.getText().toString().trim();
+
+                // check for empty list name
+                if (listName.length() == 0) {
+                    dialog.dismiss();
+
+                    AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+                    builder.setMessage("New list name cannot be empty.");
+
+                    builder.setPositiveButton("Got it", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.cancel();
+                            showAddDialog();
+                        }
+                    });
+
+                    AlertDialog dialog = builder.create();
+                    dialog.show();
+                    return;
+                }
+
+                // check for duplicate list name
+                ArrayList<List> listList = db.getAllLists();
+
+                for (int i = 0; i < listList.size(); i++) {
+                    if (listName.equals(listList.get(i).getName())) {
+                        dialog.dismiss();
+
+                        AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+                        builder.setMessage("List name already exists. Please enter a new list name.");
+
+                        builder.setPositiveButton("Got it", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.cancel();
+                                showAddDialog();
+                            }
+                        });
+
+                        AlertDialog dialog = builder.create();
+                        dialog.show();
+                        return;
+                    }
+                }
+
+                // check for "All Tasks" name
+                if (listName.equals("All Tasks")) {
+                    dialog.dismiss();
+
+                    AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+                    builder.setMessage("List name already exists. Please enter a new list name.");
+
+                    builder.setPositiveButton("Got it", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.cancel();
+                            showAddDialog();
+                        }
+                    });
+
+                    AlertDialog dialog = builder.create();
+                    dialog.show();
+                    return;
+                }
+
+                List newList = new List(listName);
+                db.addList(newList);
+
+                // reset activity
+                pref.edit().putString("current_list", newList.getName()).apply();
+                Intent intent = new Intent(MainActivity.this.getApplicationContext(), MainActivity.class);
+                startActivity(intent);
+                overridePendingTransition(0, 0);
+            }
+        });
+
+        // cancel button
+        Button btnCancel = (Button) dialog.findViewById(R.id.cancel);
+
+        btnCancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.cancel();
             }
         });
 
