@@ -67,7 +67,6 @@ public class DBHandler extends SQLiteOpenHelper {
         if (cursor.moveToFirst()) {
             id = cursor.getLong(0);
         }
-        Log.d("DBHandler", "id is " + id);
         task.setId(id);
 
         cursor.close();
@@ -80,6 +79,8 @@ public class DBHandler extends SQLiteOpenHelper {
 
         if (cursor.moveToFirst()) {
             Task task = new Task(Long.parseLong(cursor.getString(0)), cursor.getString(1), cursor.getString(2), Long.parseLong(cursor.getString(3)), Long.parseLong(cursor.getString(4)), Long.parseLong(cursor.getString(5)));
+            cursor.close();
+            db.close();
             return task;
         }
 
@@ -101,6 +102,8 @@ public class DBHandler extends SQLiteOpenHelper {
                 taskList.add(task);
             } while (cursor.moveToNext());
         }
+
+        cursor.close();
 
         selectQuery =  "SELECT * FROM " + TABLE_TASKS + " WHERE " + KEY_TASK_DUE + " = -1 ORDER BY " + KEY_TASK_NAME;
         cursor = db.rawQuery(selectQuery, null);
@@ -152,6 +155,8 @@ public class DBHandler extends SQLiteOpenHelper {
 
         if (cursor.moveToFirst()) {
             List list = new List(Long.parseLong(cursor.getString(0)), cursor.getString(1));
+            cursor.close();
+            db.close();
             return list;
         }
 
@@ -220,6 +225,8 @@ public class DBHandler extends SQLiteOpenHelper {
                 tasks.add(task);
             } while (cursor.moveToNext());
         }
+
+        cursor.close();
 
         selectQuery = "SELECT  * FROM " + TABLE_TASKS + " t1, " + TABLE_LISTS + " t2 WHERE t2." + KEY_LIST_ID + " = '" + listId + "' AND t1." + KEY_TASK_LIST + " = t2." + KEY_LIST_ID + " AND " + KEY_TASK_DUE + " = -1 ORDER BY " + KEY_TASK_NAME;
         cursor = db.rawQuery(selectQuery, null);

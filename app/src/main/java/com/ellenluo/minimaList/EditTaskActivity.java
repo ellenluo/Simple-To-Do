@@ -72,7 +72,8 @@ public class EditTaskActivity extends AppCompatActivity implements TimePickerFra
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
-        toolbar.setPadding(0, Reference.getStatusBarHeight(this), 0, 0);
+        Helper h = new Helper(this);
+        toolbar.setPadding(0, h.getStatusBarHeight(), 0, 0);
 
         // get task from database
         pref = getSharedPreferences("Main", PREFERENCE_MODE_PRIVATE);
@@ -295,7 +296,8 @@ public class EditTaskActivity extends AppCompatActivity implements TimePickerFra
 
             // check for empty list name
             if (listName.length() == 0) {
-                Reference.displayAlert(this, "New list name cannot be empty.", "Got it", "");
+                Helper h = new Helper(this);
+                h.displayAlert("New list name cannot be empty.", "Got it", "");
                 return true;
             }
 
@@ -304,14 +306,16 @@ public class EditTaskActivity extends AppCompatActivity implements TimePickerFra
 
             for (int i = 0; i < listList.size(); i++) {
                 if (listName.equals(listList.get(i).getName())) {
-                    Reference.displayAlert(this, "List name already exists. Please enter a new list name.", "Got it", "");
+                    Helper h = new Helper(this);
+                    h.displayAlert("List name already exists. Please enter a new list name.", "Got it", "");
                     return true;
                 }
             }
 
             // check for "All Tasks" name
             if (listName.equals("All Tasks")) {
-                Reference.displayAlert(this, "List name already exists. Please enter a new list name.", "Got it", "");
+                Helper h = new Helper(this);
+                h.displayAlert("List name already exists. Please enter a new list name.", "Got it", "");
                 return true;
             }
 
@@ -369,7 +373,8 @@ public class EditTaskActivity extends AppCompatActivity implements TimePickerFra
         Toast.makeText(this, "'" + curTask.getName() + "' successfully updated", Toast.LENGTH_SHORT).show();
 
         // update widgets
-        Reference.updateWidgets(this);
+        Helper h = new Helper(this);
+        h.updateWidgets();
 
         // return to list that edited task belongs to
         if (listId == -1) {
@@ -382,6 +387,7 @@ public class EditTaskActivity extends AppCompatActivity implements TimePickerFra
         Intent intent = new Intent(EditTaskActivity.this, TaskDetailsActivity.class);
         intent.putExtra("id", id);
         startActivity(intent);
+        EditTaskActivity.this.finish();
 
         return true;
     }
@@ -411,7 +417,8 @@ public class EditTaskActivity extends AppCompatActivity implements TimePickerFra
     // back button confirmation
     @Override
     public void onBackPressed() {
-        Reference.displayAlert(this, "Are you sure you want to discard your changes?", "Keep editing", "Discard");
+        Helper h = new Helper(this);
+        h.displayAlert("Are you sure you want to discard your changes?", "Keep editing", "Discard");
     }
 
 }

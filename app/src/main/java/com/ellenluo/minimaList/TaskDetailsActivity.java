@@ -10,6 +10,7 @@ import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.CheckBox;
@@ -40,7 +41,8 @@ public class TaskDetailsActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
-        toolbar.setPadding(0, Reference.getStatusBarHeight(this), 0, 0);
+        Helper h = new Helper(this);
+        toolbar.setPadding(0, h.getStatusBarHeight(), 0, 0);
 
         // get settings from preferences
         SharedPreferences prefSettings = PreferenceManager.getDefaultSharedPreferences(this);
@@ -114,10 +116,12 @@ public class TaskDetailsActivity extends AppCompatActivity {
                             db.deleteTask(curTask);
 
                             // update widgets
-                            Reference.updateWidgets(TaskDetailsActivity.this);
+                            Helper h = new Helper(TaskDetailsActivity.this);
+                            h.updateWidgets();
 
                             Intent intent = new Intent(TaskDetailsActivity.this, MainActivity.class);
                             startActivity(intent);
+                            TaskDetailsActivity.this.finish();
                         }
                     }, 500);
                 }
@@ -141,6 +145,7 @@ public class TaskDetailsActivity extends AppCompatActivity {
             Intent intent = new Intent(TaskDetailsActivity.this, EditTaskActivity.class);
             intent.putExtra("id", id);
             startActivity(intent);
+            TaskDetailsActivity.this.finish();
         } else if (itemId == android.R.id.home) {
             onBackPressed();
             return true;
@@ -164,6 +169,15 @@ public class TaskDetailsActivity extends AppCompatActivity {
     public void onBackPressed() {
         Intent intent = new Intent(TaskDetailsActivity.this, MainActivity.class);
         startActivity(intent);
+        TaskDetailsActivity.this.finish();
+        Log.d("TaskDetailsActivity", "activity finished");
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        db.close();
+        Log.d("TaskDetailsActivity", "activity destroyed");
     }
 
 }

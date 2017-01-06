@@ -52,12 +52,14 @@ public class SettingsFragment extends PreferenceFragment {
                         db.deleteAll();
 
                         // update widgets
-                        Reference.updateWidgets(getActivity());
+                        Helper h = new Helper(getActivity());
+                        h.updateWidgets();
 
                         // reset activity
                         pref.edit().putString("current_list", "All Tasks").apply();
                         Intent intent = new Intent(getActivity(), MainActivity.class);
                         startActivity(intent);
+                        getActivity().finish();
                     }
                 });
 

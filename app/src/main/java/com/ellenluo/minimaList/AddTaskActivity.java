@@ -69,7 +69,8 @@ public class AddTaskActivity extends AppCompatActivity implements TimePickerFrag
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
-        toolbar.setPadding(0, Reference.getStatusBarHeight(this), 0, 0);
+        Helper h = new Helper(this);
+        toolbar.setPadding(0, h.getStatusBarHeight(), 0, 0);
 
         // get settings from preferences
         SharedPreferences prefSettings = PreferenceManager.getDefaultSharedPreferences(this);
@@ -263,7 +264,8 @@ public class AddTaskActivity extends AppCompatActivity implements TimePickerFrag
 
         // check for empty task name
         if (etName.getText().toString().trim().length() == 0) {
-            Reference.displayAlert(this, "Task name cannot be empty.", "Got it", "");
+            Helper h = new Helper(this);
+            h.displayAlert("Task name cannot be empty.", "Got it", "");
             return true;
         }
 
@@ -273,7 +275,8 @@ public class AddTaskActivity extends AppCompatActivity implements TimePickerFrag
 
             // check for empty list name
             if (listName.length() == 0) {
-                Reference.displayAlert(this, "New list name cannot be empty.", "Got it", "");
+                Helper h = new Helper(this);
+                h.displayAlert("New list name cannot be empty.", "Got it", "");
                 return true;
             }
 
@@ -282,14 +285,16 @@ public class AddTaskActivity extends AppCompatActivity implements TimePickerFrag
 
             for (int i = 0; i < listList.size(); i++) {
                 if (listName.equals(listList.get(i).getName())) {
-                    Reference.displayAlert(this, "List name already exists. Please enter a new list name.", "Got it", "");
+                    Helper h = new Helper(this);
+                    h.displayAlert("List name already exists. Please enter a new list name.", "Got it", "");
                     return true;
                 }
             }
 
             // check for "All Tasks" name
             if (listName.equals("All Tasks")) {
-                Reference.displayAlert(this, "List name already exists. Please enter a new list name.", "Got it", "");
+                Helper h = new Helper(this);
+                h.displayAlert("List name already exists. Please enter a new list name.", "Got it", "");
                 return true;
             }
 
@@ -333,7 +338,8 @@ public class AddTaskActivity extends AppCompatActivity implements TimePickerFrag
         }
 
         // update widgets
-        Reference.updateWidgets(this);
+        Helper h = new Helper(this);
+        h.updateWidgets();
 
         // return to list that new task belongs to
         if (listId == -1) {
@@ -345,7 +351,7 @@ public class AddTaskActivity extends AppCompatActivity implements TimePickerFrag
         // return to main activity
         Intent returnIntent = new Intent(AddTaskActivity.this, MainActivity.class);
         startActivity(returnIntent);
-
+        AddTaskActivity.this.finish();
         return true;
     }
 
@@ -374,6 +380,13 @@ public class AddTaskActivity extends AppCompatActivity implements TimePickerFrag
     // back button confirmation
     @Override
     public void onBackPressed() {
-        Reference.displayAlert(this, "Are you sure you want to discard this task?", "Keep editing", "Discard");
+        Helper h = new Helper(this);
+        h.displayAlert("Are you sure you want to discard this task?", "Keep editing", "Discard");
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        db.close();
     }
 }

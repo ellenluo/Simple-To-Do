@@ -27,7 +27,7 @@
     <string name="details_no_reminder">No reminder set</string>
     <string name="details_no_list">No list</string>
     <string name="details_list">List:</string>
-    <string name="details_completed">List:</string>
+    <string name="details_completed">Complete?</string>
 
     <!-- Add/edit list strings -->
     <string name="add_list_title">Add List</string>

@@ -55,7 +55,8 @@ public class MainActivity extends AppCompatActivity {
         // set up toolbar
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        toolbar.setPadding(0, Reference.getStatusBarHeight(this), 0, 0);
+        Helper h = new Helper(this);
+        toolbar.setPadding(0, h.getStatusBarHeight(), 0, 0);
 
         // set up navigation menu
         mDrawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -73,6 +74,7 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View view) {
                 Intent intent = new Intent(MainActivity.this, AddTaskActivity.class);
                 startActivity(intent);
+                MainActivity.this.finish();
             }
         });
 
@@ -80,10 +82,17 @@ public class MainActivity extends AppCompatActivity {
         pref = getSharedPreferences("Main", PREFERENCE_MODE_PRIVATE);
         String curList = pref.getString("current_list", "All Tasks");
 
+        // check for extras
+        String newList = getIntent().getStringExtra("current_list");
+        if (newList != null) {
+            curList = newList;
+            pref.edit().putString("current_list", newList).apply();
+        }
+
         Fragment fragment = null;
 
         try {
-            fragment = (Fragment) MainFragment.class.newInstance();
+            fragment = MainFragment.class.newInstance();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -91,6 +100,8 @@ public class MainActivity extends AppCompatActivity {
         FragmentManager fragmentManager = getSupportFragmentManager();
         fragmentManager.beginTransaction().replace(R.id.frame, fragment).commit();
         setTitle(curList);
+
+        db.close();
     }
 
     // refresh navigation menu of lists
@@ -194,7 +205,7 @@ public class MainActivity extends AppCompatActivity {
             }
         } else {
             try {
-                fragment = (Fragment) MainFragment.class.newInstance();
+                fragment = MainFragment.class.newInstance();
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -256,6 +267,12 @@ public class MainActivity extends AppCompatActivity {
 
         pref.edit().putString("current_list", "All Tasks").apply();
         setTitle("All Tasks");
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        Log.d("MainActivity", "activity destroyed");
     }
 
     public void showEditDialog() {
@@ -373,9 +390,11 @@ public class MainActivity extends AppCompatActivity {
                 appWidgetManager.notifyAppWidgetViewDataChanged(appWidgetIds, R.id.task_list);
 
                 // reset activity
+                dialog.dismiss();
                 Intent intent = new Intent(MainActivity.this.getApplicationContext(), MainActivity.class);
                 startActivity(intent);
                 overridePendingTransition(0, 0);
+                MainActivity.this.finish();
             }
         });
 
@@ -411,13 +430,19 @@ public class MainActivity extends AppCompatActivity {
                         db.deleteList(curList);
                         db.deleteTasksFromList(curList.getId());
 
+                        Log.d("MainActivity", "List successfully deleted");
+
                         // update widgets
-                        Reference.updateWidgets(getApplicationContext());
+                        Helper h = new Helper(getApplicationContext());
+                        h.updateWidgets();
+
+                        Log.d("MainActivity", "Widgets successfully updated");
 
                         // reset activity
                         pref.edit().putString("current_list", "All Tasks").apply();
                         Intent intent = new Intent(MainActivity.this.getApplicationContext(), MainActivity.class);
                         startActivity(intent);
+                        MainActivity.this.finish();
                     }
                 });
 
@@ -537,6 +562,7 @@ public class MainActivity extends AppCompatActivity {
                 Intent intent = new Intent(MainActivity.this.getApplicationContext(), MainActivity.class);
                 startActivity(intent);
                 overridePendingTransition(0, 0);
+                MainActivity.this.finish();
             }
         });
 

@@ -35,7 +35,8 @@ public class WidgetConfigureActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
-        toolbar.setPadding(0, Reference.getStatusBarHeight(this), 0, 0);
+        Helper h = new Helper(this);
+        toolbar.setPadding(0, h.getStatusBarHeight(), 0, 0);
 
         // in case user presses back button
         setResult(RESULT_CANCELED);

@@ -39,7 +39,7 @@
                 android:layout_width="100dp"
                 android:layout_height="100dp"
                 android:contentDescription="@string/tasks_complete"
-                android:src="@drawable/no_tasks"
+                android:src="@drawable/all_done"
                 android:visibility="gone" />
 
         </FrameLayout>

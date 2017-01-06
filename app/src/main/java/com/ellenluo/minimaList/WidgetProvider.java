@@ -50,6 +50,7 @@ public class WidgetProvider extends AppWidgetProvider {
             appWidgetManager.updateAppWidget(appWidgetId, remoteViews);
         }
 
+        Log.w("WidgetProvider", "onUpdate called");
         super.onUpdate(context, appWidgetManager, appWidgetIds);
     }
 
@@ -71,9 +72,16 @@ public class WidgetProvider extends AppWidgetProvider {
             RemoteViews remoteViews = new RemoteViews(context.getPackageName(), R.layout.widget);
             remoteViews.setTextViewText(R.id.widget_title, "All Tasks");
 
+            // set list item click event
             Intent clickIntent = new Intent(context, TaskDetailsActivity.class);
             PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, clickIntent, PendingIntent.FLAG_UPDATE_CURRENT);
             remoteViews.setPendingIntentTemplate(R.id.task_list, pendingIntent);
+
+            // set header click event
+            Intent headerIntent = new Intent(context, MainActivity.class);
+            headerIntent.putExtra("current_list", "All Tasks");
+            PendingIntent headerPendingIntent = PendingIntent.getActivity(context, 0, headerIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+            remoteViews.setOnClickPendingIntent(R.id.widget_title, headerPendingIntent);
 
             appWidgetManager.updateAppWidget(appWidgetIds, remoteViews);
         }

@@ -1,6 +1,7 @@
 package com.ellenluo.minimaList;
 
 import android.appwidget.AppWidgetManager;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -32,20 +33,10 @@ public class WidgetListProvider implements RemoteViewsService.RemoteViewsFactory
 
         pref = context.getSharedPreferences(String.valueOf(appWidgetId), 0);
         list = pref.getString("widget_list", "All Tasks");
-        Log.w("WidgetListProvider", "parameter is " + list);
         db = new DBHandler(context);
 
         if (list.equals("All Tasks")) {
             taskList = db.getAllTasks();
-        } else if (!db.checkIfListExists(list)) {
-            pref.edit().putString("widget_list", "All Tasks").apply();
-            taskList = db.getAllTasks();
-
-            // update widgets
-            Log.w("WidgetListProvider", "Updating widgets..");
-            Intent updateWidgetIntent = new Intent(context, WidgetProvider.class);
-            updateWidgetIntent.setAction(WidgetProvider.UPDATE_LIST);
-            context.sendBroadcast(updateWidgetIntent);
         } else {
             taskList = db.getTasksFromList(db.getList(list).getId());
         }
@@ -57,19 +48,37 @@ public class WidgetListProvider implements RemoteViewsService.RemoteViewsFactory
 
     @Override
     public void onDataSetChanged() {
-        if (list.equals("All Tasks")) {
+        String newList = pref.getString("widget_list", "All Tasks");
+
+        if (!newList.equals(list)) {
+            taskList = db.getTasksFromList(db.getList(newList).getId());
+
+            // update widget title
+            /*Intent updateWidgetIntent = new Intent(context, WidgetProvider.class);
+            updateWidgetIntent.setAction(WidgetProvider.UPDATE_LIST);
+            context.sendBroadcast(updateWidgetIntent);*/
+
+            Intent intent = new Intent(this.context, WidgetProvider.class);
+            intent.setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE);
+            int[] ids = AppWidgetManager.getInstance(this.context).getAppWidgetIds(new ComponentName(this.context, WidgetProvider.class));
+            intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, ids);
+            this.context.sendBroadcast(intent);
+            Log.w("WidgetListProvider", "Name change called");
+        } else if (list.equals("All Tasks")) {
             taskList = db.getAllTasks();
+            Log.w("WidgetListProvider", "All tasks called");
         } else if (!db.checkIfListExists(list)) {
             pref.edit().putString("widget_list", "All Tasks").apply();
             taskList = db.getAllTasks();
 
             // update widgets
-            Log.w("WidgetListProvider", "Updating widgets..");
+            Log.w("WidgetListProvider", "List not found called");
             Intent updateWidgetIntent = new Intent(context, WidgetProvider.class);
             updateWidgetIntent.setAction(WidgetProvider.UPDATE_LIST);
             context.sendBroadcast(updateWidgetIntent);
         } else {
             taskList = db.getTasksFromList(db.getList(list).getId());
+            Log.w("WidgetListProvider", "Custom list called");
         }
     }
 

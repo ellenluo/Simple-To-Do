@@ -6,9 +6,11 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Paint;
+import android.media.Image;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -30,8 +32,11 @@ public class MainFragment extends Fragment {
     SharedPreferences pref;
     private static final int PREFERENCE_MODE_PRIVATE = 0;
 
+    private View v;
+    private ImageView ivEmpty;
+
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View v = inflater.inflate(R.layout.fragment_main, container, false);
+        v = inflater.inflate(R.layout.fragment_main, container, false);
 
         if (container != null) {
             container.removeAllViews();
@@ -50,9 +55,11 @@ public class MainFragment extends Fragment {
             taskList = db.getTasksFromList(curList.getId());
         }
 
+        db.close();
+
         // set up empty view
-        ImageView tvEmpty = (ImageView) v.findViewById(R.id.empty_list);
-        lvTasks.setEmptyView(tvEmpty);
+        ivEmpty = (ImageView) v.findViewById(R.id.empty_list);
+        lvTasks.setEmptyView(ivEmpty);
 
         final TaskListAdapter taskAdapter = new TaskListAdapter(getActivity(), taskList);
         lvTasks.setAdapter(taskAdapter);
@@ -65,6 +72,7 @@ public class MainFragment extends Fragment {
                 Intent intent = new Intent(getActivity(), TaskDetailsActivity.class);
                 intent.putExtra("id", curTask.getId());
                 startActivity(intent);
+                getActivity().finish();
             }
         });
 
@@ -89,7 +97,8 @@ public class MainFragment extends Fragment {
                         taskAdapter.notifyDataSetChanged();
 
                         // update widgets
-                        Reference.updateWidgets(getActivity());
+                        Helper h = new Helper(getActivity());
+                        h.updateWidgets();
                     }
                 }, 500);
 
@@ -98,6 +107,13 @@ public class MainFragment extends Fragment {
         });
 
         return v;
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        v = null;
+        ivEmpty.setImageDrawable(null);
     }
 
 }
