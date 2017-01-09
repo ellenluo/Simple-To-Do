@@ -165,7 +165,7 @@ public class EditTaskActivity extends AppCompatActivity implements TimePickerFra
         size = listList.size();
 
         spinnerItem = new String[size + 2];
-        spinnerItem[0] = "Select one";
+        spinnerItem[0] = "None";
         spinnerItem[size + 1] = "Add new list";
 
         if (size > 0) {

@@ -127,7 +127,7 @@ public class AddTaskActivity extends AppCompatActivity implements TimePickerFrag
         size = listList.size();
 
         listSpinnerItem = new String[size + 2];
-        listSpinnerItem[0] = "Select one";
+        listSpinnerItem[0] = "None";
         listSpinnerItem[size + 1] = "Add new list";
 
         if (size > 0) {
