@@ -3,6 +3,8 @@ package com.ellenluo.minimaList;
 import android.app.AlarmManager;
 import android.app.AlertDialog;
 import android.app.PendingIntent;
+import android.appwidget.AppWidgetManager;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -11,6 +13,7 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
+import android.util.Log;
 
 import java.util.ArrayList;
 
@@ -52,8 +55,16 @@ public class SettingsFragment extends PreferenceFragment {
                         db.deleteAll();
 
                         // update widgets
-                        Helper h = new Helper(getActivity());
-                        h.updateWidgets();
+                        AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(getActivity());
+                        int appWidgetIds[] = appWidgetManager.getAppWidgetIds(new ComponentName(getActivity(), WidgetProvider.class));
+
+                        for (int appWidgetId : appWidgetIds) {
+                            SharedPreferences widgetPref = getActivity().getSharedPreferences(String.valueOf(appWidgetId), PREFERENCE_MODE_PRIVATE);
+                            widgetPref.edit().putString("widget_list", "All Tasks").apply();
+                        }
+
+                        appWidgetManager.notifyAppWidgetViewDataChanged(appWidgetIds, R.id.task_list);
+                        Log.d("SettingsFragment", "Widgets successfully updated");
 
                         // reset activity
                         pref.edit().putString("current_list", "All Tasks").apply();

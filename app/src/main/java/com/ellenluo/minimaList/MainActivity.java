@@ -416,6 +416,7 @@ public class MainActivity extends AppCompatActivity {
                         dialog.dismiss();
 
                         List curList = db.getList(pref.getString("current_list", "error"));
+                        String oldListName = curList.getName();
                         ArrayList<Task> taskList = db.getTasksFromList(curList.getId());
 
                         // cancel all reminders
@@ -433,9 +434,18 @@ public class MainActivity extends AppCompatActivity {
                         Log.d("MainActivity", "List successfully deleted");
 
                         // update widgets
-                        Helper h = new Helper(getApplicationContext());
-                        h.updateWidgets();
+                        AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(getApplicationContext());
+                        int appWidgetIds[] = appWidgetManager.getAppWidgetIds(new ComponentName(getApplicationContext(), WidgetProvider.class));
 
+                        for (int appWidgetId : appWidgetIds) {
+                            SharedPreferences widgetPref = getSharedPreferences(String.valueOf(appWidgetId), PREFERENCE_MODE_PRIVATE);
+                            if (widgetPref.getString("widget_list", "All Tasks").equals(oldListName)) {
+                                widgetPref.edit().putString("widget_list", "All Tasks").apply();
+                                Log.d("MainActivity", "updating widget_list parameter to 'All Tasks'");
+                            }
+                        }
+
+                        appWidgetManager.notifyAppWidgetViewDataChanged(appWidgetIds, R.id.task_list);
                         Log.d("MainActivity", "Widgets successfully updated");
 
                         // reset activity

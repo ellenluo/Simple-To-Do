@@ -54,37 +54,4 @@ public class WidgetProvider extends AppWidgetProvider {
         super.onUpdate(context, appWidgetManager, appWidgetIds);
     }
 
-    @Override
-    public void onReceive(final Context context, final Intent intent) {
-        super.onReceive(context, intent);
-
-        if (UPDATE_LIST.equals(intent.getAction())) {
-            updateTitle(context);
-        }
-    }
-
-    public void updateTitle(Context context) {
-        Log.w("WidgetProvider", "updateTitle called");
-        AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
-        int[] appWidgetIds = appWidgetManager.getAppWidgetIds(new ComponentName(context, this.getClass()));
-
-        if (appWidgetIds != null && appWidgetIds.length > 0) {
-            RemoteViews remoteViews = new RemoteViews(context.getPackageName(), R.layout.widget);
-            remoteViews.setTextViewText(R.id.widget_title, "All Tasks");
-
-            // set list item click event
-            Intent clickIntent = new Intent(context, TaskDetailsActivity.class);
-            PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, clickIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-            remoteViews.setPendingIntentTemplate(R.id.task_list, pendingIntent);
-
-            // set header click event
-            Intent headerIntent = new Intent(context, MainActivity.class);
-            headerIntent.putExtra("current_list", "All Tasks");
-            PendingIntent headerPendingIntent = PendingIntent.getActivity(context, 0, headerIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-            remoteViews.setOnClickPendingIntent(R.id.widget_title, headerPendingIntent);
-
-            appWidgetManager.updateAppWidget(appWidgetIds, remoteViews);
-        }
-    }
-
 }
