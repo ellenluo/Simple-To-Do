@@ -188,10 +188,6 @@ public class MainActivity extends AppCompatActivity {
                     fragmentClass = FeedbackFragment.class;
                     showEditList = false;
                     break;
-                case R.id.nav_help:
-                    showEditList = false;
-                    fab.setVisibility(View.GONE);
-                    break;
                 default:
                     break;
             }

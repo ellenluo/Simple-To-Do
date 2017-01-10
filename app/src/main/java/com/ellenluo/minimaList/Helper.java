@@ -79,8 +79,8 @@ class Helper {
             this.context.setTheme(R.style.PurpleTheme);
         } else if (color == ContextCompat.getColor(this.context, R.color.deep_purple)) {
             this.context.setTheme(R.style.DeepPurpleTheme);
-        } else if (color == ContextCompat.getColor(this.context, R.color.dark_blue)) {
-            this.context.setTheme(R.style.AppTheme);
+        } else if (color == ContextCompat.getColor(this.context, R.color.blue_grey)) {
+            this.context.setTheme(R.style.BlueGreyTheme);
         } else if (color == ContextCompat.getColor(this.context, R.color.light_blue)) {
             this.context.setTheme(R.style.LightBlueTheme);
         } else if (color == ContextCompat.getColor(this.context, R.color.aqua)) {
@@ -90,7 +90,7 @@ class Helper {
         } else if (color == ContextCompat.getColor(this.context, R.color.orange)) {
             this.context.setTheme(R.style.OrangeTheme);
         } else {
-            this.context.setTheme(R.style.BlueGreyTheme);
+            this.context.setTheme(R.style.AppTheme);
         }
     }
 

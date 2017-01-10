@@ -64,7 +64,7 @@
     <string name="settings_24h_title">24-Hour Time</string>
     <string name="settings_24h_summary">If selected, all due/reminder dates will be displayed in 24-hour time.</string>
     <string name="settings_color_title">Theme</string>
-    <string name="settings_color_summary">Tap to select the main color for the app.</string>
+    <string name="settings_color_summary">Tap to select the main color for the app. Changes will NOT take effect until you restart the app.</string>
     <string name="settings_color_dialog">Select a Color</string>
     <string name="settings_vibration_title">Vibration</string>
     <string name="settings_vibration_summary">If selected, reminders will cause phone to vibrate.</string>

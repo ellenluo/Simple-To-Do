@@ -86,6 +86,8 @@ public class SettingsFragment extends PreferenceFragment {
                 return true;
             }
         });
+
+        Preference prefColor = findPreference("theme_color");
     }
 
     @Override
