@@ -69,7 +69,7 @@ class Helper {
 
     void setTheme() {
         SharedPreferences prefSettings = PreferenceManager.getDefaultSharedPreferences(this.context);
-        int color = prefSettings.getInt("theme_color", 4149685);
+        int color = prefSettings.getInt("theme_color", ContextCompat.getColor(this.context, R.color.dark_blue));
 
         if (color == ContextCompat.getColor(this.context, R.color.red)) {
             this.context.setTheme(R.style.RedTheme);

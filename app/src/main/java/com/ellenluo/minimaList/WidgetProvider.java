@@ -34,7 +34,7 @@ public class WidgetProvider extends AppWidgetProvider {
 
             // set header bar color
             SharedPreferences prefSettings = PreferenceManager.getDefaultSharedPreferences(context);
-            int color = prefSettings.getInt("theme_color", 4149685);
+            int color = prefSettings.getInt("theme_color", ContextCompat.getColor(context, R.color.dark_blue));
             remoteViews.setInt(R.id.widget_title, "setBackgroundColor", color);
 
             // set widget title

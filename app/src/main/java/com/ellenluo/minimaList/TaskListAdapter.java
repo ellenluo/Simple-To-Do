@@ -3,7 +3,9 @@ package com.ellenluo.minimaList;
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.preference.PreferenceManager;
+import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -35,7 +37,7 @@ public class TaskListAdapter extends ArrayAdapter {
         // get settings from preferences
         SharedPreferences prefSettings = PreferenceManager.getDefaultSharedPreferences(getContext());
         boolean militaryTime = prefSettings.getBoolean("24h", false);
-        int color = prefSettings.getInt("theme_color", 4149685);
+        int color = prefSettings.getInt("theme_color", ContextCompat.getColor(this.context, R.color.dark_blue));
 
         // set name
         TextView tvName = (TextView) convertView.findViewById(R.id.task_row_name);

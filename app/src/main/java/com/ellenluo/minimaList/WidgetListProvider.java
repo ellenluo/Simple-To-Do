@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.preference.PreferenceManager;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.util.TypedValue;
 import android.widget.RemoteViews;
@@ -114,7 +115,7 @@ public class WidgetListProvider implements RemoteViewsService.RemoteViewsFactory
         // get settings from preferences
         SharedPreferences prefSettings = PreferenceManager.getDefaultSharedPreferences(context);
         boolean militaryTime = prefSettings.getBoolean("24h", false);
-        int color = prefSettings.getInt("theme_color", 4149685);
+        int color = prefSettings.getInt("theme_color", ContextCompat.getColor(context, R.color.dark_blue));
 
         // set name and list
         if (task.getList() != -1) {

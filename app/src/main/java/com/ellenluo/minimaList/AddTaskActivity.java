@@ -2,8 +2,6 @@ package com.ellenluo.minimaList;
 
 import android.app.AlarmManager;
 import android.app.PendingIntent;
-import android.appwidget.AppWidgetManager;
-import android.content.ComponentName;
 import android.content.Context;
 import android.os.Build;
 import android.preference.PreferenceManager;
@@ -13,7 +11,6 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -33,33 +30,35 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Locale;
 
 public class AddTaskActivity extends AppCompatActivity implements TimePickerFragment.OnTimeSetListener, DatePickerFragment.OnDateSetListener {
 
-    DBHandler db;
-    SharedPreferences pref;
+    private DBHandler db;
+    private SharedPreferences pref;
     private static final int PREFERENCE_MODE_PRIVATE = 0;
 
-    String[] listSpinnerItem;
-    ArrayList<List> listList;
-    long listId = -1;
-    int size = 0;
-    int picker = 0;
+    private String[] listSpinnerItem;
+    private ArrayList<List> listList;
+    private long listId = -1;
+    private int size = 0;
+    private int picker = 0;
     boolean militaryTime = false;
 
-    Calendar due;
-    Calendar remind;
+    private Calendar due;
+    private Calendar remind;
 
-    TextView tvAddList;
-    TextView tvDueDate;
-    TextView tvRemindDate;
-    TextView tvRemindTime;
-    TextView tvDueTime;
-    EditText etAddList;
-    Spinner listSpinner;
-    Button btnClearDue;
-    Button btnClearRemind;
+    private TextView tvAddList;
+    private TextView tvDueDate;
+    private TextView tvRemindDate;
+    private TextView tvRemindTime;
+    private TextView tvDueTime;
+    private EditText etAddList;
+    private Spinner listSpinner;
+    private Button btnClearDue;
+    private Button btnClearRemind;
 
+    @SuppressWarnings("ConstantConditions")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -74,17 +73,14 @@ public class AddTaskActivity extends AppCompatActivity implements TimePickerFrag
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setDisplayShowHomeEnabled(true);
 
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP && getSupportActionBar() != null) {
             toolbar.setPadding(0, h.getStatusBarHeight(), 0, 0);
         }
 
         // get settings from preferences
         SharedPreferences prefSettings = PreferenceManager.getDefaultSharedPreferences(this);
         militaryTime = prefSettings.getBoolean("24h", false);
-
-        Log.d("AddTaskActivity", "color is " + prefSettings.getInt("theme_color", 0));
 
         // initialize due date/time
         tvDueDate = (TextView) findViewById(R.id.due_date);
@@ -132,13 +128,12 @@ public class AddTaskActivity extends AppCompatActivity implements TimePickerFrag
         listSpinner = (Spinner) findViewById(R.id.list_spinner);
 
         db = new DBHandler(this);
-        //db.getReadableDatabase();
         listList = db.getAllLists();
         size = listList.size();
 
         listSpinnerItem = new String[size + 2];
-        listSpinnerItem[0] = "None";
-        listSpinnerItem[size + 1] = "Add new list";
+        listSpinnerItem[0] = getString(R.string.add_task_no_list);
+        listSpinnerItem[size + 1] = getString(R.string.add_task_new_list);
 
         if (size > 0) {
             for (int i = 0; i < listList.size(); i++) {
@@ -146,7 +141,7 @@ public class AddTaskActivity extends AppCompatActivity implements TimePickerFrag
             }
         }
 
-        ArrayAdapter<String> listAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item, listSpinnerItem);
+        ArrayAdapter<String> listAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, listSpinnerItem);
         listSpinner.setAdapter(listAdapter);
 
         // set default list option
@@ -179,27 +174,31 @@ public class AddTaskActivity extends AppCompatActivity implements TimePickerFrag
         });
     }
 
-    public void setDate(View view) {
+    // when set due button clicked
+    public void setDue(View view) {
         picker = 0;
         DialogFragment datePicker = new DatePickerFragment();
         datePicker.show(getSupportFragmentManager(), "datePicker");
     }
 
+    // when set reminder button clicked
     public void setRemind(View view) {
         picker = 1;
         DialogFragment datePicker = new DatePickerFragment();
         datePicker.show(getSupportFragmentManager(), "datePicker");
     }
 
+    // when clear due button clicked
     public void clearDue(View view) {
-        tvDueDate.setText("No date selected");
+        tvDueDate.setText(getString(R.string.add_task_no_date));
         tvDueTime.setText("");
         due = null;
         btnClearDue.setVisibility(View.GONE);
     }
 
+    // when clear reminder button clicked
     public void clearRemind(View view) {
-        tvRemindDate.setText("No date selected");
+        tvRemindDate.setText(getString(R.string.add_task_no_date));
         tvRemindTime.setText("");
         remind = null;
         btnClearRemind.setVisibility(View.GONE);
@@ -208,7 +207,7 @@ public class AddTaskActivity extends AppCompatActivity implements TimePickerFrag
     // when date is set
     @Override
     public void onDateSet(DatePicker view, int year, int month, int day) {
-        String[] monthArray = {"Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
+        String[] monthArray = getResources().getStringArray(R.array.month_abbr);
 
         if (picker == 0) {
             due = Calendar.getInstance();
@@ -236,9 +235,9 @@ public class AddTaskActivity extends AppCompatActivity implements TimePickerFrag
             Date date = due.getTime();
 
             if (militaryTime) {
-                tvDueTime.setText(new SimpleDateFormat("HH:mm").format(date));
+                tvDueTime.setText(new SimpleDateFormat("HH:mm", Locale.getDefault()).format(date));
             } else {
-                tvDueTime.setText(new SimpleDateFormat("hh:mm a").format(date));
+                tvDueTime.setText(new SimpleDateFormat("hh:mm a", Locale.getDefault()).format(date));
             }
         } else {
             remind.set(Calendar.HOUR_OF_DAY, hourOfDay);
@@ -246,14 +245,15 @@ public class AddTaskActivity extends AppCompatActivity implements TimePickerFrag
             Date date = remind.getTime();
 
             if (militaryTime) {
-                tvRemindTime.setText(new SimpleDateFormat("HH:mm").format(date));
+                tvRemindTime.setText(new SimpleDateFormat("HH:mm", Locale.getDefault()).format(date));
             } else {
-                tvRemindTime.setText(new SimpleDateFormat("hh:mm a").format(date));
+                tvRemindTime.setText(new SimpleDateFormat("hh:mm a", Locale.getDefault()).format(date));
             }
         }
     }
 
     // get index of item in spinner
+    @SuppressWarnings("ConstantConditions")
     private int getIndex(String item) {
         int index = 0;
 
@@ -267,7 +267,8 @@ public class AddTaskActivity extends AppCompatActivity implements TimePickerFrag
     }
 
     // add task to database
-    public boolean addTask() {
+    @SuppressWarnings("ConstantConditions")
+    private void addTask() {
         EditText etName = (EditText) findViewById(R.id.task_name);
         EditText etText = (EditText) findViewById(R.id.task_details);
         DBHandler db = new DBHandler(this);
@@ -275,8 +276,8 @@ public class AddTaskActivity extends AppCompatActivity implements TimePickerFrag
         // check for empty task name
         if (etName.getText().toString().trim().length() == 0) {
             Helper h = new Helper(this);
-            h.displayAlert("Task name cannot be empty.", "Got it", "");
-            return true;
+            h.displayAlert(getString(R.string.dialog_empty_task), getString(R.string.dialog_confirmation), "");
+            return;
         }
 
         // check if new list was added
@@ -286,26 +287,26 @@ public class AddTaskActivity extends AppCompatActivity implements TimePickerFrag
             // check for empty list name
             if (listName.length() == 0) {
                 Helper h = new Helper(this);
-                h.displayAlert("New list name cannot be empty.", "Got it", "");
-                return true;
+                h.displayAlert(getString(R.string.dialog_empty_list), getString(R.string.dialog_confirmation), "");
+                return;
             }
 
             // check for duplicate list name
-            ArrayList<List> listList = db.getAllLists();
+            listList = db.getAllLists();
 
             for (int i = 0; i < listList.size(); i++) {
                 if (listName.equals(listList.get(i).getName())) {
                     Helper h = new Helper(this);
-                    h.displayAlert("List name already exists. Please enter a new list name.", "Got it", "");
-                    return true;
+                    h.displayAlert(getString(R.string.dialog_duplicate_list), getString(R.string.dialog_confirmation), "");
+                    return;
                 }
             }
 
             // check for "All Tasks" name
             if (listName.equals("All Tasks")) {
                 Helper h = new Helper(this);
-                h.displayAlert("List name already exists. Please enter a new list name.", "Got it", "");
-                return true;
+                h.displayAlert(getString(R.string.dialog_duplicate_list), getString(R.string.dialog_confirmation), "");
+                return;
             }
 
             List newList = new List(listName);
@@ -330,7 +331,7 @@ public class AddTaskActivity extends AppCompatActivity implements TimePickerFrag
         // add task & print completion message
         Task newTask = new Task(etName.getText().toString().trim(), etText.getText().toString(), dueMillis, remindMillis, listId);
         db.addTask(newTask);
-        Toast.makeText(this, "New task successfully added", Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, getString(R.string.add_task_confirmation), Toast.LENGTH_SHORT).show();
 
         // set reminder
         if (remindMillis != -1 && remindMillis > System.currentTimeMillis()) {
@@ -362,7 +363,6 @@ public class AddTaskActivity extends AppCompatActivity implements TimePickerFrag
         Intent returnIntent = new Intent(AddTaskActivity.this, MainActivity.class);
         startActivity(returnIntent);
         AddTaskActivity.this.finish();
-        return true;
     }
 
     // inflates action bar menu
@@ -391,9 +391,10 @@ public class AddTaskActivity extends AppCompatActivity implements TimePickerFrag
     @Override
     public void onBackPressed() {
         Helper h = new Helper(this);
-        h.displayAlert("Are you sure you want to discard this task?", "Keep editing", "Discard");
+        h.displayAlert(getString(R.string.dialog_discard_task), getString(R.string.dialog_discard_cancel), getString(R.string.dialog_discard));
     }
 
+    // close database
     @Override
     public void onDestroy() {
         super.onDestroy();
