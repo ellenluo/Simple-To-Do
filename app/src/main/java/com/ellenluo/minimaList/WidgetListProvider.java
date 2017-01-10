@@ -114,6 +114,7 @@ public class WidgetListProvider implements RemoteViewsService.RemoteViewsFactory
         // get settings from preferences
         SharedPreferences prefSettings = PreferenceManager.getDefaultSharedPreferences(context);
         boolean militaryTime = prefSettings.getBoolean("24h", false);
+        int color = prefSettings.getInt("theme_color", 4149685);
 
         // set name and list
         if (task.getList() != -1) {
@@ -128,6 +129,8 @@ public class WidgetListProvider implements RemoteViewsService.RemoteViewsFactory
         remoteView.setTextViewTextSize(R.id.task_row_date, TypedValue.COMPLEX_UNIT_SP, 12);
         remoteView.setTextColor(R.id.task_row_name, Color.parseColor("#757575"));
         remoteView.setTextColor(R.id.task_row_time, Color.parseColor("#757575"));
+        remoteView.setTextColor(R.id.task_row_list, color);
+        remoteView.setTextColor(R.id.task_row_date, color);
 
         // set date & time
         long millis = task.getDue();
@@ -168,6 +171,7 @@ public class WidgetListProvider implements RemoteViewsService.RemoteViewsFactory
         intent.putExtra("id", task.getId());
         remoteView.setOnClickFillInIntent(R.id.task_row, intent);
 
+        Log.w("WidgetListProvider", "row created");
         return remoteView;
     }
 

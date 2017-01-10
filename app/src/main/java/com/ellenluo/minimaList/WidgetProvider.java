@@ -9,6 +9,8 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.net.Uri;
+import android.preference.PreferenceManager;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -29,6 +31,11 @@ public class WidgetProvider extends AppWidgetProvider {
             RemoteViews remoteViews = new RemoteViews(context.getPackageName(), R.layout.widget);
             remoteViews.setRemoteAdapter(R.id.task_list, service);
             remoteViews.setEmptyView(R.id.task_list, R.id.empty_list);
+
+            // set header bar color
+            SharedPreferences prefSettings = PreferenceManager.getDefaultSharedPreferences(context);
+            int color = prefSettings.getInt("theme_color", 4149685);
+            remoteViews.setInt(R.id.widget_title, "setBackgroundColor", color);
 
             // set widget title
             SharedPreferences pref = context.getSharedPreferences(String.valueOf(appWidgetId), PREFERENCE_MODE_PRIVATE);

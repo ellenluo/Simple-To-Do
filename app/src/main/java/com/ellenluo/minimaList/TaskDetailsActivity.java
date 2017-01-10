@@ -34,6 +34,11 @@ public class TaskDetailsActivity extends AppCompatActivity {
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        // set theme
+        Helper h = new Helper(this);
+        h.setTheme();
+
         setContentView(R.layout.activity_task_details);
 
         // set up toolbar
@@ -41,8 +46,10 @@ public class TaskDetailsActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
-        Helper h = new Helper(this);
-        toolbar.setPadding(0, h.getStatusBarHeight(), 0, 0);
+
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
+            toolbar.setPadding(0, h.getStatusBarHeight(), 0, 0);
+        }
 
         // get settings from preferences
         SharedPreferences prefSettings = PreferenceManager.getDefaultSharedPreferences(this);

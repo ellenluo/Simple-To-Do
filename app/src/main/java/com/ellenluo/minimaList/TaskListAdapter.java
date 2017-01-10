@@ -35,6 +35,7 @@ public class TaskListAdapter extends ArrayAdapter {
         // get settings from preferences
         SharedPreferences prefSettings = PreferenceManager.getDefaultSharedPreferences(getContext());
         boolean militaryTime = prefSettings.getBoolean("24h", false);
+        int color = prefSettings.getInt("theme_color", 4149685);
 
         // set name
         TextView tvName = (TextView) convertView.findViewById(R.id.task_row_name);
@@ -42,6 +43,7 @@ public class TaskListAdapter extends ArrayAdapter {
 
         // set list
         TextView tvList = (TextView) convertView.findViewById(R.id.task_row_list);
+        tvList.setTextColor(color);
 
         if (taskList.get(position).getList() != -1) {
             String list = db.getList(taskList.get(position).getList()).getName();
@@ -50,6 +52,7 @@ public class TaskListAdapter extends ArrayAdapter {
 
         // get date & time text
         TextView tvDate = (TextView) convertView.findViewById(R.id.task_row_date);
+        tvDate.setTextColor(color);
         TextView tvTime = (TextView) convertView.findViewById(R.id.task_row_time);
         long millis = taskList.get(position).getDue();
 

@@ -65,6 +65,11 @@ public class EditTaskActivity extends AppCompatActivity implements TimePickerFra
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        // set theme
+        Helper h = new Helper(this);
+        h.setTheme();
+
         setContentView(R.layout.activity_edit_task);
 
         // set up toolbar
@@ -72,8 +77,10 @@ public class EditTaskActivity extends AppCompatActivity implements TimePickerFra
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
-        Helper h = new Helper(this);
-        toolbar.setPadding(0, h.getStatusBarHeight(), 0, 0);
+
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
+            toolbar.setPadding(0, h.getStatusBarHeight(), 0, 0);
+        }
 
         // get task from database
         pref = getSharedPreferences("Main", PREFERENCE_MODE_PRIVATE);

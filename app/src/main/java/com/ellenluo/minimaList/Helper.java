@@ -7,18 +7,22 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.graphics.Color;
+import android.preference.PreferenceManager;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
 
-public class Helper {
+class Helper {
 
     Context context;
 
-    public Helper(Context context) {
+    Helper(Context context) {
         this.context = context;
     }
 
     // find height of status bar
-    public int getStatusBarHeight() {
+    int getStatusBarHeight() {
         int result = 0;
         int resourceId = this.context.getResources().getIdentifier("status_bar_height", "dimen", "android");
         if (resourceId > 0) {
@@ -28,7 +32,7 @@ public class Helper {
     }
 
     // displays alert confirmation message
-    public void displayAlert(String message, String posMsg, String negMsg) {
+    void displayAlert(String message, String posMsg, String negMsg) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this.context);
         builder.setMessage(message);
 
@@ -55,12 +59,39 @@ public class Helper {
         dialog.show();
     }
 
-    public void updateWidgets() {
+    void updateWidgets() {
         // update widgets
         AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(this.context);
         int appWidgetIds[] = appWidgetManager.getAppWidgetIds(new ComponentName(this.context, WidgetProvider.class));
         appWidgetManager.notifyAppWidgetViewDataChanged(appWidgetIds, R.id.task_list);
         Log.w("Reference", "widgets updated");
+    }
+
+    void setTheme() {
+        SharedPreferences prefSettings = PreferenceManager.getDefaultSharedPreferences(this.context);
+        int color = prefSettings.getInt("theme_color", 4149685);
+
+        if (color == ContextCompat.getColor(this.context, R.color.red)) {
+            this.context.setTheme(R.style.RedTheme);
+        } else if (color == ContextCompat.getColor(this.context, R.color.pink)) {
+            this.context.setTheme(R.style.PinkTheme);
+        } else if (color == ContextCompat.getColor(this.context, R.color.purple)) {
+            this.context.setTheme(R.style.PurpleTheme);
+        } else if (color == ContextCompat.getColor(this.context, R.color.deep_purple)) {
+            this.context.setTheme(R.style.DeepPurpleTheme);
+        } else if (color == ContextCompat.getColor(this.context, R.color.dark_blue)) {
+            this.context.setTheme(R.style.AppTheme);
+        } else if (color == ContextCompat.getColor(this.context, R.color.light_blue)) {
+            this.context.setTheme(R.style.LightBlueTheme);
+        } else if (color == ContextCompat.getColor(this.context, R.color.aqua)) {
+            this.context.setTheme(R.style.AquaTheme);
+        } else if (color == ContextCompat.getColor(this.context, R.color.green)) {
+            this.context.setTheme(R.style.GreenTheme);
+        } else if (color == ContextCompat.getColor(this.context, R.color.orange)) {
+            this.context.setTheme(R.style.OrangeTheme);
+        } else {
+            this.context.setTheme(R.style.BlueGreyTheme);
+        }
     }
 
 }

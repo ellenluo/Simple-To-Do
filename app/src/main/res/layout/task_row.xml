@@ -37,7 +37,6 @@
             android:maxLines="1"
             android:text="@string/details_no_list"
             android:textAllCaps="true"
-            android:textColor="@color/colorPrimary"
             android:textSize="12sp"
             android:textStyle="bold" />
 
@@ -57,7 +56,6 @@
             android:maxLines="1"
             android:text="@string/task_row_no_date"
             android:textAllCaps="true"
-            android:textColor="@color/colorPrimary"
             android:textSize="14sp"
             android:textStyle="bold" />
 

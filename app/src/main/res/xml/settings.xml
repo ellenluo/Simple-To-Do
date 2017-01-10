@@ -1,46 +1,57 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:content="http://schemas.android.com/apk/res-auto">
 
-    <PreferenceCategory android:title="General Settings">
+    <PreferenceCategory android:title="@string/settings_general">
 
         <SwitchPreference
             android:defaultValue="false"
             android:key="24h"
-            android:summary="If selected, all due/reminder dates will be displayed in 24-hour time."
-            android:title="24-Hour Time" />
+            android:summary="@string/settings_24h_summary"
+            android:title="@string/settings_24h_title" />
+
+        <com.woalk.apps.lib.colorpicker.ColorPreference
+            android:defaultValue="@color/dark_blue"
+            android:key="theme_color"
+            android:summary="@string/settings_color_summary"
+            android:title="@string/settings_color_title"
+            app:picker_allowCustomColor="false"
+            app:picker_colors="@array/color_picker"
+            app:picker_columns="5"
+            app:picker_dialogTitle="@string/settings_color_dialog" />
 
     </PreferenceCategory>
 
-    <PreferenceCategory android:title="Notification Settings">
+    <PreferenceCategory android:title="@string/settings_notifications">
 
         <SwitchPreference
             android:defaultValue="true"
             android:key="vibration"
-            android:summary="If selected, reminders will cause phone to vibrate."
-            android:title="Vibration" />
+            android:summary="@string/settings_vibration_summary"
+            android:title="@string/settings_vibration_title" />
 
         <SwitchPreference
             android:defaultValue="true"
             android:key="light"
-            android:summary="If selected, reminders will cause phone LED light to blink."
-            android:title="LED Light" />
+            android:summary="@string/settings_led_summary"
+            android:title="@string/settings_led_title" />
 
         <RingtonePreference
             android:defaultValue="content://settings/system/notification_sound"
             android:key="sound"
             android:ringtoneType="notification"
             android:showDefault="true"
-            android:summary="Select a ringtone for reminders (or turn sound off)."
-            android:title="Notification Sound" />
+            android:summary="@string/settings_sound_summary"
+            android:title="@string/settings_sound_title" />
 
     </PreferenceCategory>
 
-    <PreferenceCategory android:title="Other">
+    <PreferenceCategory android:title="@string/settings_other">
 
         <Preference
             android:key="delete_all"
-            android:title="Delete all tasks and lists" />
+            android:title="@string/settings_delete" />
 
     </PreferenceCategory>
 

@@ -6,4 +6,17 @@
         <item>@string/feedback_3</item>
         <item>@string/feedback_4</item>
     </string-array>
+
+    <integer-array name="color_picker">
+        <item>@color/red</item>
+        <item>@color/pink</item>
+        <item>@color/purple</item>
+        <item>@color/deep_purple</item>
+        <item>@color/dark_blue</item>
+        <item>@color/light_blue</item>
+        <item>@color/aqua</item>
+        <item>@color/green</item>
+        <item>@color/orange</item>
+        <item>@color/blue_grey</item>
+    </integer-array>
 </resources>

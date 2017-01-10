@@ -13,6 +13,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -62,6 +63,11 @@ public class AddTaskActivity extends AppCompatActivity implements TimePickerFrag
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        // set theme
+        Helper h = new Helper(this);
+        h.setTheme();
+
         setContentView(R.layout.activity_add_task);
 
         // set up toolbar
@@ -69,12 +75,16 @@ public class AddTaskActivity extends AppCompatActivity implements TimePickerFrag
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
-        Helper h = new Helper(this);
-        toolbar.setPadding(0, h.getStatusBarHeight(), 0, 0);
+
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
+            toolbar.setPadding(0, h.getStatusBarHeight(), 0, 0);
+        }
 
         // get settings from preferences
         SharedPreferences prefSettings = PreferenceManager.getDefaultSharedPreferences(this);
         militaryTime = prefSettings.getBoolean("24h", false);
+
+        Log.d("AddTaskActivity", "color is " + prefSettings.getInt("theme_color", 0));
 
         // initialize due date/time
         tvDueDate = (TextView) findViewById(R.id.due_date);

@@ -27,7 +27,7 @@ public class SettingsFragment extends PreferenceFragment {
         addPreferencesFromResource(R.xml.settings);
 
         // delete all button
-        Preference prefDelete = (Preference) findPreference("delete_all");
+        Preference prefDelete = findPreference("delete_all");
         prefDelete.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             public boolean onPreferenceClick(Preference preference) {
                 // display confirmation dialog

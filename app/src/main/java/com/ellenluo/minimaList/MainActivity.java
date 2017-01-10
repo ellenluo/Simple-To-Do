@@ -50,13 +50,20 @@ public class MainActivity extends AppCompatActivity {
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        // set theme
+        Helper h = new Helper(this);
+        h.setTheme();
+
         setContentView(R.layout.activity_main);
 
         // set up toolbar
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        Helper h = new Helper(this);
-        toolbar.setPadding(0, h.getStatusBarHeight(), 0, 0);
+
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
+            toolbar.setPadding(0, h.getStatusBarHeight(), 0, 0);
+        }
 
         // set up navigation menu
         mDrawer = (DrawerLayout) findViewById(R.id.drawer_layout);

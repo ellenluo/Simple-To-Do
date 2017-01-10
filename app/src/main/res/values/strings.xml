@@ -60,6 +60,23 @@
     <string name="drawer_feedback">Send Feedback</string>
     <string name="drawer_help">Help</string>
 
+    <!-- Settings strings -->
+    <string name="settings_24h_title">24-Hour Time</string>
+    <string name="settings_24h_summary">If selected, all due/reminder dates will be displayed in 24-hour time.</string>
+    <string name="settings_color_title">Theme</string>
+    <string name="settings_color_summary">Tap to select the main color for the app.</string>
+    <string name="settings_color_dialog">Select a Color</string>
+    <string name="settings_vibration_title">Vibration</string>
+    <string name="settings_vibration_summary">If selected, reminders will cause phone to vibrate.</string>
+    <string name="settings_led_title">LED Light</string>
+    <string name="settings_led_summary">If selected, reminders will cause phone LED light to blink.</string>
+    <string name="settings_sound_title">Notification Sound</string>
+    <string name="settings_sound_summary">Select a ringtone for reminders (or turn sound off).</string>
+    <string name="settings_delete">Delete all tasks and lists</string>
+    <string name="settings_general">General Settings</string>
+    <string name="settings_notifications">Notification Settings</string>
+    <string name="settings_other">Other</string>
+
     <!-- Miscellaneous strings -->
     <string name="task_row_no_date">Someday</string>
     <string name="tasks_complete">All complete!</string>
