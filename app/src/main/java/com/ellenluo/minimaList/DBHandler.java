@@ -49,7 +49,7 @@ public class DBHandler extends SQLiteOpenHelper {
     }
 
     // all task table operations
-    public void addTask(Task task) {
+    void addTask(Task task) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
 
@@ -73,7 +73,7 @@ public class DBHandler extends SQLiteOpenHelper {
         db.close();
     }
 
-    public Task getTask(long id) {
+    Task getTask(long id) {
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor = db.query(TABLE_TASKS, new String[]{KEY_TASK_ID, KEY_TASK_NAME, KEY_TASK_DETAILS, KEY_TASK_DUE, KEY_TASK_REMIND, KEY_TASK_LIST}, KEY_TASK_ID + "=?", new String[] { String.valueOf(id) }, null, null, null, null);
 
@@ -89,12 +89,12 @@ public class DBHandler extends SQLiteOpenHelper {
         return null;
     }
 
-    public ArrayList<Task> getAllTasks() {
+    ArrayList<Task> getAllTasks() {
         SQLiteDatabase db = this.getReadableDatabase();
         String selectQuery =  "SELECT * FROM " + TABLE_TASKS + " WHERE " + KEY_TASK_DUE + " != -1 ORDER BY " + KEY_TASK_DUE + ", " + KEY_TASK_NAME;
         Cursor cursor = db.rawQuery(selectQuery, null);
 
-        ArrayList<Task> taskList = new ArrayList<Task>();
+        ArrayList<Task> taskList = new ArrayList<>();
 
         if (cursor.moveToFirst()) {
             do {
@@ -120,7 +120,7 @@ public class DBHandler extends SQLiteOpenHelper {
         return taskList;
     }
 
-    public int updateTask(Task task) {
+    int updateTask(Task task) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
         values.put(KEY_TASK_NAME, task.getName());
@@ -132,14 +132,14 @@ public class DBHandler extends SQLiteOpenHelper {
         return db.update(TABLE_TASKS, values, KEY_TASK_ID + " = ?", new String[]{String.valueOf(task.getId())});
     }
 
-    public void deleteTask(Task task) {
+    void deleteTask(Task task) {
         SQLiteDatabase db = this.getWritableDatabase();
         db.delete(TABLE_TASKS, KEY_TASK_ID + " = ?", new String[] { String.valueOf(task.getId()) });
         db.close();
     }
 
     // all list table operations
-    public void addList(List list) {
+    void addList(List list) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
 
@@ -149,7 +149,7 @@ public class DBHandler extends SQLiteOpenHelper {
         db.close();
     }
 
-    public List getList(long id) {
+    List getList(long id) {
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor = db.query(TABLE_LISTS, new String[]{KEY_LIST_ID, KEY_LIST_NAME}, KEY_LIST_ID + "=?", new String[] { String.valueOf(id) }, null, null, null, null);
 
@@ -165,26 +165,29 @@ public class DBHandler extends SQLiteOpenHelper {
         return null;
     }
 
-    public List getList(String name) {
+    List getList(String name) {
         SQLiteDatabase db = this.getReadableDatabase();
         String selectQuery = "SELECT * FROM " + TABLE_LISTS + " WHERE " + KEY_LIST_NAME + " =  \"" + name + "\"";
         Cursor cursor = db.rawQuery(selectQuery, null);
 
-        if (cursor != null)
-            cursor.moveToFirst();
+        if (cursor.moveToFirst()) {
+            List list = new List(Long.parseLong(cursor.getString(0)), cursor.getString(1));
+            cursor.close();
+            db.close();
+            return list;
+        }
 
-        List list = new List(Long.parseLong(cursor.getString(0)), cursor.getString(1));
         cursor.close();
         db.close();
-        return list;
+        return null;
     }
 
-    public ArrayList<List> getAllLists() {
+    ArrayList<List> getAllLists() {
         SQLiteDatabase db = this.getReadableDatabase();
         String selectQuery =  "SELECT * FROM " + TABLE_LISTS;
         Cursor cursor = db.rawQuery(selectQuery, null);
 
-        ArrayList<List> listList = new ArrayList<List>();
+        ArrayList<List> listList = new ArrayList<>();
 
         if (cursor.moveToFirst()) {
             do {
@@ -198,7 +201,7 @@ public class DBHandler extends SQLiteOpenHelper {
         return listList;
     }
 
-    public int updateList(List list) {
+    int updateList(List list) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
         values.put(KEY_LIST_NAME, list.getName());
@@ -206,18 +209,18 @@ public class DBHandler extends SQLiteOpenHelper {
         return db.update(TABLE_LISTS, values, KEY_LIST_ID + " = ?", new String[]{String.valueOf(list.getId())});
     }
 
-    public void deleteList(List list) {
+    void deleteList(List list) {
         SQLiteDatabase db = this.getWritableDatabase();
         db.delete(TABLE_LISTS, KEY_LIST_ID + " = ?", new String[] { String.valueOf(list.getId()) });
         db.close();
     }
 
-    public ArrayList<Task> getTasksFromList(long listId) {
+    ArrayList<Task> getTasksFromList(long listId) {
         SQLiteDatabase db = this.getReadableDatabase();
         String selectQuery = "SELECT  * FROM " + TABLE_TASKS + " t1, " + TABLE_LISTS + " t2 WHERE t2." + KEY_LIST_ID + " = '" + listId + "' AND t1." + KEY_TASK_LIST + " = t2." + KEY_LIST_ID + " AND " + KEY_TASK_DUE + " != -1 ORDER BY " + KEY_TASK_DUE + ", " + KEY_TASK_NAME;
         Cursor cursor = db.rawQuery(selectQuery, null);
 
-        ArrayList<Task> tasks = new ArrayList<Task>();
+        ArrayList<Task> tasks = new ArrayList<>();
 
         if (cursor.moveToFirst()) {
             do {
@@ -243,29 +246,13 @@ public class DBHandler extends SQLiteOpenHelper {
         return tasks;
     }
 
-    public boolean checkIfListExists(String name) {
-        SQLiteDatabase db = this.getReadableDatabase();
-        String selectQuery = "SELECT * FROM " + TABLE_LISTS + " WHERE " + KEY_LIST_NAME + " =  \"" + name + "\"";
-        Cursor cursor = db.rawQuery(selectQuery, null);
-
-        if(cursor.getCount() <= 0) {
-            cursor.close();
-            db.close();
-            return false;
-        }
-
-        cursor.close();
-        db.close();
-        return true;
-    }
-
-    public void deleteTasksFromList(long id) {
+    void deleteTasksFromList(long id) {
         SQLiteDatabase db = this.getWritableDatabase();
         db.delete(TABLE_TASKS, KEY_TASK_LIST + " = ?", new String[] { String.valueOf(id) });
         db.close();
     }
 
-    public void deleteAll() {
+    void deleteAll() {
         SQLiteDatabase db = this.getWritableDatabase();
         db.delete(TABLE_TASKS, null, null);
         db.delete(TABLE_LISTS, null, null);

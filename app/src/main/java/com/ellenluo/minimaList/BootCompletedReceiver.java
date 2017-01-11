@@ -6,7 +6,6 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
-import android.util.Log;
 
 import java.util.ArrayList;
 
@@ -14,12 +13,12 @@ public class BootCompletedReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent incomingIntent) {
-        // set new reminders
+        // get task list
         DBHandler db = new DBHandler(context);
         ArrayList<Task> taskList = db.getAllTasks();
 
+        // set new reminders
         for (int i = 0; i < taskList.size(); i++) {
-            Log.d("BootCompletedReceiver", "i = " + i + ", text is " + taskList.get(i).getName() + ",  remind is " + taskList.get(i).getRemind());
             if (taskList.get(i).getRemind() != -1 && taskList.get(i).getRemind() > System.currentTimeMillis()) {
                 AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
                 Intent intent = new Intent(context, AlarmManagerReceiver.class);
@@ -32,8 +31,6 @@ public class BootCompletedReceiver extends BroadcastReceiver {
                 } else {
                     alarmManager.setExact(AlarmManager.RTC_WAKEUP, taskList.get(i).getRemind(), pendingIntent);
                 }
-
-                Log.d("BootCompletedReceiver", "Reminder for task '" + taskList.get(i).getName() + "' has been set");
             }
         }
     }
