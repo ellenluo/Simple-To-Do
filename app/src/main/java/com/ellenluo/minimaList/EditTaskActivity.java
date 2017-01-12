@@ -2,17 +2,15 @@ package com.ellenluo.minimaList;
 
 import android.app.AlarmManager;
 import android.app.PendingIntent;
-import android.appwidget.AppWidgetManager;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Build;
+import android.preference.PreferenceManager;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -32,36 +30,37 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Locale;
 
 public class EditTaskActivity extends AppCompatActivity implements TimePickerFragment.OnTimeSetListener, DatePickerFragment.OnDateSetListener {
 
-    DBHandler db;
-    SharedPreferences pref;
+    private DBHandler db;
+    private SharedPreferences pref;
     private static final int PREFERENCE_MODE_PRIVATE = 0;
 
-    Calendar due;
-    Calendar remind;
-    Task curTask;
+    private long id;
+    private int picker = 0;
+    private int size = 0;
+    private String[] spinnerItem;
+    private long listId = -1;
+    private boolean militaryTime;
 
-    EditText etName;
-    EditText etDetails;
-    EditText etAddList;
-    Spinner listSpinner;
-    TextView tvAddList;
-    TextView tvDueDate;
-    TextView tvDueTime;
-    TextView tvRemindDate;
-    TextView tvRemindTime;
-    Button btnClearDue;
-    Button btnClearRemind;
+    private Calendar due;
+    private Calendar remind;
+    private Task curTask;
 
-    long id;
-    int picker = 0;
-    int size = 0;
-    String[] spinnerItem;
-    ArrayList<List> listList;
-    long listId = -1;
+    private EditText etName;
+    private EditText etDetails;
+    private EditText etAddList;
+    private TextView tvAddList;
+    private TextView tvDueDate;
+    private TextView tvDueTime;
+    private TextView tvRemindDate;
+    private TextView tvRemindTime;
+    private Button btnClearDue;
+    private Button btnClearRemind;
 
+    @SuppressWarnings("ConstantConditions")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -76,11 +75,14 @@ public class EditTaskActivity extends AppCompatActivity implements TimePickerFra
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setDisplayShowHomeEnabled(true);
 
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
             toolbar.setPadding(0, h.getStatusBarHeight(), 0, 0);
         }
+
+        // get settings from preferences
+        SharedPreferences prefSettings = PreferenceManager.getDefaultSharedPreferences(this);
+        militaryTime = prefSettings.getBoolean("24h", false);
 
         // get task from database
         pref = getSharedPreferences("Main", PREFERENCE_MODE_PRIVATE);
@@ -105,9 +107,14 @@ public class EditTaskActivity extends AppCompatActivity implements TimePickerFra
             Date date = cal.getTime();
             due = cal;
 
-            tvDueDate.setText(new SimpleDateFormat("MMM dd, yyyy").format(date));
-            tvDueTime.setText(new SimpleDateFormat("hh:mm a").format(date));
+            tvDueDate.setText(new SimpleDateFormat("MMM dd, yyyy", Locale.getDefault()).format(date));
             btnClearDue.setVisibility(View.VISIBLE);
+
+            if (militaryTime) {
+                tvDueTime.setText(new SimpleDateFormat("HH:mm", Locale.getDefault()).format(date));
+            } else {
+                tvDueTime.setText(new SimpleDateFormat("hh:mm a", Locale.getDefault()).format(date));
+            }
         }
 
         // set up current reminder
@@ -118,20 +125,26 @@ public class EditTaskActivity extends AppCompatActivity implements TimePickerFra
         btnClearRemind = (Button) findViewById(R.id.clear_remind);
 
         if (curTask.getRemind() == -1) {
-            // make reminder date invisible
+            // make reminder date/time invisible
             tvRemindDate.setVisibility(View.GONE);
             tvRemindTime.setVisibility(View.GONE);
             btnSetRemind.setVisibility(View.GONE);
         } else {
+            // set current reminder date/time
             Calendar cal = Calendar.getInstance();
             cal.setTimeInMillis(curTask.getRemind());
             Date date = cal.getTime();
             remind = cal;
 
-            tvRemindDate.setText(new SimpleDateFormat("MMM dd, yyyy").format(date));
-            tvRemindTime.setText(new SimpleDateFormat("hh:mm a").format(date));
+            tvRemindDate.setText(new SimpleDateFormat("MMM dd, yyyy", Locale.getDefault()).format(date));
             btnClearRemind.setVisibility(View.VISIBLE);
             remindSwitch.setChecked(true);
+
+            if (militaryTime) {
+                tvRemindTime.setText(new SimpleDateFormat("HH:mm", Locale.getDefault()).format(date));
+            } else {
+                tvRemindTime.setText(new SimpleDateFormat("hh:mm a", Locale.getDefault()).format(date));
+            }
         }
 
         // set up reminder switch
@@ -164,16 +177,13 @@ public class EditTaskActivity extends AppCompatActivity implements TimePickerFra
         etAddList = (EditText) findViewById(R.id.list_name);
 
         // set up spinner
-        listSpinner = (Spinner) findViewById(R.id.list_spinner);
-
-        db = new DBHandler(this);
-        //db.getReadableDatabase();
-        listList = db.getAllLists();
+        Spinner listSpinner = (Spinner) findViewById(R.id.list_spinner);
+        ArrayList<List> listList = db.getAllLists();
         size = listList.size();
 
         spinnerItem = new String[size + 2];
-        spinnerItem[0] = "None";
-        spinnerItem[size + 1] = "Add new list";
+        spinnerItem[0] = getString(R.string.add_task_no_list);
+        spinnerItem[size + 1] = getString(R.string.add_task_new_list);
 
         if (size > 0) {
             for (int i = 0; i < listList.size(); i++) {
@@ -181,16 +191,17 @@ public class EditTaskActivity extends AppCompatActivity implements TimePickerFra
             }
         }
 
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item, spinnerItem);
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, spinnerItem);
         listSpinner.setAdapter(adapter);
 
+        // set selection to current value
         if (curTask.getList() == -1) {
-            listSpinner.setSelection(getIndex("All Tasks"));
+            listSpinner.setSelection(h.getIndex("All Tasks", listSpinner));
         } else {
-            listSpinner.setSelection(getIndex(db.getList(curTask.getList()).getName()));
+            listSpinner.setSelection(h.getIndex(db.getList(curTask.getList()).getName(), listSpinner));
         }
 
-        // if spinner item is selected
+        // if list item is selected
         listSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -215,27 +226,31 @@ public class EditTaskActivity extends AppCompatActivity implements TimePickerFra
         });
     }
 
-    public void setDate(View view) {
+    // when set due button clicked
+    public void setDue(View view) {
         picker = 0;
         DialogFragment datePicker = new DatePickerFragment();
         datePicker.show(getSupportFragmentManager(), "datePicker");
     }
 
+    // when set reminder button clicked
     public void setRemind(View view) {
         picker = 1;
         DialogFragment datePicker = new DatePickerFragment();
         datePicker.show(getSupportFragmentManager(), "datePicker");
     }
 
+    // when clear due button clicked
     public void clearDue(View view) {
-        tvDueDate.setText("No date selected");
+        tvDueDate.setText(getString(R.string.add_task_no_date));
         tvDueTime.setText("");
         due = null;
         btnClearDue.setVisibility(View.GONE);
     }
 
+    // when clear reminder button clicked
     public void clearRemind(View view) {
-        tvRemindDate.setText("No date selected");
+        tvRemindDate.setText(getString(R.string.add_task_no_date));
         tvRemindTime.setText("");
         remind = null;
         btnClearRemind.setVisibility(View.GONE);
@@ -244,7 +259,7 @@ public class EditTaskActivity extends AppCompatActivity implements TimePickerFra
     // when date is set
     @Override
     public void onDateSet(DatePicker view, int year, int month, int day) {
-        String[] monthArray = {"Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
+        String[] monthArray = getResources().getStringArray(R.array.month_abbr);
 
         if (picker == 0) {
             due = Calendar.getInstance();
@@ -270,42 +285,46 @@ public class EditTaskActivity extends AppCompatActivity implements TimePickerFra
             due.set(Calendar.HOUR_OF_DAY, hourOfDay);
             due.set(Calendar.MINUTE, minute);
             Date date = due.getTime();
-            tvDueTime.setText(new SimpleDateFormat("hh:mm a").format(date));
+
+            if (militaryTime) {
+                tvDueTime.setText(new SimpleDateFormat("HH:mm", Locale.getDefault()).format(date));
+            } else {
+                tvDueTime.setText(new SimpleDateFormat("hh:mm a", Locale.getDefault()).format(date));
+            }
         } else {
             remind.set(Calendar.HOUR_OF_DAY, hourOfDay);
             remind.set(Calendar.MINUTE, minute);
             Date date = remind.getTime();
-            tvRemindTime.setText(new SimpleDateFormat("hh:mm a").format(date));
-        }
-    }
 
-    // get index of item in spinner
-    private int getIndex(String item) {
-        int index = 0;
-
-        for (int i = 0; i < listSpinner.getCount(); i++) {
-            if (listSpinner.getItemAtPosition(i).toString().equalsIgnoreCase(item)) {
-                index = i;
-                break;
+            if (militaryTime) {
+                tvRemindTime.setText(new SimpleDateFormat("HH:mm", Locale.getDefault()).format(date));
+            } else {
+                tvRemindTime.setText(new SimpleDateFormat("hh:mm a", Locale.getDefault()).format(date));
             }
         }
-        return index;
     }
 
-    // save changes
-    public boolean saveChanges() {
-        String newName = etName.getText().toString();
+    // save changes to database
+    private void saveChanges() {
+        String newName = etName.getText().toString().trim();
         String newDetails = etDetails.getText().toString();
+
+        // check for empty task name
+        if (newName.length() == 0) {
+            Helper h = new Helper(this);
+            h.displayAlert(getString(R.string.dialog_empty_task), getString(R.string.dialog_confirmation), "");
+            return;
+        }
 
         // check if new list was added
         if (tvAddList.getVisibility() == View.VISIBLE && etAddList.getVisibility() == View.VISIBLE) {
-            String listName = etAddList.getText().toString();
+            String listName = etAddList.getText().toString().trim();
 
             // check for empty list name
             if (listName.length() == 0) {
                 Helper h = new Helper(this);
-                h.displayAlert("New list name cannot be empty.", "Got it", "");
-                return true;
+                h.displayAlert(getString(R.string.dialog_empty_list), getString(R.string.dialog_confirmation), "");
+                return;
             }
 
             // check for duplicate list name
@@ -314,24 +333,25 @@ public class EditTaskActivity extends AppCompatActivity implements TimePickerFra
             for (int i = 0; i < listList.size(); i++) {
                 if (listName.equals(listList.get(i).getName())) {
                     Helper h = new Helper(this);
-                    h.displayAlert("List name already exists. Please enter a new list name.", "Got it", "");
-                    return true;
+                    h.displayAlert(getString(R.string.dialog_duplicate_list), getString(R.string.dialog_confirmation), "");
+                    return;
                 }
             }
 
             // check for "All Tasks" name
             if (listName.equals("All Tasks")) {
                 Helper h = new Helper(this);
-                h.displayAlert("List name already exists. Please enter a new list name.", "Got it", "");
-                return true;
+                h.displayAlert(getString(R.string.dialog_duplicate_list), getString(R.string.dialog_confirmation), "");
+                return;
             }
 
+            // add new list
             List newList = new List(listName);
             db.addList(newList);
             listId = db.getList(listName).getId();
         }
 
-        // get time & date
+        // get due date
         long dueMillis = -1;
 
         if (due != null) {
@@ -347,7 +367,7 @@ public class EditTaskActivity extends AppCompatActivity implements TimePickerFra
 
         // set reminder
         if (remindMillis != curTask.getRemind()) {
-            // cancel reminder
+            // cancel original reminder
             Intent intent = new Intent(EditTaskActivity.this, AlarmManagerReceiver.class);
             PendingIntent pendingIntent = PendingIntent.getBroadcast(this, (int) curTask.getId(), intent, PendingIntent.FLAG_UPDATE_CURRENT);
             AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
@@ -361,10 +381,8 @@ public class EditTaskActivity extends AppCompatActivity implements TimePickerFra
                 pendingIntent = PendingIntent.getBroadcast(this, (int) curTask.getId(), intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
                 if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT) {
-                    Log.d("EditTaskActivity", "using set");
                     alarmManager.set(AlarmManager.RTC_WAKEUP, remindMillis, pendingIntent);
                 } else {
-                    Log.d("EditTaskActivity", "Using setExact");
                     alarmManager.setExact(AlarmManager.RTC_WAKEUP, remindMillis, pendingIntent);
                 }
             }
@@ -377,7 +395,7 @@ public class EditTaskActivity extends AppCompatActivity implements TimePickerFra
         curTask.setRemind(remindMillis);
         curTask.setList(listId);
         db.updateTask(curTask);
-        Toast.makeText(this, "'" + curTask.getName() + "' successfully updated", Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, "'" + curTask.getName() + "' " + getString(R.string.edit_task_confirmation), Toast.LENGTH_SHORT).show();
 
         // update widgets
         Helper h = new Helper(this);
@@ -395,8 +413,6 @@ public class EditTaskActivity extends AppCompatActivity implements TimePickerFra
         intent.putExtra("id", id);
         startActivity(intent);
         EditTaskActivity.this.finish();
-
-        return true;
     }
 
     // inflates action bar menu
@@ -425,7 +441,14 @@ public class EditTaskActivity extends AppCompatActivity implements TimePickerFra
     @Override
     public void onBackPressed() {
         Helper h = new Helper(this);
-        h.displayAlert("Are you sure you want to discard your changes?", "Keep editing", "Discard");
+        h.displayAlert(getString(R.string.dialog_discard_changes), getString(R.string.dialog_discard_cancel), getString(R.string.dialog_discard));
+    }
+
+    // close database
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        db.close();
     }
 
 }

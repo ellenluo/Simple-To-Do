@@ -21,6 +21,7 @@
     <string name="add_task_no_list">None</string>
     <string name="add_task_new_list">Add new list</string>
     <string name="add_task_confirmation">New task successfully added</string>
+    <string name="edit_task_confirmation">successfully updated</string>
 
     <!-- Task details strings -->
     <string name="details_task_name">Task:</string>
@@ -88,6 +89,7 @@
     <string name="dialog_discard_task">Are you sure you want to discard this task?</string>
     <string name="dialog_discard_cancel">Keep editing</string>
     <string name="dialog_discard">Discard</string>
+    <string name="dialog_discard_changes">Are you sure you want to discard your changes?</string>
 
     <!-- Month abbreviations -->
     <string name="jan">Jan</string>

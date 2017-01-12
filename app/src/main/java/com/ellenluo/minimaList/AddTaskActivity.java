@@ -54,7 +54,6 @@ public class AddTaskActivity extends AppCompatActivity implements TimePickerFrag
     private TextView tvRemindTime;
     private TextView tvDueTime;
     private EditText etAddList;
-    private Spinner listSpinner;
     private Button btnClearDue;
     private Button btnClearRemind;
 
@@ -125,7 +124,7 @@ public class AddTaskActivity extends AppCompatActivity implements TimePickerFrag
         });
 
         // set up list spinner
-        listSpinner = (Spinner) findViewById(R.id.list_spinner);
+        Spinner listSpinner = (Spinner) findViewById(R.id.list_spinner);
 
         db = new DBHandler(this);
         listList = db.getAllLists();
@@ -147,9 +146,9 @@ public class AddTaskActivity extends AppCompatActivity implements TimePickerFrag
         // set default list option
         pref = getSharedPreferences("Main", PREFERENCE_MODE_PRIVATE);
         String curList = pref.getString("current_list", "All Tasks");
-        listSpinner.setSelection(getIndex(curList));
+        listSpinner.setSelection(h.getIndex(curList, listSpinner));
 
-        // if spinner item is selected
+        // if list item is selected
         listSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -252,36 +251,23 @@ public class AddTaskActivity extends AppCompatActivity implements TimePickerFrag
         }
     }
 
-    // get index of item in spinner
-    @SuppressWarnings("ConstantConditions")
-    private int getIndex(String item) {
-        int index = 0;
-
-        for (int i = 0; i < listSpinner.getCount(); i++) {
-            if (listSpinner.getItemAtPosition(i).toString().equalsIgnoreCase(item)) {
-                index = i;
-                break;
-            }
-        }
-        return index;
-    }
-
     // add task to database
     @SuppressWarnings("ConstantConditions")
     private void addTask() {
         EditText etName = (EditText) findViewById(R.id.task_name);
-        EditText etText = (EditText) findViewById(R.id.task_details);
-        DBHandler db = new DBHandler(this);
+        EditText etDetails = (EditText) findViewById(R.id.task_details);
+        String taskName = etName.getText().toString().trim();
+        String details = etDetails.getText().toString();
 
         // check for empty task name
-        if (etName.getText().toString().trim().length() == 0) {
+        if (taskName.length() == 0) {
             Helper h = new Helper(this);
             h.displayAlert(getString(R.string.dialog_empty_task), getString(R.string.dialog_confirmation), "");
             return;
         }
 
         // check if new list was added
-        if (etText.getVisibility() == View.VISIBLE && etAddList.getVisibility() == View.VISIBLE) {
+        if (tvAddList.getVisibility() == View.VISIBLE && etAddList.getVisibility() == View.VISIBLE) {
             String listName = etAddList.getText().toString().trim();
 
             // check for empty list name
@@ -309,6 +295,7 @@ public class AddTaskActivity extends AppCompatActivity implements TimePickerFrag
                 return;
             }
 
+            // add new list
             List newList = new List(listName);
             db.addList(newList);
             listId = db.getList(listName).getId();
@@ -329,7 +316,7 @@ public class AddTaskActivity extends AppCompatActivity implements TimePickerFrag
         }
 
         // add task & print completion message
-        Task newTask = new Task(etName.getText().toString().trim(), etText.getText().toString(), dueMillis, remindMillis, listId);
+        Task newTask = new Task(taskName, details, dueMillis, remindMillis, listId);
         db.addTask(newTask);
         Toast.makeText(this, getString(R.string.add_task_confirmation), Toast.LENGTH_SHORT).show();
 
@@ -337,7 +324,7 @@ public class AddTaskActivity extends AppCompatActivity implements TimePickerFrag
         if (remindMillis != -1 && remindMillis > System.currentTimeMillis()) {
             AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
             Intent intent = new Intent(AddTaskActivity.this, AlarmManagerReceiver.class);
-            intent.putExtra("text", etName.getText().toString());
+            intent.putExtra("text", taskName);
             intent.putExtra("id", newTask.getId());
             PendingIntent pendingIntent = PendingIntent.getBroadcast(this, (int) newTask.getId(), intent, PendingIntent.FLAG_UPDATE_CURRENT);
 

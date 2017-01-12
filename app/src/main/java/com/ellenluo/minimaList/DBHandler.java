@@ -5,7 +5,6 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.util.Log;
 
 import java.util.ArrayList;
 
@@ -34,6 +33,7 @@ public class DBHandler extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
+        // create task and list tables
         String CREATE_TASK_TABLE = "CREATE TABLE " + TABLE_TASKS + " (" + KEY_TASK_ID + " INTEGER PRIMARY KEY, " + KEY_TASK_NAME + " TEXT, " + KEY_TASK_DETAILS + " TEXT, " + KEY_TASK_DUE + " INTEGER, " + KEY_TASK_REMIND + " INTEGER, " + KEY_TASK_LIST + " INTEGER)";
         String CREATE_LIST_TABLE = "CREATE TABLE " + TABLE_LISTS + " (" + KEY_LIST_ID + " INTEGER PRIMARY KEY, " + KEY_LIST_NAME + " TEXT)";
 
@@ -48,7 +48,7 @@ public class DBHandler extends SQLiteOpenHelper {
         onCreate(db);
     }
 
-    // all task table operations
+    // add task to table
     void addTask(Task task) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
@@ -61,7 +61,7 @@ public class DBHandler extends SQLiteOpenHelper {
 
         db.insert(TABLE_TASKS, null, values);
 
-        long id = -1;
+        /*long id = -1;
         String selectQuery = "SELECT " + KEY_TASK_ID + " FROM " + TABLE_TASKS + " ORDER BY " + KEY_TASK_ID + " DESC LIMIT 1";
         Cursor cursor = db.rawQuery(selectQuery, null);
         if (cursor.moveToFirst()) {
@@ -69,10 +69,12 @@ public class DBHandler extends SQLiteOpenHelper {
         }
         task.setId(id);
 
-        cursor.close();
+        cursor.close();*/
+
         db.close();
     }
 
+    // get task from table
     Task getTask(long id) {
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor = db.query(TABLE_TASKS, new String[]{KEY_TASK_ID, KEY_TASK_NAME, KEY_TASK_DETAILS, KEY_TASK_DUE, KEY_TASK_REMIND, KEY_TASK_LIST}, KEY_TASK_ID + "=?", new String[] { String.valueOf(id) }, null, null, null, null);
@@ -89,8 +91,11 @@ public class DBHandler extends SQLiteOpenHelper {
         return null;
     }
 
+    // get all tasks from table
     ArrayList<Task> getAllTasks() {
         SQLiteDatabase db = this.getReadableDatabase();
+
+        // select all tasks with due dates first
         String selectQuery =  "SELECT * FROM " + TABLE_TASKS + " WHERE " + KEY_TASK_DUE + " != -1 ORDER BY " + KEY_TASK_DUE + ", " + KEY_TASK_NAME;
         Cursor cursor = db.rawQuery(selectQuery, null);
 
@@ -105,6 +110,7 @@ public class DBHandler extends SQLiteOpenHelper {
 
         cursor.close();
 
+        // select all tasks without due dates
         selectQuery =  "SELECT * FROM " + TABLE_TASKS + " WHERE " + KEY_TASK_DUE + " = -1 ORDER BY " + KEY_TASK_NAME;
         cursor = db.rawQuery(selectQuery, null);
 
@@ -120,6 +126,7 @@ public class DBHandler extends SQLiteOpenHelper {
         return taskList;
     }
 
+    // update task in table
     int updateTask(Task task) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
@@ -132,13 +139,14 @@ public class DBHandler extends SQLiteOpenHelper {
         return db.update(TABLE_TASKS, values, KEY_TASK_ID + " = ?", new String[]{String.valueOf(task.getId())});
     }
 
+    // delete task from table
     void deleteTask(Task task) {
         SQLiteDatabase db = this.getWritableDatabase();
         db.delete(TABLE_TASKS, KEY_TASK_ID + " = ?", new String[] { String.valueOf(task.getId()) });
         db.close();
     }
 
-    // all list table operations
+    // add list to table
     void addList(List list) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
@@ -149,6 +157,7 @@ public class DBHandler extends SQLiteOpenHelper {
         db.close();
     }
 
+    // get list from table (by id)
     List getList(long id) {
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor = db.query(TABLE_LISTS, new String[]{KEY_LIST_ID, KEY_LIST_NAME}, KEY_LIST_ID + "=?", new String[] { String.valueOf(id) }, null, null, null, null);
@@ -165,6 +174,7 @@ public class DBHandler extends SQLiteOpenHelper {
         return null;
     }
 
+    // get list from table (by name)
     List getList(String name) {
         SQLiteDatabase db = this.getReadableDatabase();
         String selectQuery = "SELECT * FROM " + TABLE_LISTS + " WHERE " + KEY_LIST_NAME + " =  \"" + name + "\"";
@@ -182,6 +192,7 @@ public class DBHandler extends SQLiteOpenHelper {
         return null;
     }
 
+    // get all lists from table
     ArrayList<List> getAllLists() {
         SQLiteDatabase db = this.getReadableDatabase();
         String selectQuery =  "SELECT * FROM " + TABLE_LISTS;
@@ -201,6 +212,7 @@ public class DBHandler extends SQLiteOpenHelper {
         return listList;
     }
 
+    // update list in table
     int updateList(List list) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
@@ -209,14 +221,18 @@ public class DBHandler extends SQLiteOpenHelper {
         return db.update(TABLE_LISTS, values, KEY_LIST_ID + " = ?", new String[]{String.valueOf(list.getId())});
     }
 
+    // delete list from table
     void deleteList(List list) {
         SQLiteDatabase db = this.getWritableDatabase();
         db.delete(TABLE_LISTS, KEY_LIST_ID + " = ?", new String[] { String.valueOf(list.getId()) });
         db.close();
     }
 
+    // get all tasks from a particular list
     ArrayList<Task> getTasksFromList(long listId) {
         SQLiteDatabase db = this.getReadableDatabase();
+
+        // select all tasks with due dates first
         String selectQuery = "SELECT  * FROM " + TABLE_TASKS + " t1, " + TABLE_LISTS + " t2 WHERE t2." + KEY_LIST_ID + " = '" + listId + "' AND t1." + KEY_TASK_LIST + " = t2." + KEY_LIST_ID + " AND " + KEY_TASK_DUE + " != -1 ORDER BY " + KEY_TASK_DUE + ", " + KEY_TASK_NAME;
         Cursor cursor = db.rawQuery(selectQuery, null);
 
@@ -231,6 +247,7 @@ public class DBHandler extends SQLiteOpenHelper {
 
         cursor.close();
 
+        // select all tasks without due dates
         selectQuery = "SELECT  * FROM " + TABLE_TASKS + " t1, " + TABLE_LISTS + " t2 WHERE t2." + KEY_LIST_ID + " = '" + listId + "' AND t1." + KEY_TASK_LIST + " = t2." + KEY_LIST_ID + " AND " + KEY_TASK_DUE + " = -1 ORDER BY " + KEY_TASK_NAME;
         cursor = db.rawQuery(selectQuery, null);
 
@@ -246,12 +263,14 @@ public class DBHandler extends SQLiteOpenHelper {
         return tasks;
     }
 
+    // delete all tasks from a particular list
     void deleteTasksFromList(long id) {
         SQLiteDatabase db = this.getWritableDatabase();
         db.delete(TABLE_TASKS, KEY_TASK_LIST + " = ?", new String[] { String.valueOf(id) });
         db.close();
     }
 
+    // delete all tasks and lists
     void deleteAll() {
         SQLiteDatabase db = this.getWritableDatabase();
         db.delete(TABLE_TASKS, null, null);

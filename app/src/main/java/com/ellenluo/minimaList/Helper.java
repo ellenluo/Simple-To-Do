@@ -12,6 +12,7 @@ import android.graphics.Color;
 import android.preference.PreferenceManager;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
+import android.widget.Spinner;
 
 class Helper {
 
@@ -92,6 +93,19 @@ class Helper {
         } else {
             this.context.setTheme(R.style.AppTheme);
         }
+    }
+
+    // get index of item in spinner
+    int getIndex(String item, Spinner listSpinner) {
+        int index = 0;
+
+        for (int i = 0; i < listSpinner.getCount(); i++) {
+            if (listSpinner.getItemAtPosition(i).toString().equalsIgnoreCase(item)) {
+                index = i;
+                break;
+            }
+        }
+        return index;
     }
 
 }
