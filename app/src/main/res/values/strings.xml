@@ -7,7 +7,7 @@
     <string name="title_activity_edit_task">Edit Task</string>
     <string name="title_activity_widget_configure">Configure Widget</string>
 
-    <!-- Add/edit task strings -->
+    <!-- Add/edit/delete task strings -->
     <string name="add_task_button">Add Task</string>
     <string name="add_task_name">What is your task?</string>
     <string name="add_task_details">Additional details:</string>
@@ -22,6 +22,7 @@
     <string name="add_task_new_list">Add new list</string>
     <string name="add_task_confirmation">New task successfully added</string>
     <string name="edit_task_confirmation">successfully updated</string>
+    <string name="delete_task_confirmation">successfully removed</string>
 
     <!-- Task details strings -->
     <string name="details_task_name">Task:</string>
@@ -32,6 +33,7 @@
     <string name="details_no_list">No list</string>
     <string name="details_list">List:</string>
     <string name="details_completed">Complete?</string>
+    <string name="details_at">at</string>
 
     <!-- Add/edit list strings -->
     <string name="add_list_title">Add List</string>
@@ -44,7 +46,7 @@
 
     <!-- Feedback strings -->
     <string name="feedback_name">What is your name?</string>
-    <string name="feedback_email">What is your email?</string>
+    <string name="feedback_email">What is your email address?</string>
     <string name="feedback_type">What type of feedback are you sending?</string>
     <string name="feedback_message">Enter your message here:</string>
     <string name="feedback_hint">Please include relevant details such as phone model, Android version, etc.</string>
@@ -90,6 +92,10 @@
     <string name="dialog_discard_cancel">Keep editing</string>
     <string name="dialog_discard">Discard</string>
     <string name="dialog_discard_changes">Are you sure you want to discard your changes?</string>
+    <string name="dialog_delete_confirmation">Are you sure you want to delete this list and all corresponding tasks?</string>
+    <string name="dialog_delete">Delete</string>
+    <string name="dialog_delete_cancel">Cancel</string>
+    <string name="dialog_delete_all_confirmation">Are you sure you want to delete all tasks and lists? This cannot be undone.</string>
 
     <!-- Month abbreviations -->
     <string name="jan">Jan</string>
@@ -105,11 +111,17 @@
     <string name="nov">Nov</string>
     <string name="dec">Dec</string>
 
-    <!-- Miscellaneous strings -->
+    <!-- Task row strings -->
     <string name="task_row_no_date">Someday</string>
+    <string name="task_row_overdue">Overdue</string>
+    <string name="task_row_today">Today</string>
+    <string name="task_row_tomorrow">Tomorrow</string>
+
+    <!-- Miscellaneous strings -->
     <string name="tasks_complete">All complete!</string>
     <string name="checkmark_toolbar">Add</string>
     <string name="edit_toolbar">Edit</string>
     <string name="widget_configure_select_list">Select list to display:</string>
+    <string name="error">Sorry, something has gone wrong. Please send a bug report so I can fix it ASAP.</string>
 
 </resources>

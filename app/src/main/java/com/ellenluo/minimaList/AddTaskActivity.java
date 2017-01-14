@@ -1,9 +1,5 @@
 package com.ellenluo.minimaList;
 
-import android.app.AlarmManager;
-import android.app.PendingIntent;
-import android.content.Context;
-import android.os.Build;
 import android.preference.PreferenceManager;
 import android.support.v4.app.DialogFragment;
 import android.content.Intent;
@@ -38,15 +34,9 @@ public class AddTaskActivity extends AppCompatActivity implements TimePickerFrag
     private SharedPreferences pref;
     private static final int PREFERENCE_MODE_PRIVATE = 0;
 
-    private String[] listSpinnerItem;
-    private ArrayList<List> listList;
-    private long listId = -1;
-    private int size = 0;
-    private int picker = 0;
-    boolean militaryTime = false;
-
     private Calendar due;
     private Calendar remind;
+    private Helper h;
 
     private TextView tvAddList;
     private TextView tvDueDate;
@@ -57,13 +47,20 @@ public class AddTaskActivity extends AppCompatActivity implements TimePickerFrag
     private Button btnClearDue;
     private Button btnClearRemind;
 
+    private String[] listSpinnerItem;
+    private ArrayList<List> listList;
+    private long listId = -1;
+    private int size = 0;
+    private int picker = 0;
+    boolean militaryTime = false;
+
     @SuppressWarnings("ConstantConditions")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         // set theme
-        Helper h = new Helper(this);
+        h = new Helper(this);
         h.setTheme();
 
         setContentView(R.layout.activity_add_task);
@@ -261,7 +258,6 @@ public class AddTaskActivity extends AppCompatActivity implements TimePickerFrag
 
         // check for empty task name
         if (taskName.length() == 0) {
-            Helper h = new Helper(this);
             h.displayAlert(getString(R.string.dialog_empty_task), getString(R.string.dialog_confirmation), "");
             return;
         }
@@ -272,7 +268,6 @@ public class AddTaskActivity extends AppCompatActivity implements TimePickerFrag
 
             // check for empty list name
             if (listName.length() == 0) {
-                Helper h = new Helper(this);
                 h.displayAlert(getString(R.string.dialog_empty_list), getString(R.string.dialog_confirmation), "");
                 return;
             }
@@ -282,7 +277,6 @@ public class AddTaskActivity extends AppCompatActivity implements TimePickerFrag
 
             for (int i = 0; i < listList.size(); i++) {
                 if (listName.equals(listList.get(i).getName())) {
-                    Helper h = new Helper(this);
                     h.displayAlert(getString(R.string.dialog_duplicate_list), getString(R.string.dialog_confirmation), "");
                     return;
                 }
@@ -290,7 +284,6 @@ public class AddTaskActivity extends AppCompatActivity implements TimePickerFrag
 
             // check for "All Tasks" name
             if (listName.equals("All Tasks")) {
-                Helper h = new Helper(this);
                 h.displayAlert(getString(R.string.dialog_duplicate_list), getString(R.string.dialog_confirmation), "");
                 return;
             }
@@ -322,21 +315,10 @@ public class AddTaskActivity extends AppCompatActivity implements TimePickerFrag
 
         // set reminder
         if (remindMillis != -1 && remindMillis > System.currentTimeMillis()) {
-            AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-            Intent intent = new Intent(AddTaskActivity.this, AlarmManagerReceiver.class);
-            intent.putExtra("text", taskName);
-            intent.putExtra("id", newTask.getId());
-            PendingIntent pendingIntent = PendingIntent.getBroadcast(this, (int) newTask.getId(), intent, PendingIntent.FLAG_UPDATE_CURRENT);
-
-            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT) {
-                alarmManager.set(AlarmManager.RTC_WAKEUP, remindMillis, pendingIntent);
-            } else {
-                alarmManager.setExact(AlarmManager.RTC_WAKEUP, remindMillis, pendingIntent);
-            }
+            h.setReminder(taskName, newTask.getId(), remindMillis);
         }
 
         // update widgets
-        Helper h = new Helper(this);
         h.updateWidgets();
 
         // return to list that new task belongs to
@@ -377,7 +359,6 @@ public class AddTaskActivity extends AppCompatActivity implements TimePickerFrag
     // back button confirmation
     @Override
     public void onBackPressed() {
-        Helper h = new Helper(this);
         h.displayAlert(getString(R.string.dialog_discard_task), getString(R.string.dialog_discard_cancel), getString(R.string.dialog_discard));
     }
 

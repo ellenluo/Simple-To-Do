@@ -61,7 +61,8 @@ public class DBHandler extends SQLiteOpenHelper {
 
         db.insert(TABLE_TASKS, null, values);
 
-        /*long id = -1;
+        // set id
+        long id = -1;
         String selectQuery = "SELECT " + KEY_TASK_ID + " FROM " + TABLE_TASKS + " ORDER BY " + KEY_TASK_ID + " DESC LIMIT 1";
         Cursor cursor = db.rawQuery(selectQuery, null);
         if (cursor.moveToFirst()) {
@@ -69,8 +70,7 @@ public class DBHandler extends SQLiteOpenHelper {
         }
         task.setId(id);
 
-        cursor.close();*/
-
+        cursor.close();
         db.close();
     }
 
@@ -195,7 +195,7 @@ public class DBHandler extends SQLiteOpenHelper {
     // get all lists from table
     ArrayList<List> getAllLists() {
         SQLiteDatabase db = this.getReadableDatabase();
-        String selectQuery =  "SELECT * FROM " + TABLE_LISTS;
+        String selectQuery =  "SELECT * FROM " + TABLE_LISTS + " ORDER BY " + KEY_LIST_NAME;
         Cursor cursor = db.rawQuery(selectQuery, null);
 
         ArrayList<List> listList = new ArrayList<>();

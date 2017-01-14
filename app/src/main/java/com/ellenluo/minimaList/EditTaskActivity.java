@@ -1,8 +1,10 @@
 package com.ellenluo.minimaList;
 
 import android.app.AlarmManager;
+import android.app.AlertDialog;
 import android.app.PendingIntent;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Build;
@@ -38,16 +40,10 @@ public class EditTaskActivity extends AppCompatActivity implements TimePickerFra
     private SharedPreferences pref;
     private static final int PREFERENCE_MODE_PRIVATE = 0;
 
-    private long id;
-    private int picker = 0;
-    private int size = 0;
-    private String[] spinnerItem;
-    private long listId = -1;
-    private boolean militaryTime;
-
     private Calendar due;
     private Calendar remind;
     private Task curTask;
+    private Helper h;
 
     private EditText etName;
     private EditText etDetails;
@@ -60,13 +56,20 @@ public class EditTaskActivity extends AppCompatActivity implements TimePickerFra
     private Button btnClearDue;
     private Button btnClearRemind;
 
+    private long id;
+    private int picker = 0;
+    private int size = 0;
+    private String[] spinnerItem;
+    private long listId = -1;
+    private boolean militaryTime;
+
     @SuppressWarnings("ConstantConditions")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         // set theme
-        Helper h = new Helper(this);
+        h = new Helper(this);
         h.setTheme();
 
         setContentView(R.layout.activity_edit_task);
@@ -311,7 +314,6 @@ public class EditTaskActivity extends AppCompatActivity implements TimePickerFra
 
         // check for empty task name
         if (newName.length() == 0) {
-            Helper h = new Helper(this);
             h.displayAlert(getString(R.string.dialog_empty_task), getString(R.string.dialog_confirmation), "");
             return;
         }
@@ -322,7 +324,6 @@ public class EditTaskActivity extends AppCompatActivity implements TimePickerFra
 
             // check for empty list name
             if (listName.length() == 0) {
-                Helper h = new Helper(this);
                 h.displayAlert(getString(R.string.dialog_empty_list), getString(R.string.dialog_confirmation), "");
                 return;
             }
@@ -332,7 +333,6 @@ public class EditTaskActivity extends AppCompatActivity implements TimePickerFra
 
             for (int i = 0; i < listList.size(); i++) {
                 if (listName.equals(listList.get(i).getName())) {
-                    Helper h = new Helper(this);
                     h.displayAlert(getString(R.string.dialog_duplicate_list), getString(R.string.dialog_confirmation), "");
                     return;
                 }
@@ -340,7 +340,6 @@ public class EditTaskActivity extends AppCompatActivity implements TimePickerFra
 
             // check for "All Tasks" name
             if (listName.equals("All Tasks")) {
-                Helper h = new Helper(this);
                 h.displayAlert(getString(R.string.dialog_duplicate_list), getString(R.string.dialog_confirmation), "");
                 return;
             }
@@ -368,23 +367,11 @@ public class EditTaskActivity extends AppCompatActivity implements TimePickerFra
         // set reminder
         if (remindMillis != curTask.getRemind()) {
             // cancel original reminder
-            Intent intent = new Intent(EditTaskActivity.this, AlarmManagerReceiver.class);
-            PendingIntent pendingIntent = PendingIntent.getBroadcast(this, (int) curTask.getId(), intent, PendingIntent.FLAG_UPDATE_CURRENT);
-            AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-            alarmManager.cancel(pendingIntent);
+            h.cancelReminder(curTask.getId());
 
+            // set new reminder
             if (remindMillis != -1 && remindMillis > System.currentTimeMillis()) {
-                // set new reminder
-                intent = new Intent(EditTaskActivity.this, AlarmManagerReceiver.class);
-                intent.putExtra("text", curTask.getName());
-                intent.putExtra("id", curTask.getId());
-                pendingIntent = PendingIntent.getBroadcast(this, (int) curTask.getId(), intent, PendingIntent.FLAG_UPDATE_CURRENT);
-
-                if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT) {
-                    alarmManager.set(AlarmManager.RTC_WAKEUP, remindMillis, pendingIntent);
-                } else {
-                    alarmManager.setExact(AlarmManager.RTC_WAKEUP, remindMillis, pendingIntent);
-                }
+                h.setReminder(newName, curTask.getId(), remindMillis);
             }
         }
 
@@ -398,7 +385,6 @@ public class EditTaskActivity extends AppCompatActivity implements TimePickerFra
         Toast.makeText(this, "'" + curTask.getName() + "' " + getString(R.string.edit_task_confirmation), Toast.LENGTH_SHORT).show();
 
         // update widgets
-        Helper h = new Helper(this);
         h.updateWidgets();
 
         // return to list that edited task belongs to
@@ -440,8 +426,29 @@ public class EditTaskActivity extends AppCompatActivity implements TimePickerFra
     // back button confirmation
     @Override
     public void onBackPressed() {
-        Helper h = new Helper(this);
-        h.displayAlert(getString(R.string.dialog_discard_changes), getString(R.string.dialog_discard_cancel), getString(R.string.dialog_discard));
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage(getString(R.string.dialog_discard_changes));
+
+        builder.setNegativeButton(getString(R.string.dialog_discard), new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+                Intent intent = new Intent(EditTaskActivity.this, TaskDetailsActivity.class);
+                intent.putExtra("id", id);
+                startActivity(intent);
+                EditTaskActivity.this.finish();
+            }
+        });
+
+        builder.setPositiveButton(getString(R.string.dialog_discard_cancel), new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        });
+
+        AlertDialog dialog = builder.create();
+        dialog.show();
     }
 
     // close database

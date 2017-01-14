@@ -6,11 +6,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Paint;
-import android.media.Image;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,13 +23,11 @@ import java.util.ArrayList;
 
 public class MainFragment extends Fragment {
 
-    ArrayList<Task> taskList;
-    DBHandler db;
-    private Handler handler = new Handler();
-
-    SharedPreferences pref;
+    private DBHandler db;
     private static final int PREFERENCE_MODE_PRIVATE = 0;
 
+    private ArrayList<Task> taskList;
+    private Handler handler = new Handler();
     private View v;
     private ImageView ivEmpty;
 
@@ -45,7 +41,7 @@ public class MainFragment extends Fragment {
         // set up task list
         db = new DBHandler(getActivity());
         ListView lvTasks = (ListView) v.findViewById(R.id.task_list);
-        pref = getActivity().getSharedPreferences("Main", PREFERENCE_MODE_PRIVATE);
+        SharedPreferences pref = getActivity().getSharedPreferences("Main", PREFERENCE_MODE_PRIVATE);
 
         // set list to view
         if (pref.getString("current_list", "All Tasks").equals("All Tasks")) {
@@ -61,6 +57,7 @@ public class MainFragment extends Fragment {
         ivEmpty = (ImageView) v.findViewById(R.id.empty_list);
         lvTasks.setEmptyView(ivEmpty);
 
+        // set custom list adapter
         final TaskListAdapter taskAdapter = new TaskListAdapter(getActivity(), taskList);
         lvTasks.setAdapter(taskAdapter);
 
@@ -80,24 +77,23 @@ public class MainFragment extends Fragment {
         lvTasks.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(AdapterView<?> av, View v, final int pos, long id) {
+                Task task = taskList.get(pos);
                 TextView tvName = (TextView) v.findViewById(R.id.task_row_name);
                 tvName.setPaintFlags(tvName.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
-                Toast.makeText(getActivity(), "'" + taskList.get(pos).getName() + "' successfully removed", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity(), "'" + task.getName() + "' " + getString(R.string.delete_task_confirmation), Toast.LENGTH_SHORT).show();
 
                 // cancel any reminders
-                Intent intent = new Intent(getActivity(), AlarmManagerReceiver.class);
-                PendingIntent pendingIntent = PendingIntent.getBroadcast(getActivity(), (int) taskList.get(pos).getId(), intent, PendingIntent.FLAG_UPDATE_CURRENT);
-                AlarmManager alarmManager = (AlarmManager) getActivity().getSystemService(Context.ALARM_SERVICE);
-                alarmManager.cancel(pendingIntent);
+                final Helper h = new Helper(getActivity());
+                h.cancelReminder(task.getId());
 
                 // delay deletion
                 handler.postDelayed(new Runnable() {
                     public void run() {
+                        // update database and list adapter
                         db.deleteTask(taskList.remove(pos));
                         taskAdapter.notifyDataSetChanged();
 
                         // update widgets
-                        Helper h = new Helper(getActivity());
                         h.updateWidgets();
                     }
                 }, 500);
@@ -109,6 +105,7 @@ public class MainFragment extends Fragment {
         return v;
     }
 
+    // clear image drawable
     @Override
     public void onDestroyView() {
         super.onDestroyView();

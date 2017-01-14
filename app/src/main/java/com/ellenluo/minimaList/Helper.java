@@ -1,14 +1,16 @@
 package com.ellenluo.minimaList;
 
 import android.app.Activity;
+import android.app.AlarmManager;
 import android.app.AlertDialog;
+import android.app.PendingIntent;
 import android.appwidget.AppWidgetManager;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Color;
+import android.os.Build;
 import android.preference.PreferenceManager;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
@@ -32,7 +34,7 @@ class Helper {
         return result;
     }
 
-    // displays alert confirmation message
+    // display alert confirmation message
     void displayAlert(String message, String posMsg, String negMsg) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this.context);
         builder.setMessage(message);
@@ -60,6 +62,30 @@ class Helper {
         dialog.show();
     }
 
+    // set reminder
+    void setReminder(String name, long id, long remindMillis) {
+        AlarmManager alarmManager = (AlarmManager) this.context.getSystemService(Context.ALARM_SERVICE);
+        Intent intent = new Intent(this.context, AlarmManagerReceiver.class);
+        intent.putExtra("text", name);
+        intent.putExtra("id", id);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(this.context, (int) id, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT) {
+            alarmManager.set(AlarmManager.RTC_WAKEUP, remindMillis, pendingIntent);
+        } else {
+            alarmManager.setExact(AlarmManager.RTC_WAKEUP, remindMillis, pendingIntent);
+        }
+    }
+
+    // cancel reminder
+    void cancelReminder(long id) {
+        Intent intent = new Intent(this.context, AlarmManagerReceiver.class);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(this.context, (int) id, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        AlarmManager alarmManager = (AlarmManager) this.context.getSystemService(Context.ALARM_SERVICE);
+        alarmManager.cancel(pendingIntent);
+    }
+
+    // update all widgets
     void updateWidgets() {
         // update widgets
         AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(this.context);
@@ -68,6 +94,7 @@ class Helper {
         Log.w("Reference", "widgets updated");
     }
 
+    // set style used for activities (based on user settings)
     void setTheme() {
         SharedPreferences prefSettings = PreferenceManager.getDefaultSharedPreferences(this.context);
         int color = prefSettings.getInt("theme_color", ContextCompat.getColor(this.context, R.color.dark_blue));

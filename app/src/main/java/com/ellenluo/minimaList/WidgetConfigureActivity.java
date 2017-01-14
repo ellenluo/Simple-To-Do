@@ -6,25 +6,22 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ArrayAdapter;
-import android.widget.RemoteViews;
 import android.widget.Spinner;
 
 import java.util.ArrayList;
 
-/**
- * Created by Ellen Luo on 2016-08-16.
- */
 public class WidgetConfigureActivity extends AppCompatActivity {
 
-    int appWidgetId = AppWidgetManager.INVALID_APPWIDGET_ID;
     private static final int PREFERENCE_MODE_PRIVATE = 0;
+    private DBHandler db;
 
-    Spinner listSpinner;
+    private Spinner listSpinner;
+    private int appWidgetId = AppWidgetManager.INVALID_APPWIDGET_ID;
 
+    @SuppressWarnings("ConstantConditions")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -39,7 +36,6 @@ public class WidgetConfigureActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setDisplayShowHomeEnabled(true);
 
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
             toolbar.setPadding(0, h.getStatusBarHeight(), 0, 0);
@@ -48,7 +44,7 @@ public class WidgetConfigureActivity extends AppCompatActivity {
         // in case user presses back button
         setResult(RESULT_CANCELED);
 
-        // find the widget id from the intent.
+        // get widget id from intent.
         Intent intent = getIntent();
         Bundle extras = intent.getExtras();
         if (extras != null) {
@@ -64,7 +60,7 @@ public class WidgetConfigureActivity extends AppCompatActivity {
         // set up list spinner
         listSpinner = (Spinner) findViewById(R.id.display_list);
 
-        DBHandler db = new DBHandler(this);
+        db = new DBHandler(this);
         ArrayList<List> listList = db.getAllLists();
         int size = listList.size();
 
@@ -77,16 +73,15 @@ public class WidgetConfigureActivity extends AppCompatActivity {
             }
         }
 
-        ArrayAdapter<String> listAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item, listSpinnerItem);
+        ArrayAdapter<String> listAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, listSpinnerItem);
         listSpinner.setAdapter(listAdapter);
     }
 
-    // adding the widget
+    // add widget
     private void addWidget() {
         // store preferences
         SharedPreferences pref = getSharedPreferences(String.valueOf(appWidgetId), PREFERENCE_MODE_PRIVATE);
         pref.edit().putString("widget_list", listSpinner.getSelectedItem().toString()).apply();
-        Log.w("WidgetConfigureActivity", "appWidgetId is " + String.valueOf(appWidgetId));
 
         // call widget update
         Intent updateIntent = new Intent(AppWidgetManager.ACTION_APPWIDGET_UPDATE, null, this, WidgetProvider.class);
@@ -117,6 +112,13 @@ public class WidgetConfigureActivity extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    // close database
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        db.close();
     }
 
 }

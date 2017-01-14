@@ -30,11 +30,12 @@ public class NotifService extends IntentService {
         boolean vibration = prefSettings.getBoolean("vibration", true);
         boolean light = prefSettings.getBoolean("light", true);
 
-        // set up notification
+        // open details when notification clicked
         Intent newIntent = new Intent(this, TaskDetailsActivity.class);
         newIntent.putExtra("id", id);
-        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, newIntent, 0);
+        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, newIntent, PendingIntent.FLAG_ONE_SHOT);
 
+        // set up notification
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this)
                 .setSmallIcon(R.drawable.ic_notif)
                 .setContentTitle(text)

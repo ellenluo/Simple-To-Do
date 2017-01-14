@@ -3,8 +3,8 @@ package com.ellenluo.minimaList;
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.graphics.Color;
 import android.preference.PreferenceManager;
+import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,22 +16,24 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Locale;
 
-public class TaskListAdapter extends ArrayAdapter {
+class TaskListAdapter extends ArrayAdapter {
     ArrayList<Task> taskList;
     DBHandler db;
     Context context;
 
-    public TaskListAdapter(Context context, ArrayList<Task> resource) {
+    TaskListAdapter(Context context, ArrayList<Task> resource) {
         super(context, R.layout.task_row, resource);
         this.context = context;
         this.taskList = resource;
-        db = new DBHandler(getContext());
+        this.db = new DBHandler(getContext());
     }
 
+    @NonNull
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        LayoutInflater inflater = ((Activity) context).getLayoutInflater();
+        LayoutInflater inflater = ((Activity) this.context).getLayoutInflater();
         convertView = inflater.inflate(R.layout.task_row, parent, false);
 
         // get settings from preferences
@@ -40,23 +42,24 @@ public class TaskListAdapter extends ArrayAdapter {
         int color = prefSettings.getInt("theme_color", ContextCompat.getColor(this.context, R.color.dark_blue));
 
         // set name
+        Task curTask = this.taskList.get(position);
         TextView tvName = (TextView) convertView.findViewById(R.id.task_row_name);
-        tvName.setText(taskList.get(position).getName());
+        tvName.setText(curTask.getName());
 
         // set list
         TextView tvList = (TextView) convertView.findViewById(R.id.task_row_list);
         tvList.setTextColor(color);
 
-        if (taskList.get(position).getList() != -1) {
-            String list = db.getList(taskList.get(position).getList()).getName();
+        if (curTask.getList() != -1) {
+            String list = this.db.getList(curTask.getList()).getName();
             tvList.setText(list);
         }
 
-        // get date & time text
+        // get due date & time text
         TextView tvDate = (TextView) convertView.findViewById(R.id.task_row_date);
         tvDate.setTextColor(color);
         TextView tvTime = (TextView) convertView.findViewById(R.id.task_row_time);
-        long millis = taskList.get(position).getDue();
+        long millis = curTask.getDue();
 
         if (millis != -1) {
             // get calendars
@@ -69,24 +72,26 @@ public class TaskListAdapter extends ArrayAdapter {
             // get date
             Date date = due.getTime();
 
-            // set text
+            // set due date & time text
             if (due.before(now))
-                tvDate.setText("Overdue");
+                tvDate.setText(this.context.getString(R.string.task_row_overdue));
             else {
+                // set time
                 if (militaryTime) {
-                    tvTime.setText(new SimpleDateFormat("HH:mm").format(date));
+                    tvTime.setText(new SimpleDateFormat("HH:mm", Locale.getDefault()).format(date));
                 } else {
-                    tvTime.setText(new SimpleDateFormat("hh:mm a").format(date));
+                    tvTime.setText(new SimpleDateFormat("hh:mm a", Locale.getDefault()).format(date));
                 }
 
+                // set date
                 if (now.get(Calendar.DAY_OF_YEAR) == due.get(Calendar.DAY_OF_YEAR) && now.get(Calendar.YEAR) == due.get(Calendar.YEAR))
-                    tvDate.setText("Today");
+                    tvDate.setText(this.context.getString(R.string.task_row_today));
                 else if (tomorrow.get(Calendar.DAY_OF_YEAR) == due.get(Calendar.DAY_OF_YEAR) && tomorrow.get(Calendar.YEAR) == due.get(Calendar.YEAR))
-                    tvDate.setText("Tomorrow");
+                    tvDate.setText(this.context.getString(R.string.task_row_tomorrow));
                 else if (now.get(Calendar.YEAR) == due.get(Calendar.YEAR))
-                    tvDate.setText(new SimpleDateFormat("MMM dd").format(date));
+                    tvDate.setText(new SimpleDateFormat("MMM dd", Locale.getDefault()).format(date));
                 else
-                    tvDate.setText(new SimpleDateFormat("MMM dd, yyyy").format(date));
+                    tvDate.setText(new SimpleDateFormat("MMM dd, yyyy", Locale.getDefault()).format(date));
             }
         }
 

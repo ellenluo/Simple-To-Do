@@ -1,8 +1,5 @@
 package com.ellenluo.minimaList;
 
-import android.app.AlarmManager;
-import android.app.PendingIntent;
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -10,7 +7,6 @@ import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.CheckBox;
@@ -21,22 +17,26 @@ import android.widget.Toast;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Locale;
 
 
 public class TaskDetailsActivity extends AppCompatActivity {
 
-    DBHandler db = new DBHandler(this);
-    long id;
-    Task curTask;
+    private DBHandler db = new DBHandler(this);
+
+    private Task curTask;
     private Handler handler = new Handler();
+    private Helper h;
 
-    private static final int PREFERENCE_MODE_PRIVATE = 0;
+    private long id;
 
+    @SuppressWarnings("ConstantConditions")
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         // set theme
-        Helper h = new Helper(this);
+        h = new Helper(this);
         h.setTheme();
 
         setContentView(R.layout.activity_task_details);
@@ -45,7 +45,6 @@ public class TaskDetailsActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setDisplayShowHomeEnabled(true);
 
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
             toolbar.setPadding(0, h.getStatusBarHeight(), 0, 0);
@@ -83,9 +82,9 @@ public class TaskDetailsActivity extends AppCompatActivity {
             Date date = cal.getTime();
 
             if (militaryTime) {
-                tvDue.setText(new SimpleDateFormat("MMMM dd, yyyy").format(date) + " at " + new SimpleDateFormat("HH:mm").format(date));
+                tvDue.setText(new SimpleDateFormat("MMMM dd, yyyy", Locale.getDefault()).format(date) + " " + getString(R.string.details_at) + " " + new SimpleDateFormat("HH:mm", Locale.getDefault()).format(date));
             } else {
-                tvDue.setText(new SimpleDateFormat("MMMM dd, yyyy").format(date) + " at " + new SimpleDateFormat("hh:mm a").format(date));
+                tvDue.setText(new SimpleDateFormat("MMMM dd, yyyy", Locale.getDefault()).format(date) + " " + getString(R.string.details_at) + " " + new SimpleDateFormat("hh:mm a", Locale.getDefault()).format(date));
             }
         }
 
@@ -96,9 +95,9 @@ public class TaskDetailsActivity extends AppCompatActivity {
             Date date = cal.getTime();
 
             if (militaryTime) {
-                tvRemind.setText(new SimpleDateFormat("MMMM dd, yyyy").format(date) + " at " + new SimpleDateFormat("HH:mm").format(date));
+                tvRemind.setText(new SimpleDateFormat("MMMM dd, yyyy", Locale.getDefault()).format(date) + " " + getString(R.string.details_at) + " " + new SimpleDateFormat("HH:mm", Locale.getDefault()).format(date));
             } else {
-                tvRemind.setText(new SimpleDateFormat("MMMM dd, yyyy").format(date) + " at " + new SimpleDateFormat("hh:mm a").format(date));
+                tvRemind.setText(new SimpleDateFormat("MMMM dd, yyyy", Locale.getDefault()).format(date) + " " + getString(R.string.details_at) + " " + new SimpleDateFormat("hh:mm a", Locale.getDefault()).format(date));
             }
         }
 
@@ -109,13 +108,10 @@ public class TaskDetailsActivity extends AppCompatActivity {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (isChecked) {
-                    Toast.makeText(TaskDetailsActivity.this, "'" + curTask.getName() + "' successfully removed", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(TaskDetailsActivity.this, "'" + curTask.getName() + "' " + getString(R.string.delete_task_confirmation), Toast.LENGTH_SHORT).show();
 
                     // cancel any reminders
-                    Intent intent = new Intent(TaskDetailsActivity.this, AlarmManagerReceiver.class);
-                    PendingIntent pendingIntent = PendingIntent.getBroadcast(TaskDetailsActivity.this, (int) curTask.getId(), intent, PendingIntent.FLAG_UPDATE_CURRENT);
-                    AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-                    alarmManager.cancel(pendingIntent);
+                    h.cancelReminder(curTask.getId());
 
                     // delay deletion
                     handler.postDelayed(new Runnable() {
@@ -123,9 +119,9 @@ public class TaskDetailsActivity extends AppCompatActivity {
                             db.deleteTask(curTask);
 
                             // update widgets
-                            Helper h = new Helper(TaskDetailsActivity.this);
                             h.updateWidgets();
 
+                            // return to main activity
                             Intent intent = new Intent(TaskDetailsActivity.this, MainActivity.class);
                             startActivity(intent);
                             TaskDetailsActivity.this.finish();
@@ -148,6 +144,7 @@ public class TaskDetailsActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         int itemId = item.getItemId();
 
+        // edit task
         if (itemId == R.id.action_edit) {
             Intent intent = new Intent(TaskDetailsActivity.this, EditTaskActivity.class);
             intent.putExtra("id", id);
@@ -161,6 +158,7 @@ public class TaskDetailsActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    // if activity started from notification
     @Override
     public void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
@@ -177,14 +175,13 @@ public class TaskDetailsActivity extends AppCompatActivity {
         Intent intent = new Intent(TaskDetailsActivity.this, MainActivity.class);
         startActivity(intent);
         TaskDetailsActivity.this.finish();
-        Log.d("TaskDetailsActivity", "activity finished");
     }
 
+    // close database
     @Override
     public void onDestroy() {
         super.onDestroy();
         db.close();
-        Log.d("TaskDetailsActivity", "activity destroyed");
     }
 
 }

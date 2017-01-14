@@ -1,17 +1,18 @@
 package com.ellenluo.minimaList;
 
-public class List {
+class List {
 
+    // parameters
     private long id;
     private String name;
 
     // constructors
-    public List(long id, String name) {
+    List(long id, String name) {
         this.id = id;
         this.name = name;
     }
 
-    public List(String name) {
+    List(String name) {
         this.name = name;
     }
 

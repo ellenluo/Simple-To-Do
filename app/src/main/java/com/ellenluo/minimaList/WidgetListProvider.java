@@ -8,7 +8,6 @@ import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.preference.PreferenceManager;
 import android.support.v4.content.ContextCompat;
-import android.util.Log;
 import android.util.TypedValue;
 import android.widget.RemoteViews;
 import android.widget.RemoteViewsService;
@@ -17,42 +16,48 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Locale;
 
-public class WidgetListProvider implements RemoteViewsService.RemoteViewsFactory {
+class WidgetListProvider implements RemoteViewsService.RemoteViewsFactory {
+
+    private DBHandler db;
+    private SharedPreferences pref;
+    private static final int PREFERENCE_MODE_PRIVATE = 0;
 
     private ArrayList<Task> taskList;
     private Context context = null;
 
-    DBHandler db;
-    SharedPreferences pref;
+    private String list;
 
-    String list;
-
-    public WidgetListProvider(Context context, Intent intent) {
+    WidgetListProvider(Context context, Intent intent) {
         this.context = context;
         int appWidgetId = intent.getIntExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, AppWidgetManager.INVALID_APPWIDGET_ID);
 
-        pref = context.getSharedPreferences(String.valueOf(appWidgetId), 0);
-        list = pref.getString("widget_list", "All Tasks");
-        db = new DBHandler(context);
+        // get widget display list
+        this.pref = this.context.getSharedPreferences(String.valueOf(appWidgetId), PREFERENCE_MODE_PRIVATE);
+        this.list = this.pref.getString("widget_list", "All Tasks");
+
+        // set task list to display
+        this.db = new DBHandler(this.context);
 
         if (list.equals("All Tasks")) {
-            taskList = db.getAllTasks();
+            this.taskList = this.db.getAllTasks();
         } else {
-            taskList = db.getTasksFromList(db.getList(list).getId());
+            this.taskList = this.db.getTasksFromList(this.db.getList(this.list).getId());
         }
     }
 
     @Override
     public void onCreate() {
+        // no-op
     }
 
     @Override
     public void onDataSetChanged() {
-        String newList = pref.getString("widget_list", "All Tasks");
+        String newList = this.pref.getString("widget_list", "All Tasks");
 
         if (newList.equals("All Tasks")) {
-            taskList = db.getAllTasks();
+            this.taskList = this.db.getAllTasks();
 
             // update widget title
             Intent intent = new Intent(this.context, WidgetProvider.class);
@@ -60,9 +65,8 @@ public class WidgetListProvider implements RemoteViewsService.RemoteViewsFactory
             int[] ids = AppWidgetManager.getInstance(this.context).getAppWidgetIds(new ComponentName(this.context, WidgetProvider.class));
             intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, ids);
             this.context.sendBroadcast(intent);
-            Log.w("WidgetListProvider", "All tasks called");
         } else if (!newList.equals(list)) {
-            taskList = db.getTasksFromList(db.getList(newList).getId());
+            this.taskList = this.db.getTasksFromList(this.db.getList(newList).getId());
 
             // update widget title
             Intent intent = new Intent(this.context, WidgetProvider.class);
@@ -70,10 +74,8 @@ public class WidgetListProvider implements RemoteViewsService.RemoteViewsFactory
             int[] ids = AppWidgetManager.getInstance(this.context).getAppWidgetIds(new ComponentName(this.context, WidgetProvider.class));
             intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, ids);
             this.context.sendBroadcast(intent);
-            Log.w("WidgetListProvider", "Name change called");
         } else {
-            taskList = db.getTasksFromList(db.getList(list).getId());
-            Log.w("WidgetListProvider", "Custom list called");
+            this.taskList = this.db.getTasksFromList(this.db.getList(this.list).getId());
         }
     }
 
@@ -82,9 +84,10 @@ public class WidgetListProvider implements RemoteViewsService.RemoteViewsFactory
         return 1;
     }
 
+    // close database
     @Override
     public void onDestroy() {
-        // no-op
+        this.db.close();
     }
 
     @Override
@@ -99,7 +102,7 @@ public class WidgetListProvider implements RemoteViewsService.RemoteViewsFactory
 
     @Override
     public int getCount() {
-        return taskList.size();
+        return this.taskList.size();
     }
 
     @Override
@@ -109,22 +112,24 @@ public class WidgetListProvider implements RemoteViewsService.RemoteViewsFactory
 
     @Override
     public RemoteViews getViewAt(int position) {
-        final RemoteViews remoteView = new RemoteViews(context.getPackageName(), R.layout.task_row);
-        Task task = taskList.get(position);
+        final RemoteViews remoteView = new RemoteViews(this.context.getPackageName(), R.layout.task_row);
+        Task curTask = this.taskList.get(position);
 
         // get settings from preferences
-        SharedPreferences prefSettings = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences prefSettings = PreferenceManager.getDefaultSharedPreferences(this.context);
         boolean militaryTime = prefSettings.getBoolean("24h", false);
-        int color = prefSettings.getInt("theme_color", ContextCompat.getColor(context, R.color.dark_blue));
+        int color = prefSettings.getInt("theme_color", ContextCompat.getColor(this.context, R.color.dark_blue));
 
         // set name and list
-        if (task.getList() != -1) {
-            remoteView.setTextViewText(R.id.task_row_list, db.getList(task.getList()).getName());
+        if (curTask.getList() != -1) {
+            remoteView.setTextViewText(R.id.task_row_list, this.db.getList(curTask.getList()).getName());
         } else {
-            remoteView.setTextViewText(R.id.task_row_list, "No List");
+            remoteView.setTextViewText(R.id.task_row_list, this.context.getString(R.string.details_no_list));
         }
 
-        remoteView.setTextViewText(R.id.task_row_name, task.getName());
+        remoteView.setTextViewText(R.id.task_row_name, curTask.getName());
+
+        // set font sizes & colors
         remoteView.setTextViewTextSize(R.id.task_row_name, TypedValue.COMPLEX_UNIT_SP, 14);
         remoteView.setTextViewTextSize(R.id.task_row_time, TypedValue.COMPLEX_UNIT_SP, 12);
         remoteView.setTextViewTextSize(R.id.task_row_date, TypedValue.COMPLEX_UNIT_SP, 12);
@@ -133,8 +138,8 @@ public class WidgetListProvider implements RemoteViewsService.RemoteViewsFactory
         remoteView.setTextColor(R.id.task_row_list, color);
         remoteView.setTextColor(R.id.task_row_date, color);
 
-        // set date & time
-        long millis = task.getDue();
+        // set due date & time text
+        long millis = curTask.getDue();
         if (millis != -1) {
             // get calendars
             Calendar now = Calendar.getInstance();
@@ -146,33 +151,33 @@ public class WidgetListProvider implements RemoteViewsService.RemoteViewsFactory
             // get date
             Date date = due.getTime();
 
-            // set text
             if (due.before(now))
-                remoteView.setTextViewText(R.id.task_row_date, "Overdue");
+                remoteView.setTextViewText(R.id.task_row_date, this.context.getString(R.string.task_row_overdue));
             else {
+                // set time
                 if (militaryTime) {
-                    remoteView.setTextViewText(R.id.task_row_time, new SimpleDateFormat("HH:mm").format(date));
+                    remoteView.setTextViewText(R.id.task_row_time, new SimpleDateFormat("HH:mm", Locale.getDefault()).format(date));
                 } else {
-                    remoteView.setTextViewText(R.id.task_row_time, new SimpleDateFormat("hh:mm a").format(date));
+                    remoteView.setTextViewText(R.id.task_row_time, new SimpleDateFormat("hh:mm a", Locale.getDefault()).format(date));
                 }
 
+                // set date
                 if (now.get(Calendar.DAY_OF_YEAR) == due.get(Calendar.DAY_OF_YEAR) && now.get(Calendar.YEAR) == due.get(Calendar.YEAR))
-                    remoteView.setTextViewText(R.id.task_row_date, "Today");
+                    remoteView.setTextViewText(R.id.task_row_date, this.context.getString(R.string.task_row_today));
                 else if (tomorrow.get(Calendar.DAY_OF_YEAR) == due.get(Calendar.DAY_OF_YEAR) && tomorrow.get(Calendar.YEAR) == due.get(Calendar.YEAR))
-                    remoteView.setTextViewText(R.id.task_row_date, "Tomorrow");
+                    remoteView.setTextViewText(R.id.task_row_date, this.context.getString(R.string.task_row_tomorrow));
                 else if (now.get(Calendar.YEAR) == due.get(Calendar.YEAR))
-                    remoteView.setTextViewText(R.id.task_row_date, new SimpleDateFormat("MMM dd").format(date));
+                    remoteView.setTextViewText(R.id.task_row_date, new SimpleDateFormat("MMM dd", Locale.getDefault()).format(date));
                 else
-                    remoteView.setTextViewText(R.id.task_row_date, new SimpleDateFormat("MMM dd, yyyy").format(date));
+                    remoteView.setTextViewText(R.id.task_row_date, new SimpleDateFormat("MMM dd, yyyy", Locale.getDefault()).format(date));
             }
         }
 
-        // make clickable
+        // make row click open details
         Intent intent = new Intent();
-        intent.putExtra("id", task.getId());
+        intent.putExtra("id", curTask.getId());
         remoteView.setOnClickFillInIntent(R.id.task_row, intent);
 
-        Log.w("WidgetListProvider", "row created");
         return remoteView;
     }
 

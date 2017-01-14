@@ -2,6 +2,7 @@ package com.ellenluo.minimaList;
 
 public class Task {
 
+    // parameters
     private long id, due, remind, list;
     private String name, details;
 
@@ -23,7 +24,7 @@ public class Task {
         this.list = list;
     }
 
-    // getter
+    // getters
     public long getId() {
         return this.id;
     }
@@ -40,15 +41,15 @@ public class Task {
         return this.list;
     }
 
-    public long getDue() {
+    long getDue() {
         return this.due;
     }
 
-    public long getRemind() {
+    long getRemind() {
         return this.remind;
     }
 
-    // setter
+    // setters
     public void setId(long id) {
         this.id = id;
     }
@@ -61,11 +62,11 @@ public class Task {
         this.details = details;
     }
 
-    public void setDue(long due) {
+    void setDue(long due) {
         this.due = due;
     }
 
-    public void setRemind(long remind) {
+    void setRemind(long remind) {
         this.remind = remind;
     }
 

@@ -13,7 +13,6 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
-import android.util.Log;
 
 import java.util.ArrayList;
 
@@ -32,9 +31,10 @@ public class SettingsFragment extends PreferenceFragment {
             public boolean onPreferenceClick(Preference preference) {
                 // display confirmation dialog
                 AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-                builder.setMessage("Are you sure you want to delete all tasks and lists? This cannot be undone.");
+                builder.setMessage(getString(R.string.dialog_delete_all_confirmation));
 
-                builder.setNegativeButton("Delete", new DialogInterface.OnClickListener() {
+                // delete button
+                builder.setNegativeButton(getString(R.string.dialog_delete), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         dialog.dismiss();
@@ -44,11 +44,10 @@ public class SettingsFragment extends PreferenceFragment {
                         ArrayList<Task> taskList = db.getAllTasks();
 
                         // cancel all alarms
+                        Helper h = new Helper(getActivity());
+
                         for (int i = 0; i < taskList.size(); i++) {
-                            Intent alarmIntent = new Intent(getActivity(), AlarmManagerReceiver.class);
-                            PendingIntent pendingIntent = PendingIntent.getBroadcast(getActivity(), (int) taskList.get(i).getId(), alarmIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-                            AlarmManager alarmManager = (AlarmManager) getActivity().getSystemService(Context.ALARM_SERVICE);
-                            alarmManager.cancel(pendingIntent);
+                            h.cancelReminder(taskList.get(i).getId());
                         }
 
                         // delete all lists & tasks
@@ -64,7 +63,6 @@ public class SettingsFragment extends PreferenceFragment {
                         }
 
                         appWidgetManager.notifyAppWidgetViewDataChanged(appWidgetIds, R.id.task_list);
-                        Log.d("SettingsFragment", "Widgets successfully updated");
 
                         // reset activity
                         pref.edit().putString("current_list", "All Tasks").apply();
@@ -74,6 +72,7 @@ public class SettingsFragment extends PreferenceFragment {
                     }
                 });
 
+                // cancel button
                 builder.setPositiveButton("Cancel", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
@@ -81,21 +80,20 @@ public class SettingsFragment extends PreferenceFragment {
                     }
                 });
 
+                // show dialog
                 AlertDialog dialog = builder.create();
                 dialog.show();
                 return true;
             }
         });
-
-        Preference prefColor = findPreference("theme_color");
     }
 
+    // set background
+    @SuppressWarnings("ConstantConditions")
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-
         getView().setBackgroundColor(Color.WHITE);
-        getView().setClickable(true);
     }
 
 }

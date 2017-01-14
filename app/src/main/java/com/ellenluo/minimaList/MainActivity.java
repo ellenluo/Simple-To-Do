@@ -1,9 +1,7 @@
 package com.ellenluo.minimaList;
 
-import android.app.AlarmManager;
 import android.app.AlertDialog;
 import android.app.Dialog;
-import android.app.PendingIntent;
 import android.appwidget.AppWidgetManager;
 import android.content.ComponentName;
 import android.content.Context;
@@ -21,7 +19,6 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Display;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -29,11 +26,15 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import java.util.ArrayList;
-import java.util.Collections;
 
 public class MainActivity extends AppCompatActivity {
+
+    private DBHandler db;
+    private SharedPreferences pref;
+    private static final int PREFERENCE_MODE_PRIVATE = 0;
 
     private DrawerLayout mDrawer;
     private Toolbar toolbar;
@@ -42,11 +43,7 @@ public class MainActivity extends AppCompatActivity {
     private FloatingActionButton fab;
     private EditText etListName;
 
-    DBHandler db = new DBHandler(this);
-    SharedPreferences pref;
-    private static final int PREFERENCE_MODE_PRIVATE = 0;
-
-    boolean showEditList = true;
+    private boolean showEditList = true;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -73,9 +70,10 @@ public class MainActivity extends AppCompatActivity {
         drawerToggle = setupDrawerToggle();
         mDrawer.addDrawerListener(drawerToggle);
 
+        db = new DBHandler(this);
         refreshLists();
 
-        // set up add button
+        // set up floating add button
         fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
@@ -89,42 +87,34 @@ public class MainActivity extends AppCompatActivity {
         pref = getSharedPreferences("Main", PREFERENCE_MODE_PRIVATE);
         String curList = pref.getString("current_list", "All Tasks");
 
-        // check for extras
+        // check for extras (if launched from widget)
         String newList = getIntent().getStringExtra("current_list");
         if (newList != null) {
             curList = newList;
             pref.edit().putString("current_list", newList).apply();
         }
 
+        // set main fragment
         Fragment fragment = null;
 
         try {
             fragment = MainFragment.class.newInstance();
         } catch (Exception e) {
-            e.printStackTrace();
+            Toast.makeText(this, getString(R.string.error), Toast.LENGTH_SHORT).show();
         }
 
         FragmentManager fragmentManager = getSupportFragmentManager();
         fragmentManager.beginTransaction().replace(R.id.frame, fragment).commit();
         setTitle(curList);
-
-        db.close();
     }
 
     // refresh navigation menu of lists
-    public void refreshLists() {
+    private void refreshLists() {
         ArrayList<List> listList = db.getAllLists();
-        ArrayList<String> listName = new ArrayList<String>();
         Menu menu = nvDrawer.getMenu();
 
         for (int i = 0; i < listList.size(); i++) {
-            listName.add(listList.get(i).getName());
-        }
-
-        Collections.sort(listName, String.CASE_INSENSITIVE_ORDER);
-
-        for (int i = 0; i < listName.size(); i++) {
-            menu.add(R.id.group_lists, Menu.NONE, Menu.NONE, listName.get(i));
+            menu.add(R.id.group_lists, Menu.NONE, Menu.NONE, listList.get(i).getName());
         }
     }
 
@@ -145,15 +135,15 @@ public class MainActivity extends AppCompatActivity {
                 });
     }
 
-    // change fragments if item in drawer is clicked
+    // set up menu selection options
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (drawerToggle.onOptionsItemSelected(item)) {
             return true;
         }
 
+        // check if edit list icon selected
         int id = item.getItemId();
-
         if (id == R.id.action_edit) {
             showEditDialog();
         }
@@ -161,10 +151,12 @@ public class MainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    // when item selected from navigation drawer
     public void selectDrawerItem(MenuItem menuItem) {
         Fragment fragment = null;
         Class fragmentClass = null;
 
+        // if default item selected
         if (menuItem.getItemId() != 0) {
             switch (menuItem.getItemId()) {
                 case R.id.nav_all:
@@ -176,6 +168,8 @@ public class MainActivity extends AppCompatActivity {
                 case R.id.nav_settings:
                     showEditList = false;
                     fab.setVisibility(View.GONE);
+
+                    // set settings fragment directly
                     getFragmentManager().beginTransaction()
                             .replace(R.id.frame, new SettingsFragment())
                             .commit();
@@ -184,19 +178,18 @@ public class MainActivity extends AppCompatActivity {
                     supportInvalidateOptionsMenu();
                     break;
                 case R.id.nav_feedback:
-                    fab.setVisibility(View.GONE);
                     fragmentClass = FeedbackFragment.class;
+                    fab.setVisibility(View.GONE);
                     showEditList = false;
-                    break;
-                default:
                     break;
             }
 
+            // set fragment
             if (fragmentClass != null) {
                 try {
                     fragment = (Fragment) fragmentClass.newInstance();
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    Toast.makeText(this, getString(R.string.error), Toast.LENGTH_SHORT).show();
                 }
 
                 FragmentManager fragmentManager = getSupportFragmentManager();
@@ -206,11 +199,13 @@ public class MainActivity extends AppCompatActivity {
                 mDrawer.closeDrawers();
                 supportInvalidateOptionsMenu();
             }
-        } else {
+        }
+        // if custom list selected
+        else {
             try {
                 fragment = MainFragment.class.newInstance();
             } catch (Exception e) {
-                e.printStackTrace();
+                Toast.makeText(this, getString(R.string.error), Toast.LENGTH_SHORT).show();
             }
 
             FragmentManager fragmentManager = getSupportFragmentManager();
@@ -219,13 +214,14 @@ public class MainActivity extends AppCompatActivity {
             // set list
             pref.edit().putString("current_list", menuItem.getTitle().toString()).apply();
             showEditList = true;
-            supportInvalidateOptionsMenu();
 
             setTitle(menuItem.getTitle());
             mDrawer.closeDrawers();
+            supportInvalidateOptionsMenu();
         }
     }
 
+    // set up drawer toggle
     @Override
     protected void onPostCreate(Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
@@ -237,13 +233,14 @@ public class MainActivity extends AppCompatActivity {
         return new ActionBarDrawerToggle(this, mDrawer, toolbar, R.string.drawer_open, R.string.drawer_close);
     }
 
+    // set up drawer toggle
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
         drawerToggle.onConfigurationChanged(newConfig);
     }
 
-    // inflates action bar menu
+    // inflate action bar menu
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         if (pref.getString("current_list", "All Tasks").equals("All Tasks") || !showEditList) {
@@ -254,46 +251,11 @@ public class MainActivity extends AppCompatActivity {
         return true;
     }
 
-    // make back button return to all tasks
-    @Override
-    public void onBackPressed() {
-        Fragment fragment = null;
-
-        try {
-            fragment = MainFragment.class.newInstance();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        FragmentManager fragmentManager = getSupportFragmentManager();
-        fragmentManager.beginTransaction().replace(R.id.frame, fragment).commit();
-
-        pref.edit().putString("current_list", "All Tasks").apply();
-        setTitle("All Tasks");
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        Log.d("MainActivity", "activity destroyed");
-    }
-
+    // edit list dialog
     public void showEditDialog() {
-        // custom dialog
         final Dialog dialog = new Dialog(this);
         dialog.setContentView(R.layout.dialog_edit_list);
-
-        // set dialog width
-        WindowManager wm = (WindowManager) this.getSystemService(Context.WINDOW_SERVICE);
-        Display display = wm.getDefaultDisplay();
-        Point size = new Point();
-        display.getSize(size);
-        int width = size.x;
-
-        WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
-        lp.copyFrom(dialog.getWindow().getAttributes());
-        lp.width = width;
-        dialog.getWindow().setAttributes(lp);
+        setDialogWidth(dialog);
 
         // set text field to current name
         etListName = (EditText) dialog.findViewById(R.id.list_name);
@@ -312,9 +274,9 @@ public class MainActivity extends AppCompatActivity {
                     dialog.dismiss();
 
                     AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
-                    builder.setMessage("New list name cannot be empty.");
+                    builder.setMessage(getString(R.string.dialog_empty_list));
 
-                    builder.setPositiveButton("Got it", new DialogInterface.OnClickListener() {
+                    builder.setPositiveButton(getString(R.string.dialog_confirmation), new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             dialog.cancel();
@@ -335,9 +297,9 @@ public class MainActivity extends AppCompatActivity {
                         dialog.dismiss();
 
                         AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
-                        builder.setMessage("List name already exists. Please enter a new list name.");
+                        builder.setMessage(getString(R.string.dialog_duplicate_list));
 
-                        builder.setPositiveButton("Got it", new DialogInterface.OnClickListener() {
+                        builder.setPositiveButton(getString(R.string.dialog_confirmation), new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 dialog.cancel();
@@ -356,9 +318,9 @@ public class MainActivity extends AppCompatActivity {
                     dialog.dismiss();
 
                     AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
-                    builder.setMessage("List name already exists. Please enter a new list name.");
+                    builder.setMessage(getString(R.string.dialog_duplicate_list));
 
-                    builder.setPositiveButton("Got it", new DialogInterface.OnClickListener() {
+                    builder.setPositiveButton(getString(R.string.dialog_confirmation), new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             dialog.cancel();
@@ -371,12 +333,13 @@ public class MainActivity extends AppCompatActivity {
                     return;
                 }
 
+                // update list
                 List curList = db.getList(pref.getString("current_list", "error"));
                 String oldListName = curList.getName();
                 curList.setName(listName);
                 db.updateList(curList);
 
-                pref.edit().putString("current_list", etListName.getText().toString().trim()).apply();
+                pref.edit().putString("current_list", listName).apply();
 
                 // update widgets
                 AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(getApplicationContext());
@@ -386,7 +349,6 @@ public class MainActivity extends AppCompatActivity {
                     SharedPreferences widgetPref = getSharedPreferences(String.valueOf(appWidgetId), PREFERENCE_MODE_PRIVATE);
                     if (widgetPref.getString("widget_list", "All Tasks").equals(oldListName)) {
                         widgetPref.edit().putString("widget_list", curList.getName()).apply();
-                        Log.d("MainActivity", "updating widget_list parameter to " + curList.getName());
                     }
                 }
 
@@ -411,9 +373,10 @@ public class MainActivity extends AppCompatActivity {
 
                 // display confirmation dialog
                 AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
-                builder.setMessage("Are you sure you want to delete this list and all corresponding tasks?");
+                builder.setMessage(getString(R.string.dialog_delete_confirmation));
 
-                builder.setNegativeButton("Delete", new DialogInterface.OnClickListener() {
+                // delete button
+                builder.setNegativeButton(getString(R.string.dialog_delete), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         dialog.dismiss();
@@ -423,18 +386,15 @@ public class MainActivity extends AppCompatActivity {
                         ArrayList<Task> taskList = db.getTasksFromList(curList.getId());
 
                         // cancel all reminders
+                        Helper h = new Helper(getApplicationContext());
+
                         for (int i = 0; i < taskList.size(); i++) {
-                            Intent alarmIntent = new Intent(getApplicationContext(), AlarmManagerReceiver.class);
-                            PendingIntent pendingIntent = PendingIntent.getBroadcast(getApplicationContext(), (int) taskList.get(i).getId(), alarmIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-                            AlarmManager alarmManager = (AlarmManager) getApplicationContext().getSystemService(Context.ALARM_SERVICE);
-                            alarmManager.cancel(pendingIntent);
+                            h.cancelReminder(taskList.get(i).getId());
                         }
 
                         // delete list & tasks
                         db.deleteList(curList);
                         db.deleteTasksFromList(curList.getId());
-
-                        Log.d("MainActivity", "List successfully deleted");
 
                         // update widgets
                         AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(getApplicationContext());
@@ -444,12 +404,10 @@ public class MainActivity extends AppCompatActivity {
                             SharedPreferences widgetPref = getSharedPreferences(String.valueOf(appWidgetId), PREFERENCE_MODE_PRIVATE);
                             if (widgetPref.getString("widget_list", "All Tasks").equals(oldListName)) {
                                 widgetPref.edit().putString("widget_list", "All Tasks").apply();
-                                Log.d("MainActivity", "updating widget_list parameter to 'All Tasks'");
                             }
                         }
 
                         appWidgetManager.notifyAppWidgetViewDataChanged(appWidgetIds, R.id.task_list);
-                        Log.d("MainActivity", "Widgets successfully updated");
 
                         // reset activity
                         pref.edit().putString("current_list", "All Tasks").apply();
@@ -459,7 +417,8 @@ public class MainActivity extends AppCompatActivity {
                     }
                 });
 
-                builder.setPositiveButton("Cancel", new DialogInterface.OnClickListener() {
+                // cancel button
+                builder.setPositiveButton(getString(R.string.dialog_delete_cancel), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         dialog.cancel();
@@ -475,24 +434,13 @@ public class MainActivity extends AppCompatActivity {
         dialog.show();
     }
 
+    // add list dialog
     public void showAddDialog() {
-        // custom dialog
         final Dialog dialog = new Dialog(this);
         dialog.setContentView(R.layout.dialog_add_list);
+        setDialogWidth(dialog);
 
-        // set dialog width
-        WindowManager wm = (WindowManager) this.getSystemService(Context.WINDOW_SERVICE);
-        Display display = wm.getDefaultDisplay();
-        Point size = new Point();
-        display.getSize(size);
-        int width = size.x;
-
-        WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
-        lp.copyFrom(dialog.getWindow().getAttributes());
-        lp.width = width;
-        dialog.getWindow().setAttributes(lp);
-
-        // set text field to current name
+        // initialize text field
         etListName = (EditText) dialog.findViewById(R.id.list_name);
 
         // add button
@@ -508,9 +456,9 @@ public class MainActivity extends AppCompatActivity {
                     dialog.dismiss();
 
                     AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
-                    builder.setMessage("New list name cannot be empty.");
+                    builder.setMessage(getString(R.string.dialog_empty_list));
 
-                    builder.setPositiveButton("Got it", new DialogInterface.OnClickListener() {
+                    builder.setPositiveButton(getString(R.string.dialog_confirmation), new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             dialog.cancel();
@@ -531,9 +479,9 @@ public class MainActivity extends AppCompatActivity {
                         dialog.dismiss();
 
                         AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
-                        builder.setMessage("List name already exists. Please enter a new list name.");
+                        builder.setMessage(R.string.dialog_duplicate_list);
 
-                        builder.setPositiveButton("Got it", new DialogInterface.OnClickListener() {
+                        builder.setPositiveButton(R.string.dialog_confirmation, new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 dialog.cancel();
@@ -552,9 +500,9 @@ public class MainActivity extends AppCompatActivity {
                     dialog.dismiss();
 
                     AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
-                    builder.setMessage("List name already exists. Please enter a new list name.");
+                    builder.setMessage(R.string.dialog_duplicate_list);
 
-                    builder.setPositiveButton("Got it", new DialogInterface.OnClickListener() {
+                    builder.setPositiveButton(R.string.dialog_confirmation, new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             dialog.cancel();
@@ -590,6 +538,49 @@ public class MainActivity extends AppCompatActivity {
         });
 
         dialog.show();
+    }
+
+    // set dialog width
+    @SuppressWarnings("ConstantConditions")
+    private void setDialogWidth(Dialog dialog) {
+        WindowManager wm = (WindowManager) this.getSystemService(Context.WINDOW_SERVICE);
+        Display display = wm.getDefaultDisplay();
+        Point size = new Point();
+        display.getSize(size);
+        int width = size.x;
+
+        WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
+        lp.copyFrom(dialog.getWindow().getAttributes());
+        lp.width = width;
+        dialog.getWindow().setAttributes(lp);
+    }
+
+    // make back button return to all tasks
+    @Override
+    public void onBackPressed() {
+        // check if currently showing all tasks
+        if (!pref.getString("current_list", "All Tasks").equals("All Tasks")) {
+            Fragment fragment = null;
+
+            try {
+                fragment = MainFragment.class.newInstance();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            FragmentManager fragmentManager = getSupportFragmentManager();
+            fragmentManager.beginTransaction().replace(R.id.frame, fragment).commit();
+
+            pref.edit().putString("current_list", "All Tasks").apply();
+            setTitle("All Tasks");
+        }
+    }
+
+    // close database
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        db.close();
     }
 
 }
