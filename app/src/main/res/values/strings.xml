@@ -46,7 +46,6 @@
 
     <!-- Feedback strings -->
     <string name="feedback_name">What is your name?</string>
-    <string name="feedback_email">What is your email address?</string>
     <string name="feedback_type">What type of feedback are you sending?</string>
     <string name="feedback_message">Enter your message here:</string>
     <string name="feedback_hint">Please include relevant details such as phone model, Android version, etc.</string>

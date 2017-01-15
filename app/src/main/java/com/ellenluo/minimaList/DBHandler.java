@@ -1,5 +1,11 @@
 package com.ellenluo.minimaList;
 
+/*
+ * DBHandler
+ * Created by Ellen Luo
+ * SQLiteOpenHelper that creates SQLite tables to store tasks and lists and allows various database operations.
+ */
+
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;

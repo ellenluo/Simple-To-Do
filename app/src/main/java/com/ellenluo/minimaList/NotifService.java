@@ -1,5 +1,11 @@
 package com.ellenluo.minimaList;
 
+/*
+ * NotifService
+ * Created by Ellen Luo
+ * IntentService that creates a notification reminder with optional vibration, LED light and sound settings.
+ */
+
 import android.app.IntentService;
 import android.app.Notification;
 import android.app.NotificationManager;

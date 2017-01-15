@@ -1,5 +1,11 @@
 package com.ellenluo.minimaList;
 
+/*
+ * TaskListAdapter
+ * Created by Ellen Luo
+ * ArrayAdapter that displays task info with a custom row layout.
+ */
+
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;

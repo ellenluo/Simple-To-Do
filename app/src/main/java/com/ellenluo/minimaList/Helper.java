@@ -1,5 +1,11 @@
 package com.ellenluo.minimaList;
 
+/*
+ * Helper
+ * Created by Ellen Luo
+ * Helper class that contains methods used by multiple classes.
+ */
+
 import android.app.Activity;
 import android.app.AlarmManager;
 import android.app.AlertDialog;
@@ -13,12 +19,11 @@ import android.content.SharedPreferences;
 import android.os.Build;
 import android.preference.PreferenceManager;
 import android.support.v4.content.ContextCompat;
-import android.util.Log;
 import android.widget.Spinner;
 
 class Helper {
 
-    Context context;
+    private Context context;
 
     Helper(Context context) {
         this.context = context;
@@ -91,7 +96,6 @@ class Helper {
         AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(this.context);
         int appWidgetIds[] = appWidgetManager.getAppWidgetIds(new ComponentName(this.context, WidgetProvider.class));
         appWidgetManager.notifyAppWidgetViewDataChanged(appWidgetIds, R.id.task_list);
-        Log.w("Reference", "widgets updated");
     }
 
     // set style used for activities (based on user settings)

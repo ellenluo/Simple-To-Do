@@ -1,5 +1,11 @@
 package com.ellenluo.minimaList;
 
+/*
+ * WidgetListProvider
+ * Created by Ellen Luo
+ * RemoteViewsFactory that populates a widget with tasks in the selected list using a custom row layout.
+ */
+
 import android.appwidget.AppWidgetManager;
 import android.content.ComponentName;
 import android.content.Context;
@@ -59,24 +65,25 @@ class WidgetListProvider implements RemoteViewsService.RemoteViewsFactory {
         if (newList.equals("All Tasks")) {
             this.taskList = this.db.getAllTasks();
 
-            // update widget title
-            Intent intent = new Intent(this.context, WidgetProvider.class);
-            intent.setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE);
-            int[] ids = AppWidgetManager.getInstance(this.context).getAppWidgetIds(new ComponentName(this.context, WidgetProvider.class));
-            intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, ids);
-            this.context.sendBroadcast(intent);
+            // update widget header
+            updateHeader();
         } else if (!newList.equals(list)) {
             this.taskList = this.db.getTasksFromList(this.db.getList(newList).getId());
 
-            // update widget title
-            Intent intent = new Intent(this.context, WidgetProvider.class);
-            intent.setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE);
-            int[] ids = AppWidgetManager.getInstance(this.context).getAppWidgetIds(new ComponentName(this.context, WidgetProvider.class));
-            intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, ids);
-            this.context.sendBroadcast(intent);
+            // update widget header
+            updateHeader();
         } else {
             this.taskList = this.db.getTasksFromList(this.db.getList(this.list).getId());
         }
+    }
+
+    // update widget header
+    private void updateHeader() {
+        Intent intent = new Intent(this.context, WidgetProvider.class);
+        intent.setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE);
+        int[] ids = AppWidgetManager.getInstance(this.context).getAppWidgetIds(new ComponentName(this.context, WidgetProvider.class));
+        intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, ids);
+        this.context.sendBroadcast(intent);
     }
 
     @Override

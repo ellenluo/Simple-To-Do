@@ -1,5 +1,11 @@
 package com.ellenluo.minimaList;
 
+/*
+ * WidgetProvider
+ * Created by Ellen Luo
+ * AppWidgetProvider that creates and updates widgets.
+ */
+
 import android.app.PendingIntent;
 import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProvider;

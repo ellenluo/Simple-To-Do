@@ -1,5 +1,11 @@
 package com.ellenluo.minimaList;
 
+/*
+ * AddTaskActivity
+ * Created by Ellen Luo
+ * Activity that allows users to create a new task with customizable name, due date, reminder, list and details.
+ */
+
 import android.preference.PreferenceManager;
 import android.support.v4.app.DialogFragment;
 import android.content.Intent;

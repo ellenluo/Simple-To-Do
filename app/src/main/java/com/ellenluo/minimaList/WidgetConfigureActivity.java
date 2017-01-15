@@ -1,5 +1,11 @@
 package com.ellenluo.minimaList;
 
+/*
+ * WidgetConfigureActivity
+ * Created by Ellen Luo
+ * Activity that allows users to select a list for the widget to display.
+ */
+
 import android.appwidget.AppWidgetManager;
 import android.content.Intent;
 import android.content.SharedPreferences;

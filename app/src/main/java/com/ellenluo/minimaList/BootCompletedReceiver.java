@@ -1,11 +1,14 @@
 package com.ellenluo.minimaList;
 
-import android.app.AlarmManager;
-import android.app.PendingIntent;
+/*
+ * BootCompletedReceiver
+ * Created by Ellen Luo
+ * BroadcastReceiver that resets all reminders after device reboot (powering off device cancels notifications).
+ */
+
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.os.Build;
 
 import java.util.ArrayList;
 

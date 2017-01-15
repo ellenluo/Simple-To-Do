@@ -1,5 +1,11 @@
 package com.ellenluo.minimaList;
 
+/*
+ * DatePickerFragment
+ * Created by Ellen Luo
+ * DialogFragment that displays a calendar date picker.
+ */
+
 import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.app.Dialog;

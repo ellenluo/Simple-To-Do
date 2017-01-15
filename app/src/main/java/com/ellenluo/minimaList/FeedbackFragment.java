@@ -1,5 +1,11 @@
 package com.ellenluo.minimaList;
 
+/*
+ * FeedbackFragment
+ * Created by Ellen Luo
+ * Fragment that allows users to submit feedback by email.
+ */
+
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -22,7 +28,6 @@ public class FeedbackFragment extends Fragment {
 
         // find all fields
         final EditText etName = (EditText) v.findViewById(R.id.user_name);
-        final EditText etEmail = (EditText) v.findViewById(R.id.user_email);
         final EditText etMessage = (EditText) v.findViewById(R.id.message);
         final Spinner feedbackType = (Spinner) v.findViewById(R.id.feedback_type);
         Button btnSubmit = (Button) v.findViewById(R.id.send_feedback);
@@ -31,8 +36,8 @@ public class FeedbackFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 // set up email
-                String subject = "Lists - Feedback (" + feedbackType.getSelectedItem().toString() + ")";
-                String body = etMessage.getText().toString() + "\n\n" + etName.getText().toString() + " (" + etEmail.getText().toString() + ")";
+                String subject = "MinimaList - Feedback (" + feedbackType.getSelectedItem().toString() + ")";
+                String body = etMessage.getText().toString() + "\n\n" + etName.getText().toString();
 
                 // send email
                 Intent emailIntent = new Intent(Intent.ACTION_SENDTO, Uri.fromParts("mailto","ellenyilan.luo@gmail.com", null));

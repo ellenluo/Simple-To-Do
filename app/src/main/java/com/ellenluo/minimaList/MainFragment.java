@@ -1,8 +1,11 @@
 package com.ellenluo.minimaList;
 
-import android.app.AlarmManager;
-import android.app.PendingIntent;
-import android.content.Context;
+/*
+ * MainFragment
+ * Created by Ellen Luo
+ * Fragment that displays a list of either all tasks, or the tasks in a particular list.
+ */
+
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Paint;

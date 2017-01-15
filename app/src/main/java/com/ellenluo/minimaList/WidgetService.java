@@ -1,5 +1,11 @@
 package com.ellenluo.minimaList;
 
+/*
+ * WidgetService
+ * Created by Ellen Luo
+ * RemoteViewsService that calls WidgetListProvider to populate widgets.
+ */
+
 import android.content.Intent;
 import android.widget.RemoteViewsService;
 

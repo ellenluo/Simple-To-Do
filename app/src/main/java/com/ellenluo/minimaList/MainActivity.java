@@ -1,5 +1,11 @@
 package com.ellenluo.minimaList;
 
+/*
+ * MainActivity
+ * Created by Ellen Luo
+ * Activity that switches between fragments using a side navigation drawer and allows adding/editing lists.
+ */
+
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.appwidget.AppWidgetManager;

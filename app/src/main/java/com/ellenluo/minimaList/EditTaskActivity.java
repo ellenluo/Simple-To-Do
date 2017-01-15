@@ -1,13 +1,15 @@
 package com.ellenluo.minimaList;
 
-import android.app.AlarmManager;
+/*
+ * EditTaskActivity
+ * Created by Ellen Luo
+ * Activity that allows users to modify the parameters of a task.
+ */
+
 import android.app.AlertDialog;
-import android.app.PendingIntent;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.os.Build;
 import android.preference.PreferenceManager;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AppCompatActivity;

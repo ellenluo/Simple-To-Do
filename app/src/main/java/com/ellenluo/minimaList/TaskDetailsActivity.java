@@ -1,5 +1,11 @@
 package com.ellenluo.minimaList;
 
+/*
+ * TaskDetailsActivity
+ * Created by Ellen Luo
+ * Activity that allows users to view the parameters of a task.
+ */
+
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
