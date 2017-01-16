@@ -6,7 +6,6 @@ package com.ellenluo.minimaList;
  * ArrayAdapter that displays task info with a custom row layout.
  */
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
@@ -24,10 +23,10 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
-class TaskListAdapter extends ArrayAdapter {
-    ArrayList<Task> taskList;
-    DBHandler db;
-    Context context;
+class TaskListAdapter extends ArrayAdapter<Task> {
+    private DBHandler db;
+    private ArrayList<Task> taskList;
+    private Context context;
 
     TaskListAdapter(Context context, ArrayList<Task> resource) {
         super(context, R.layout.task_row, resource);
@@ -38,9 +37,15 @@ class TaskListAdapter extends ArrayAdapter {
 
     @NonNull
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
-        LayoutInflater inflater = ((Activity) this.context).getLayoutInflater();
-        convertView = inflater.inflate(R.layout.task_row, parent, false);
+    public View getView(int position, View convertView, @NonNull ViewGroup parent) {
+        View v;
+
+        if (convertView == null) {
+            LayoutInflater inflater = (LayoutInflater) this.context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            v = inflater.inflate(R.layout.task_row, parent, false);
+        } else {
+            v = convertView;
+        }
 
         // get settings from preferences
         SharedPreferences prefSettings = PreferenceManager.getDefaultSharedPreferences(getContext());
@@ -49,11 +54,11 @@ class TaskListAdapter extends ArrayAdapter {
 
         // set name
         Task curTask = this.taskList.get(position);
-        TextView tvName = (TextView) convertView.findViewById(R.id.task_row_name);
+        TextView tvName = (TextView) v.findViewById(R.id.task_row_name);
         tvName.setText(curTask.getName());
 
         // set list
-        TextView tvList = (TextView) convertView.findViewById(R.id.task_row_list);
+        TextView tvList = (TextView) v.findViewById(R.id.task_row_list);
         tvList.setTextColor(color);
 
         if (curTask.getList() != -1) {
@@ -62,9 +67,9 @@ class TaskListAdapter extends ArrayAdapter {
         }
 
         // get due date & time text
-        TextView tvDate = (TextView) convertView.findViewById(R.id.task_row_date);
+        TextView tvDate = (TextView) v.findViewById(R.id.task_row_date);
         tvDate.setTextColor(color);
-        TextView tvTime = (TextView) convertView.findViewById(R.id.task_row_time);
+        TextView tvTime = (TextView) v.findViewById(R.id.task_row_time);
         long millis = curTask.getDue();
 
         if (millis != -1) {
@@ -101,7 +106,7 @@ class TaskListAdapter extends ArrayAdapter {
             }
         }
 
-        return convertView;
+        return v;
     }
 
 }

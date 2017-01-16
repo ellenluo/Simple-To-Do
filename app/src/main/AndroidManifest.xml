@@ -6,9 +6,12 @@
     <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
     <application
         android:allowBackup="true"
+        android:fullBackupContent="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:supportsRtl="true"
@@ -27,20 +30,20 @@
         <activity
             android:name=".AddTaskActivity"
             android:label="@string/title_activity_add_task"
-            android:windowSoftInputMode="adjustPan"
-            android:parentActivityName=".MainActivity"/>
+            android:parentActivityName=".MainActivity"
+            android:windowSoftInputMode="adjustPan" />
 
         <activity
             android:name=".TaskDetailsActivity"
             android:label="@string/title_activity_task_details"
             android:launchMode="singleTop"
-            android:parentActivityName=".MainActivity"/>
+            android:parentActivityName=".MainActivity" />
 
         <activity
             android:name=".EditTaskActivity"
             android:label="@string/title_activity_edit_task"
-            android:windowSoftInputMode="adjustPan"
-            android:parentActivityName=".TaskDetailsActivity"/>
+            android:parentActivityName=".TaskDetailsActivity"
+            android:windowSoftInputMode="adjustPan" />
 
         <activity
             android:name=".WidgetConfigureActivity"
@@ -53,13 +56,13 @@
 
         <service
             android:name=".NotifService"
-            android:enabled="true"/>
+            android:enabled="true" />
 
         <service
             android:name=".WidgetService"
             android:permission="android.permission.BIND_REMOTEVIEWS" />
 
-        <receiver android:name=".AlarmManagerReceiver"/>
+        <receiver android:name=".AlarmManagerReceiver" />
 
         <receiver android:name=".BootCompletedReceiver">
             <intent-filter>
@@ -67,11 +70,12 @@
             </intent-filter>
         </receiver>
 
-        <receiver android:name=".WidgetProvider" >
+        <receiver android:name=".WidgetProvider">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
             </intent-filter>
-            <meta-data android:name="android.appwidget.provider"
+            <meta-data
+                android:name="android.appwidget.provider"
                 android:resource="@xml/appwidget_info" />
         </receiver>
 

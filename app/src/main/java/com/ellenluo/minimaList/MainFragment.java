@@ -81,7 +81,7 @@ public class MainFragment extends Fragment {
             @Override
             public boolean onItemLongClick(AdapterView<?> av, View v, final int pos, long id) {
                 Task task = taskList.get(pos);
-                TextView tvName = (TextView) v.findViewById(R.id.task_row_name);
+                final TextView tvName = (TextView) v.findViewById(R.id.task_row_name);
                 tvName.setPaintFlags(tvName.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
                 Toast.makeText(getActivity(), "'" + task.getName() + "' " + getString(R.string.delete_task_confirmation), Toast.LENGTH_SHORT).show();
 
@@ -95,6 +95,7 @@ public class MainFragment extends Fragment {
                         // update database and list adapter
                         db.deleteTask(taskList.remove(pos));
                         taskAdapter.notifyDataSetChanged();
+                        tvName.setPaintFlags(0);
 
                         // update widgets
                         h.updateWidgets();
