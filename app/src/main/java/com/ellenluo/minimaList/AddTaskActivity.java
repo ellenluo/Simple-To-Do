@@ -28,6 +28,8 @@ import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
+import com.google.android.gms.analytics.Tracker;
+
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -64,6 +66,12 @@ public class AddTaskActivity extends AppCompatActivity implements TimePickerFrag
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        // Google analytics
+        AnalyticsApplication application = (AnalyticsApplication) getApplication();
+        Tracker tracker = application.getDefaultTracker();
+        tracker.enableAutoActivityTracking(true);
+        tracker.enableExceptionReporting(true);
 
         // set theme
         h = new Helper(this);
@@ -374,4 +382,5 @@ public class AddTaskActivity extends AppCompatActivity implements TimePickerFrag
         super.onDestroy();
         db.close();
     }
+
 }

@@ -17,6 +17,8 @@ import android.view.MenuItem;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 
+import com.google.android.gms.analytics.Tracker;
+
 import java.util.ArrayList;
 
 public class WidgetConfigureActivity extends AppCompatActivity {
@@ -31,6 +33,12 @@ public class WidgetConfigureActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        // Google analytics
+        AnalyticsApplication application = (AnalyticsApplication) getApplication();
+        Tracker tracker = application.getDefaultTracker();
+        tracker.enableAutoActivityTracking(true);
+        tracker.enableExceptionReporting(true);
 
         // set theme
         Helper h = new Helper(this);

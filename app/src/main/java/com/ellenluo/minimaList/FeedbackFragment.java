@@ -17,7 +17,11 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
 
+import com.google.android.gms.analytics.Tracker;
+
 public class FeedbackFragment extends Fragment {
+
+    private Tracker tracker;
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_feedback, container, false);
