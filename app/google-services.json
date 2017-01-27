@@ -1,0 +1,38 @@
+{
+  "project_info": {
+    "project_number": "421457585665",
+    "project_id": "firebase-minimalist"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:421457585665:android:1860e6e71866ddc3",
+        "android_client_info": {
+          "package_name": "com.ellenluo.minimaList"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBCwyqqE8wTlqcSEW4u7QFoIUVu_cfeaUY"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 2,
+          "analytics_property": {
+            "tracking_id": "UA-90345489-1"
+          }
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 1
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

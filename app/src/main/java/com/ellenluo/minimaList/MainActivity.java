@@ -52,6 +52,7 @@ public class MainActivity extends AppCompatActivity {
     private FloatingActionButton fab;
     private EditText etListName;
 
+    private ArrayList<List> listList;
     private boolean showEditList = true;
 
     protected void onCreate(Bundle savedInstanceState) {
@@ -104,9 +105,17 @@ public class MainActivity extends AppCompatActivity {
 
         // check for extras (if launched from widget)
         String newList = getIntent().getStringExtra("current_list");
+
+        // check for faulty value
         if (newList != null) {
-            curList = newList;
-            pref.edit().putString("current_list", newList).apply();
+            boolean exists = false;
+            for (int i = 0; i < listList.size(); i++) {
+                if (newList.equals(listList.get(i).getName())) {
+                    curList = newList;
+                    pref.edit().putString("current_list", newList).apply();
+                    break;
+                }
+            }
         }
 
         // set main fragment
@@ -125,7 +134,7 @@ public class MainActivity extends AppCompatActivity {
 
     // refresh navigation menu of lists
     private void refreshLists() {
-        ArrayList<List> listList = db.getAllLists();
+        listList = db.getAllLists();
         Menu menu = nvDrawer.getMenu();
 
         for (int i = 0; i < listList.size(); i++) {
@@ -305,8 +314,6 @@ public class MainActivity extends AppCompatActivity {
                 }
 
                 // check for duplicate list name
-                ArrayList<List> listList = db.getAllLists();
-
                 for (int i = 0; i < listList.size(); i++) {
                     if (listName.equals(listList.get(i).getName())) {
                         dialog.dismiss();
@@ -487,8 +494,6 @@ public class MainActivity extends AppCompatActivity {
                 }
 
                 // check for duplicate list name
-                ArrayList<List> listList = db.getAllLists();
-
                 for (int i = 0; i < listList.size(); i++) {
                     if (listName.equals(listList.get(i).getName())) {
                         dialog.dismiss();

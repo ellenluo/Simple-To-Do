@@ -64,6 +64,8 @@ class TaskListAdapter extends ArrayAdapter<Task> {
         if (curTask.getList() != -1) {
             String list = this.db.getList(curTask.getList()).getName();
             tvList.setText(list);
+        } else {
+            tvList.setText(context.getString(R.string.details_no_list));
         }
 
         // get due date & time text
