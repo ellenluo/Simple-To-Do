@@ -29,6 +29,10 @@ public class BootCompletedReceiver extends BroadcastReceiver {
                 h.setReminder(curTask.getName(), curTask.getId(), curTask.getRemind());
             }
         }
+
+        // schedules widget update at midnight
+        Helper h = new Helper(context);
+        h.scheduleUpdate();
     }
 
 }

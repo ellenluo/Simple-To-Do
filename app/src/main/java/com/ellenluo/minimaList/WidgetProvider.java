@@ -6,20 +6,36 @@ package com.ellenluo.minimaList;
  * AppWidgetProvider that creates and updates widgets.
  */
 
+import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProvider;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
+import android.os.Build;
 import android.preference.PreferenceManager;
 import android.support.v4.content.ContextCompat;
 import android.widget.RemoteViews;
 
+import java.util.Calendar;
+
 public class WidgetProvider extends AppWidgetProvider {
 
     private static final int PREFERENCE_MODE_PRIVATE = 0;
+    private static final String ACTION_SCHEDULED_UPDATE = "scheduled_update";
+
+    @Override
+    public void onReceive(Context context, Intent intent) {
+        if (intent.getAction().equals(ACTION_SCHEDULED_UPDATE)) {
+            AppWidgetManager manager = AppWidgetManager.getInstance(context);
+            int[] ids = manager.getAppWidgetIds(new ComponentName(context, WidgetProvider.class));
+            onUpdate(context, manager, ids);
+        }
+        super.onReceive(context, intent);
+    }
 
     public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
         for (int appWidgetId : appWidgetIds) {
@@ -57,7 +73,14 @@ public class WidgetProvider extends AppWidgetProvider {
             appWidgetManager.updateAppWidget(appWidgetId, remoteViews);
         }
 
+        scheduleNextUpdate(context);
         super.onUpdate(context, appWidgetManager, appWidgetIds);
+    }
+
+    // schedules update at midnight
+    private void scheduleNextUpdate(Context context) {
+        Helper h = new Helper(context);
+        h.scheduleUpdate();
     }
 
 }

@@ -21,9 +21,12 @@ import android.preference.PreferenceManager;
 import android.support.v4.content.ContextCompat;
 import android.widget.Spinner;
 
+import java.util.Calendar;
+
 class Helper {
 
     private Context context;
+    private static final String ACTION_SCHEDULED_UPDATE = "scheduled_update";
 
     Helper(Context context) {
         this.context = context;
@@ -137,6 +140,28 @@ class Helper {
             }
         }
         return index;
+    }
+
+    // schedules widget update at midnight
+    void scheduleUpdate() {
+        AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+        Intent intent = new Intent(context, WidgetProvider.class);
+        intent.setAction(ACTION_SCHEDULED_UPDATE);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, intent, 0);
+
+        // get calendar instance for midnight tomorrow
+        Calendar midnight = Calendar.getInstance();
+        midnight.set(Calendar.HOUR_OF_DAY, 0);
+        midnight.set(Calendar.MINUTE, 0);
+        midnight.set(Calendar.SECOND, 1);
+        midnight.set(Calendar.MILLISECOND, 0);
+        midnight.add(Calendar.DAY_OF_YEAR, 1);
+
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT) {
+            alarmManager.set(AlarmManager.RTC_WAKEUP, midnight.getTimeInMillis(), pendingIntent);
+        } else {
+            alarmManager.setExact(AlarmManager.RTC_WAKEUP, midnight.getTimeInMillis(), pendingIntent);
+        }
     }
 
 }
