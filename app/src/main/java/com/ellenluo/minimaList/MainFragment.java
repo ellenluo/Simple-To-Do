@@ -1,6 +1,6 @@
 package com.ellenluo.minimaList;
 
-/*
+/**
  * MainFragment
  * Created by Ellen Luo
  * Fragment that displays a list of either all tasks, or the tasks in a particular list.
@@ -11,7 +11,9 @@ import android.content.SharedPreferences;
 import android.graphics.Paint;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -30,7 +32,6 @@ public class MainFragment extends Fragment {
     private static final int PREFERENCE_MODE_PRIVATE = 0;
 
     private ArrayList<Task> taskList;
-    private Handler handler = new Handler();
     private View v;
     private ImageView ivEmpty;
 
@@ -80,27 +81,49 @@ public class MainFragment extends Fragment {
         lvTasks.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(AdapterView<?> av, View v, final int pos, long id) {
-                Task task = taskList.get(pos);
+                final Task task = taskList.get(pos);
                 final TextView tvName = (TextView) v.findViewById(R.id.task_row_name);
                 tvName.setPaintFlags(tvName.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
-                Toast.makeText(getActivity(), "'" + task.getName() + "' " + getString(R.string.delete_task_confirmation), Toast.LENGTH_SHORT).show();
 
-                // cancel any reminders
-                final Helper h = new Helper(getActivity());
-                h.cancelReminder(task.getId());
+                // undo snackbar
+                CharSequence text = task.getName() + "' " + getString(R.string.delete_task_confirmation);
+                Snackbar.make(v, text, Snackbar.LENGTH_LONG)
+                        .addCallback(new Snackbar.Callback() {
+                            @Override
+                            public void onDismissed(Snackbar snackbar, int event) {
+                                switch (event) {
+                                    case Snackbar.Callback.DISMISS_EVENT_ACTION:
+                                        // undo
+                                        taskAdapter.notifyDataSetChanged();
+                                        tvName.setPaintFlags(0);
+                                        break;
+                                    default:
+                                        // cancel any reminders
+                                        final Helper h = new Helper(getActivity());
+                                        h.cancelReminder(task.getId());
 
-                // delay deletion
-                handler.postDelayed(new Runnable() {
-                    public void run() {
-                        // update database and list adapter
-                        db.deleteTask(taskList.remove(pos));
-                        taskAdapter.notifyDataSetChanged();
-                        tvName.setPaintFlags(0);
+                                        // update database and list adapter
+                                        db.deleteTask(taskList.remove(pos));
+                                        Log.d("MainFragment", "task removed");
+                                        taskAdapter.notifyDataSetChanged();
+                                        //tvName.setPaintFlags(0);
 
-                        // update widgets
-                        h.updateWidgets();
-                    }
-                }, 500);
+                                        // update widgets
+                                        h.updateWidgets();
+
+                                        String message = String.format("'%s' %s", task.getName(), getString(R.string.delete_task_confirmation));
+                                        Toast.makeText(getActivity(), message, Toast.LENGTH_SHORT).show();
+                                        break;
+                                }
+                            }
+                        })
+                        .setAction(getString(R.string.undo_delete), new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                // do nothing
+                            }
+                        })
+                        .show();
 
                 return true;
             }

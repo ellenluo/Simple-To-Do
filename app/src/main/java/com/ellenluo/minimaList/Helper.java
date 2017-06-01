@@ -1,6 +1,6 @@
 package com.ellenluo.minimaList;
 
-/*
+/**
  * Helper
  * Created by Ellen Luo
  * Helper class that contains methods used by multiple classes.

@@ -1,6 +1,6 @@
 package com.ellenluo.minimaList;
 
-/*
+/**
  * TaskListAdapter
  * Created by Ellen Luo
  * ArrayAdapter that displays task info with a custom row layout.
@@ -24,9 +24,12 @@ import java.util.Date;
 import java.util.Locale;
 
 class TaskListAdapter extends ArrayAdapter<Task> {
+
     private DBHandler db;
     private ArrayList<Task> taskList;
     private Context context;
+
+    private static final int PREFERENCE_MODE_PRIVATE = 0;
 
     TaskListAdapter(Context context, ArrayList<Task> resource) {
         super(context, R.layout.task_row, resource);
@@ -45,6 +48,13 @@ class TaskListAdapter extends ArrayAdapter<Task> {
             v = inflater.inflate(R.layout.task_row, parent, false);
         } else {
             v = convertView;
+        }
+
+        // return null if row hidden
+        SharedPreferences pref = context.getSharedPreferences("Main", PREFERENCE_MODE_PRIVATE);
+        int hidden = pref.getInt("hide_pos", -1);
+        if (hidden != -1 && position == hidden) {
+            return new View(context);
         }
 
         // get settings from preferences

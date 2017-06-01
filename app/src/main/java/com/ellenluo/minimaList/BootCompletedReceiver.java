@@ -1,6 +1,6 @@
 package com.ellenluo.minimaList;
 
-/*
+/**
  * BootCompletedReceiver
  * Created by Ellen Luo
  * BroadcastReceiver that resets all reminders after device reboot (powering off device cancels notifications).

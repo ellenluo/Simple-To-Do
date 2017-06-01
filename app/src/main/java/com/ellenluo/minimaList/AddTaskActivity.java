@@ -1,6 +1,6 @@
 package com.ellenluo.minimaList;
 
-/*
+/**
  * AddTaskActivity
  * Created by Ellen Luo
  * Activity that allows users to create a new task with customizable name, due date, reminder, list and details.

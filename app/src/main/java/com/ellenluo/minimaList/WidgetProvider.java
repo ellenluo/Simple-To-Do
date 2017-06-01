@@ -1,12 +1,11 @@
 package com.ellenluo.minimaList;
 
-/*
+/**
  * WidgetProvider
  * Created by Ellen Luo
  * AppWidgetProvider that creates and updates widgets.
  */
 
-import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProvider;
@@ -15,12 +14,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
-import android.os.Build;
 import android.preference.PreferenceManager;
 import android.support.v4.content.ContextCompat;
 import android.widget.RemoteViews;
-
-import java.util.Calendar;
 
 public class WidgetProvider extends AppWidgetProvider {
 
