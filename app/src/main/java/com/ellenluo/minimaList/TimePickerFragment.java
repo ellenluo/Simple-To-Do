@@ -1,6 +1,6 @@
 package com.ellenluo.minimaList;
 
-/*
+/**
  * TimePickerFragment
  * Created by Ellen Luo
  * DialogFragment that displays a time picker.

@@ -1,6 +1,6 @@
 package com.ellenluo.minimaList;
 
-/*
+/**
  * FeedbackFragment
  * Created by Ellen Luo
  * Fragment that allows users to submit feedback by email.

@@ -1,6 +1,6 @@
 package com.ellenluo.minimaList;
 
-/*
+/**
  * AlarmManagerReceiver
  * Created by Ellen Luo
  * BroadcastReceiver that calls a notification service when a task reminder fires.

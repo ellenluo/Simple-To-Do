@@ -1,6 +1,6 @@
 package com.ellenluo.minimaList;
 
-/*
+/**
  * List
  * Created by Ellen Luo
  * Class to represent a List object with an id and name.

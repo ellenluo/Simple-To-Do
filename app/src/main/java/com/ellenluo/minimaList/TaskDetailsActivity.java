@@ -1,6 +1,6 @@
 package com.ellenluo.minimaList;
 
-/*
+/**
  * TaskDetailsActivity
  * Created by Ellen Luo
  * Activity that allows users to view the parameters of a task.

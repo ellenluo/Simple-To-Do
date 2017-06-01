@@ -1,6 +1,6 @@
 package com.ellenluo.minimaList;
 
-/*
+/**
  * WidgetListProvider
  * Created by Ellen Luo
  * RemoteViewsFactory that populates a widget with tasks in the selected list using a custom row layout.

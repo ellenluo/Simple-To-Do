@@ -1,6 +1,6 @@
 package com.ellenluo.minimaList;
 
-/*
+/**
  * AnalyticsApplication
  * Created by Ellen Luo and Google Analytics
  * Application that allows Google Analytics tracking

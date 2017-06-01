@@ -1,6 +1,6 @@
 package com.ellenluo.minimaList;
 
-/*
+/**
  * NotifService
  * Created by Ellen Luo
  * IntentService that creates a notification reminder with optional vibration, LED light and sound settings.

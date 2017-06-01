@@ -1,6 +1,6 @@
 package com.ellenluo.minimaList;
 
-/*
+/**
  * WidgetService
  * Created by Ellen Luo
  * RemoteViewsService that calls WidgetListProvider to populate widgets.

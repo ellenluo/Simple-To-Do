@@ -1,6 +1,6 @@
 package com.ellenluo.minimaList;
 
-/*
+/**
  * DatePickerFragment
  * Created by Ellen Luo
  * DialogFragment that displays a calendar date picker.

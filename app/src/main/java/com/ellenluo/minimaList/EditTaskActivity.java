@@ -1,6 +1,6 @@
 package com.ellenluo.minimaList;
 
-/*
+/**
  * EditTaskActivity
  * Created by Ellen Luo
  * Activity that allows users to modify the parameters of a task.

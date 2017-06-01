@@ -1,6 +1,6 @@
 package com.ellenluo.minimaList;
 
-/*
+/**
  * SettingsFragment
  * Created by Ellen Luo
  * PreferenceFragment that allows users to set display, theme and notification settings.
