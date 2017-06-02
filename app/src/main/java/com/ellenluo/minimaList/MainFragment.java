@@ -10,10 +10,8 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Paint;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -86,7 +84,7 @@ public class MainFragment extends Fragment {
                 tvName.setPaintFlags(tvName.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
 
                 // undo snackbar
-                CharSequence text = task.getName() + "' " + getString(R.string.delete_task_confirmation);
+                CharSequence text = String.format("%s '%s'?", getString(R.string.deleting_task), task.getName());
                 Snackbar.make(v, text, Snackbar.LENGTH_LONG)
                         .addCallback(new Snackbar.Callback() {
                             @Override
@@ -95,7 +93,7 @@ public class MainFragment extends Fragment {
                                     case Snackbar.Callback.DISMISS_EVENT_ACTION:
                                         // undo
                                         taskAdapter.notifyDataSetChanged();
-                                        tvName.setPaintFlags(0);
+                                        tvName.setPaintFlags(tvName.getPaintFlags() & (~ Paint.STRIKE_THRU_TEXT_FLAG));
                                         break;
                                     default:
                                         // cancel any reminders
@@ -104,9 +102,8 @@ public class MainFragment extends Fragment {
 
                                         // update database and list adapter
                                         db.deleteTask(taskList.remove(pos));
-                                        Log.d("MainFragment", "task removed");
                                         taskAdapter.notifyDataSetChanged();
-                                        //tvName.setPaintFlags(0);
+                                        tvName.setPaintFlags(tvName.getPaintFlags() & (~ Paint.STRIKE_THRU_TEXT_FLAG));
 
                                         // update widgets
                                         h.updateWidgets();

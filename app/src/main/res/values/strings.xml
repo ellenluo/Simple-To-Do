@@ -23,6 +23,7 @@
     <string name="add_task_confirmation">New task successfully added</string>
     <string name="edit_task_confirmation">successfully updated</string>
     <string name="delete_task_confirmation">successfully removed</string>
+    <string name="deleting_task">Are you sure you want to delete</string>
     <string name="undo_delete">Undo</string>
 
     <!-- Task details strings -->
