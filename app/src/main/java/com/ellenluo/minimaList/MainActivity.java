@@ -61,7 +61,7 @@ public class MainActivity extends AppCompatActivity {
 
         // show intro if first time
         pref = getSharedPreferences("Main", PREFERENCE_MODE_PRIVATE);
-        if (true){//(pref.getBoolean("show_intro", true)) {
+        if (pref.getBoolean("show_intro", true)) {
             Intent intent = new Intent(MainActivity.this, IntroActivity.class);
             startActivity(intent);
             pref.edit().putBoolean("show_intro", false).apply();
@@ -214,6 +214,11 @@ public class MainActivity extends AppCompatActivity {
                     fragmentClass = FeedbackFragment.class;
                     fab.setVisibility(View.GONE);
                     showEditList = false;
+                    break;
+                case R.id.nav_help:
+                    Intent intent = new Intent(MainActivity.this, IntroActivity.class);
+                    startActivity(intent);
+                    MainActivity.this.finish();
                     break;
             }
 

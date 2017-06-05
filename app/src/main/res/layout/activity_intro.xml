@@ -25,8 +25,8 @@
         android:gravity="center">
 
         <ImageView
-            android:layout_width="350dp"
-            android:layout_height="400dp"
+            android:layout_width="400dp"
+            android:layout_height="500dp"
             android:layout_centerHorizontal="true"
             android:contentDescription="@string/intro_img_error"
             android:src="@drawable/help_screen" />
