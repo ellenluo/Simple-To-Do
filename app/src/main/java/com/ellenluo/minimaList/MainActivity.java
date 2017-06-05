@@ -55,8 +55,18 @@ public class MainActivity extends AppCompatActivity {
     private ArrayList<List> listList;
     private boolean showEditList = true;
 
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        // show intro if first time
+        pref = getSharedPreferences("Main", PREFERENCE_MODE_PRIVATE);
+        if (true){//(pref.getBoolean("show_intro", true)) {
+            Intent intent = new Intent(MainActivity.this, IntroActivity.class);
+            startActivity(intent);
+            pref.edit().putBoolean("show_intro", false).apply();
+            MainActivity.this.finish();
+        }
 
         // Google analytics
         AnalyticsApplication application = (AnalyticsApplication) getApplication();
@@ -100,7 +110,6 @@ public class MainActivity extends AppCompatActivity {
         });
 
         // set main fragment
-        pref = getSharedPreferences("Main", PREFERENCE_MODE_PRIVATE);
         String curList = pref.getString("current_list", "All Tasks");
 
         // check for extras (if launched from widget)

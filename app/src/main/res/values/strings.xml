@@ -6,6 +6,12 @@
     <string name="title_activity_task_details">Task Details</string>
     <string name="title_activity_edit_task">Edit Task</string>
     <string name="title_activity_widget_configure">Configure Widget</string>
+    <string name="title_activity_intro">Help</string>
+
+    <!-- Intro/help screen -->
+    <string name="intro_title">Let\'s get started</string>
+    <string name="intro_done">GOT IT</string>
+    <string name="intro_img_error">Error loading image :(</string>
 
     <!-- Add/edit/delete task strings -->
     <string name="add_task_button">Add Task</string>
