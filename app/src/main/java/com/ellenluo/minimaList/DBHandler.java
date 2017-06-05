@@ -13,6 +13,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
 import java.util.ArrayList;
+import java.util.Locale;
 
 public class DBHandler extends SQLiteOpenHelper {
 
@@ -29,6 +30,7 @@ public class DBHandler extends SQLiteOpenHelper {
     private static final String KEY_TASK_DETAILS = "task_details";
     private static final String KEY_TASK_DUE = "task_due";
     private static final String KEY_TASK_REMIND = "task_remind";
+    private static final String KEY_TASK_REPEAT = "task_repeat";
     private static final String KEY_TASK_LIST = "task_list";
     private static final String KEY_LIST_ID = "list_id";
     private static final String KEY_LIST_NAME = "list_name";
@@ -40,8 +42,8 @@ public class DBHandler extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
         // create task and list tables
-        String CREATE_TASK_TABLE = "CREATE TABLE " + TABLE_TASKS + " (" + KEY_TASK_ID + " INTEGER PRIMARY KEY, " + KEY_TASK_NAME + " TEXT, " + KEY_TASK_DETAILS + " TEXT, " + KEY_TASK_DUE + " INTEGER, " + KEY_TASK_REMIND + " INTEGER, " + KEY_TASK_LIST + " INTEGER)";
-        String CREATE_LIST_TABLE = "CREATE TABLE " + TABLE_LISTS + " (" + KEY_LIST_ID + " INTEGER PRIMARY KEY, " + KEY_LIST_NAME + " TEXT)";
+        String CREATE_TASK_TABLE = String.format(Locale.US, "CREATE TABLE %s (%s INTEGER PRIMARY KEY, %s TEXT, %s TEXT, %s INTEGER, %s INTEGER, %s INTEGER, %s INTEGER)", TABLE_TASKS, KEY_TASK_ID, KEY_TASK_NAME, KEY_TASK_DETAILS, KEY_TASK_DUE, KEY_TASK_REMIND, KEY_TASK_REPEAT, KEY_TASK_LIST);
+        String CREATE_LIST_TABLE = String.format(Locale.US, "CREATE TABLE %s (%s INTEGER PRIMARY KEY, %s TEXT)", TABLE_LISTS, KEY_LIST_ID, KEY_LIST_NAME);
 
         db.execSQL(CREATE_TASK_TABLE);
         db.execSQL(CREATE_LIST_TABLE);
@@ -63,6 +65,7 @@ public class DBHandler extends SQLiteOpenHelper {
         values.put(KEY_TASK_DETAILS, task.getDetails());
         values.put(KEY_TASK_DUE, task.getDue());
         values.put(KEY_TASK_REMIND, task.getRemind());
+        values.put(KEY_TASK_REPEAT, task.getRepeat());
         values.put(KEY_TASK_LIST, task.getList());
 
         db.insert(TABLE_TASKS, null, values);
@@ -83,10 +86,10 @@ public class DBHandler extends SQLiteOpenHelper {
     // get task from table
     Task getTask(long id) {
         SQLiteDatabase db = this.getReadableDatabase();
-        Cursor cursor = db.query(TABLE_TASKS, new String[]{KEY_TASK_ID, KEY_TASK_NAME, KEY_TASK_DETAILS, KEY_TASK_DUE, KEY_TASK_REMIND, KEY_TASK_LIST}, KEY_TASK_ID + "=?", new String[] { String.valueOf(id) }, null, null, null, null);
+        Cursor cursor = db.query(TABLE_TASKS, new String[]{KEY_TASK_ID, KEY_TASK_NAME, KEY_TASK_DETAILS, KEY_TASK_DUE, KEY_TASK_REMIND, KEY_TASK_REPEAT, KEY_TASK_LIST}, KEY_TASK_ID + "=?", new String[] { String.valueOf(id) }, null, null, null, null);
 
         if (cursor.moveToFirst()) {
-            Task task = new Task(Long.parseLong(cursor.getString(0)), cursor.getString(1), cursor.getString(2), Long.parseLong(cursor.getString(3)), Long.parseLong(cursor.getString(4)), Long.parseLong(cursor.getString(5)));
+            Task task = new Task(Long.parseLong(cursor.getString(0)), cursor.getString(1), cursor.getString(2), Long.parseLong(cursor.getString(3)), Long.parseLong(cursor.getString(4)), Long.parseLong(cursor.getString(5)), Long.parseLong(cursor.getString(6)));
             cursor.close();
             db.close();
             return task;
@@ -109,7 +112,7 @@ public class DBHandler extends SQLiteOpenHelper {
 
         if (cursor.moveToFirst()) {
             do {
-                Task task = new Task(Long.parseLong(cursor.getString(0)), cursor.getString(1), cursor.getString(2), Long.parseLong(cursor.getString(3)), Long.parseLong(cursor.getString(4)), Long.parseLong(cursor.getString(5)));
+                Task task = new Task(Long.parseLong(cursor.getString(0)), cursor.getString(1), cursor.getString(2), Long.parseLong(cursor.getString(3)), Long.parseLong(cursor.getString(4)), Long.parseLong(cursor.getString(5)), Long.parseLong(cursor.getString(6)));
                 taskList.add(task);
             } while (cursor.moveToNext());
         }
@@ -122,7 +125,7 @@ public class DBHandler extends SQLiteOpenHelper {
 
         if (cursor.moveToFirst()) {
             do {
-                Task task = new Task(Long.parseLong(cursor.getString(0)), cursor.getString(1), cursor.getString(2), Long.parseLong(cursor.getString(3)), Long.parseLong(cursor.getString(4)), Long.parseLong(cursor.getString(5)));
+                Task task = new Task(Long.parseLong(cursor.getString(0)), cursor.getString(1), cursor.getString(2), Long.parseLong(cursor.getString(3)), Long.parseLong(cursor.getString(4)), Long.parseLong(cursor.getString(5)), Long.parseLong(cursor.getString(6)));
                 taskList.add(task);
             } while (cursor.moveToNext());
         }
@@ -140,6 +143,7 @@ public class DBHandler extends SQLiteOpenHelper {
         values.put(KEY_TASK_DETAILS, task.getDetails());
         values.put(KEY_TASK_DUE, task.getDue());
         values.put(KEY_TASK_REMIND, task.getRemind());
+        values.put(KEY_TASK_REPEAT, task.getRepeat());
         values.put(KEY_TASK_LIST, task.getList());
 
         return db.update(TABLE_TASKS, values, KEY_TASK_ID + " = ?", new String[]{String.valueOf(task.getId())});
@@ -246,7 +250,7 @@ public class DBHandler extends SQLiteOpenHelper {
 
         if (cursor.moveToFirst()) {
             do {
-                Task task = new Task(Long.parseLong(cursor.getString(0)), cursor.getString(1), cursor.getString(2), Long.parseLong(cursor.getString(3)), Long.parseLong(cursor.getString(4)), Long.parseLong(cursor.getString(5)));
+                Task task = new Task(Long.parseLong(cursor.getString(0)), cursor.getString(1), cursor.getString(2), Long.parseLong(cursor.getString(3)), Long.parseLong(cursor.getString(4)), Long.parseLong(cursor.getString(5)), Long.parseLong(cursor.getString(6)));
                 tasks.add(task);
             } while (cursor.moveToNext());
         }
@@ -259,7 +263,7 @@ public class DBHandler extends SQLiteOpenHelper {
 
         if (cursor.moveToFirst()) {
             do {
-                Task task = new Task(Long.parseLong(cursor.getString(0)), cursor.getString(1), cursor.getString(2), Long.parseLong(cursor.getString(3)), Long.parseLong(cursor.getString(4)), Long.parseLong(cursor.getString(5)));
+                Task task = new Task(Long.parseLong(cursor.getString(0)), cursor.getString(1), cursor.getString(2), Long.parseLong(cursor.getString(3)), Long.parseLong(cursor.getString(4)), Long.parseLong(cursor.getString(5)), Long.parseLong(cursor.getString(6)));
                 tasks.add(task);
             } while (cursor.moveToNext());
         }

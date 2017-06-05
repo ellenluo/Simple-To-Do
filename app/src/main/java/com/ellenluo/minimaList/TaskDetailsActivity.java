@@ -15,6 +15,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.TextView;
@@ -78,11 +79,14 @@ public class TaskDetailsActivity extends AppCompatActivity {
         TextView tvName = (TextView) findViewById(R.id.task_name);
         TextView tvDue = (TextView) findViewById(R.id.due_date);
         TextView tvRemind = (TextView) findViewById(R.id.reminder);
+        TextView tvRepeatLabel = (TextView) findViewById(R.id.repeat_label);
+        TextView tvRepeat = (TextView) findViewById(R.id.repeat);
         TextView tvList = (TextView) findViewById(R.id.list);
         TextView tvDetails = (TextView) findViewById(R.id.details);
 
         tvName.setText(curTask.getName());
         tvDetails.setText(curTask.getDetails());
+        tvRepeat.setText(getResources().getStringArray(R.array.repeat_options)[(int) curTask.getRepeat()]);
 
         // set list
         if (curTask.getList() != -1) {
@@ -113,6 +117,9 @@ public class TaskDetailsActivity extends AppCompatActivity {
             } else {
                 tvRemind.setText(new SimpleDateFormat("MMMM dd, yyyy", Locale.getDefault()).format(date) + " " + getString(R.string.details_at) + " " + new SimpleDateFormat("hh:mm a", Locale.getDefault()).format(date));
             }
+
+            tvRepeatLabel.setVisibility(View.VISIBLE);
+            tvRepeat.setVisibility(View.VISIBLE);
         }
 
         // task completed checkbox

@@ -57,8 +57,10 @@ public class EditTaskActivity extends AppCompatActivity implements TimePickerFra
     private TextView tvDueTime;
     private TextView tvRemindDate;
     private TextView tvRemindTime;
+    private TextView tvRepeat;
     private Button btnClearDue;
     private Button btnClearRemind;
+    private Spinner repeatSpinner;
 
     private long id;
     private int picker = 0;
@@ -136,12 +138,18 @@ public class EditTaskActivity extends AppCompatActivity implements TimePickerFra
         tvRemindDate = (TextView) findViewById(R.id.remind_date);
         tvRemindTime = (TextView) findViewById(R.id.remind_time);
         btnClearRemind = (Button) findViewById(R.id.clear_remind);
+        tvRepeat = (TextView) findViewById(R.id.repeat);
+        repeatSpinner = (Spinner) findViewById(R.id.repeat_spinner);
+        ArrayAdapter<CharSequence> repeatAdapter = ArrayAdapter.createFromResource(this, R.array.repeat_options, android.R.layout.simple_spinner_dropdown_item);
+        repeatSpinner.setAdapter(repeatAdapter);
 
         if (curTask.getRemind() == -1) {
             // make reminder date/time invisible
             tvRemindDate.setVisibility(View.GONE);
             tvRemindTime.setVisibility(View.GONE);
             btnSetRemind.setVisibility(View.GONE);
+            repeatSpinner.setVisibility(View.GONE);
+            tvRepeat.setVisibility(View.GONE);
         } else {
             // set current reminder date/time
             Calendar cal = Calendar.getInstance();
@@ -158,6 +166,8 @@ public class EditTaskActivity extends AppCompatActivity implements TimePickerFra
             } else {
                 tvRemindTime.setText(new SimpleDateFormat("hh:mm a", Locale.getDefault()).format(date));
             }
+
+            repeatSpinner.setSelection((int) curTask.getRepeat());
         }
 
         // set up reminder switch
@@ -180,6 +190,8 @@ public class EditTaskActivity extends AppCompatActivity implements TimePickerFra
                     tvRemindTime.setVisibility(View.GONE);
                     btnSetRemind.setVisibility(View.GONE);
                     btnClearRemind.setVisibility(View.GONE);
+                    tvRepeat.setVisibility(View.GONE);
+                    repeatSpinner.setVisibility(View.GONE);
                     remind = null;
                 }
             }
@@ -289,6 +301,10 @@ public class EditTaskActivity extends AppCompatActivity implements TimePickerFra
         // show time picker
         DialogFragment timePicker = new TimePickerFragment();
         timePicker.show(getSupportFragmentManager(), "timePicker");
+
+        // show repeating options
+        tvRepeat.setVisibility(View.VISIBLE);
+        repeatSpinner.setVisibility(View.VISIBLE);
     }
 
     // when time is set
@@ -369,9 +385,11 @@ public class EditTaskActivity extends AppCompatActivity implements TimePickerFra
 
         // get reminder
         long remindMillis = -1;
+        int repeat = 0;
 
         if (remind != null) {
             remindMillis = remind.getTimeInMillis();
+            repeat = repeatSpinner.getSelectedItemPosition();
         }
 
         // set reminder
@@ -390,6 +408,7 @@ public class EditTaskActivity extends AppCompatActivity implements TimePickerFra
         curTask.setDetails(newDetails);
         curTask.setDue(dueMillis);
         curTask.setRemind(remindMillis);
+        curTask.setRepeat(repeat);
         curTask.setList(listId);
         db.updateTask(curTask);
         Toast.makeText(this, "'" + curTask.getName() + "' " + getString(R.string.edit_task_confirmation), Toast.LENGTH_SHORT).show();
