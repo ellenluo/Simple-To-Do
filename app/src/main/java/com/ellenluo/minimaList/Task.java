@@ -9,26 +9,28 @@ package com.ellenluo.minimaList;
 public class Task {
 
     // parameters
-    private long id, due, remind, list, repeat;
+    private long id, due, remind, list, repeat, nextRemind;
     private String name, details;
 
     // constructors
-    public Task(long id, String name, String details, long due, long remind, long repeat, long list) {
+    public Task(long id, String name, String details, long due, long remind, long repeat, long nextRemind, long list) {
         this.id = id;
         this.name = name;
         this.details = details;
         this.due = due;
         this.remind = remind;
         this.repeat = repeat;
+        this.nextRemind = nextRemind;
         this.list = list;
     }
 
-    public Task(String name, String details, long due, long remind, long repeat, long list) {
+    public Task(String name, String details, long due, long remind, long repeat, long nextRemind, long list) {
         this.name = name;
         this.details = details;
         this.due = due;
         this.remind = remind;
         this.repeat = repeat;
+        this.nextRemind = nextRemind;
         this.list = list;
     }
 
@@ -61,6 +63,10 @@ public class Task {
         return this.remind;
     }
 
+    long getNextRemind() {
+        return this.nextRemind;
+    }
+
     // setters
     public void setId(long id) {
         this.id = id;
@@ -84,6 +90,10 @@ public class Task {
 
     void setRepeat(int repeat) {
         this.repeat = repeat;
+    }
+
+    void setNextRemind(long nextRemind) {
+        this.nextRemind = nextRemind;
     }
 
     public void setList(long list) {

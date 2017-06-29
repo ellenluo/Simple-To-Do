@@ -84,7 +84,7 @@ public class MainFragment extends Fragment {
                 tvName.setPaintFlags(tvName.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
 
                 // undo snackbar
-                CharSequence text = String.format("%s '%s'?", getString(R.string.deleting_task), task.getName());
+                CharSequence text = String.format("%s '%s'...", getString(R.string.deleting_task), task.getName());
                 Snackbar.make(v, text, Snackbar.LENGTH_LONG)
                         .addCallback(new Snackbar.Callback() {
                             @Override
@@ -93,7 +93,7 @@ public class MainFragment extends Fragment {
                                     case Snackbar.Callback.DISMISS_EVENT_ACTION:
                                         // undo
                                         taskAdapter.notifyDataSetChanged();
-                                        tvName.setPaintFlags(tvName.getPaintFlags() & (~ Paint.STRIKE_THRU_TEXT_FLAG));
+                                        tvName.setPaintFlags(tvName.getPaintFlags() & (~Paint.STRIKE_THRU_TEXT_FLAG));
                                         break;
                                     default:
                                         // cancel any reminders
@@ -103,7 +103,7 @@ public class MainFragment extends Fragment {
                                         // update database and list adapter
                                         db.deleteTask(taskList.remove(pos));
                                         taskAdapter.notifyDataSetChanged();
-                                        tvName.setPaintFlags(tvName.getPaintFlags() & (~ Paint.STRIKE_THRU_TEXT_FLAG));
+                                        tvName.setPaintFlags(tvName.getPaintFlags() & (~Paint.STRIKE_THRU_TEXT_FLAG));
 
                                         // update widgets
                                         h.updateWidgets();

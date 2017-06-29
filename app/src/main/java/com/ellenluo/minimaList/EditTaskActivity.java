@@ -38,7 +38,8 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
-public class EditTaskActivity extends AppCompatActivity implements TimePickerFragment.OnTimeSetListener, DatePickerFragment.OnDateSetListener {
+public class EditTaskActivity extends AppCompatActivity implements TimePickerFragment.OnTimeSetListener,
+        DatePickerFragment.OnDateSetListener {
 
     private DBHandler db;
     private SharedPreferences pref;
@@ -140,7 +141,8 @@ public class EditTaskActivity extends AppCompatActivity implements TimePickerFra
         btnClearRemind = (Button) findViewById(R.id.clear_remind);
         tvRepeat = (TextView) findViewById(R.id.repeat);
         repeatSpinner = (Spinner) findViewById(R.id.repeat_spinner);
-        ArrayAdapter<CharSequence> repeatAdapter = ArrayAdapter.createFromResource(this, R.array.repeat_options, android.R.layout.simple_spinner_dropdown_item);
+        ArrayAdapter<CharSequence> repeatAdapter = ArrayAdapter.createFromResource(this, R.array.repeat_options,
+                android.R.layout.simple_spinner_dropdown_item);
         repeatSpinner.setAdapter(repeatAdapter);
 
         if (curTask.getRemind() == -1) {
@@ -216,7 +218,8 @@ public class EditTaskActivity extends AppCompatActivity implements TimePickerFra
             }
         }
 
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, spinnerItem);
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item,
+                spinnerItem);
         listSpinner.setAdapter(adapter);
 
         // set selection to current value

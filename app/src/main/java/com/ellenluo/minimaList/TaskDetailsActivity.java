@@ -13,6 +13,7 @@ import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -73,6 +74,7 @@ public class TaskDetailsActivity extends AppCompatActivity {
         if (getIntent().getExtras() != null) {
             id = getIntent().getExtras().getLong("id");
         }
+        Log.d("TaskDetailsActivity", "id is " + id);
         curTask = db.getTask(id);
 
         // set task info

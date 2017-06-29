@@ -96,9 +96,10 @@ class TaskListAdapter extends ArrayAdapter<Task> {
             Date date = due.getTime();
 
             // set due date & time text
-            if (due.before(now))
+            if (due.before(now)) {
                 tvDate.setText(this.context.getString(R.string.task_row_overdue));
-            else {
+                tvTime.setText("");
+            } else {
                 // set time
                 if (militaryTime) {
                     tvTime.setText(new SimpleDateFormat("HH:mm", Locale.getDefault()).format(date));

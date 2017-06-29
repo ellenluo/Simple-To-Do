@@ -36,7 +36,8 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
-public class AddTaskActivity extends AppCompatActivity implements TimePickerFragment.OnTimeSetListener, DatePickerFragment.OnDateSetListener {
+public class AddTaskActivity extends AppCompatActivity implements TimePickerFragment.OnTimeSetListener,
+        DatePickerFragment.OnDateSetListener {
 
     private DBHandler db;
     private SharedPreferences pref;
@@ -86,7 +87,8 @@ public class AddTaskActivity extends AppCompatActivity implements TimePickerFrag
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP && getSupportActionBar() != null) {
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP &&
+                getSupportActionBar() != null) {
             toolbar.setPadding(0, h.getStatusBarHeight(), 0, 0);
         }
 
@@ -106,7 +108,8 @@ public class AddTaskActivity extends AppCompatActivity implements TimePickerFrag
         btnClearRemind = (Button) findViewById(R.id.clear_remind);
         tvRepeat = (TextView) findViewById(R.id.repeat);
         repeatSpinner = (Spinner) findViewById(R.id.repeat_spinner);
-        ArrayAdapter<CharSequence> repeatAdapter = ArrayAdapter.createFromResource(this, R.array.repeat_options, android.R.layout.simple_spinner_dropdown_item);
+        ArrayAdapter<CharSequence> repeatAdapter = ArrayAdapter.createFromResource(this, R.array.repeat_options,
+                android.R.layout.simple_spinner_dropdown_item);
         repeatSpinner.setAdapter(repeatAdapter);
 
         // initialize new list instructions/text field
@@ -159,7 +162,8 @@ public class AddTaskActivity extends AppCompatActivity implements TimePickerFrag
             }
         }
 
-        ArrayAdapter<String> listAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, listSpinnerItem);
+        ArrayAdapter<String> listAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item,
+                listSpinnerItem);
         listSpinner.setAdapter(listAdapter);
 
         // set default list option
@@ -330,14 +334,16 @@ public class AddTaskActivity extends AppCompatActivity implements TimePickerFrag
         // get reminder
         long remindMillis = -1;
         int repeat = 0;
+        long nextRemindMillis = -1;
 
         if (remind != null) {
             remindMillis = remind.getTimeInMillis();
             repeat = repeatSpinner.getSelectedItemPosition();
+            nextRemindMillis = remindMillis;
         }
 
         // add task & print completion message
-        Task newTask = new Task(taskName, details, dueMillis, remindMillis, repeat, listId);
+        Task newTask = new Task(taskName, details, dueMillis, remindMillis, repeat, nextRemindMillis, listId);
         db.addTask(newTask);
         Toast.makeText(this, getString(R.string.add_task_confirmation), Toast.LENGTH_SHORT).show();
 

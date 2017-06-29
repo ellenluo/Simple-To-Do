@@ -17,6 +17,9 @@ import android.os.Build;
 import android.preference.PreferenceManager;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.ContextCompat;
+import android.util.Log;
+
+import java.util.Calendar;
 
 public class NotifService extends IntentService {
 
@@ -75,7 +78,53 @@ public class NotifService extends IntentService {
         Notification notif = builder.build();
         NotificationManager manager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
         manager.notify((int) id, notif);
+        Log.d("NotifService", "notification sent at " + Calendar.getInstance().getTimeInMillis());
+        Log.d("NotifService", "task id is " + id);
 
+        // set next reminder (if recurring)
+        DBHandler db = new DBHandler(this);
+        Task curTask = db.getTask(id);
+        int option = (int) curTask.getRepeat();
+        Helper h = new Helper(this);
+
+        if (option > 0) {
+            long millis = curTask.getNextRemind();
+            Calendar cal = Calendar.getInstance();
+            cal.setTimeInMillis(millis);
+
+            switch (option) {
+                case 1: {
+                    // daily
+                    cal.add(Calendar.DATE, 1);
+                    long nextMillis = cal.getTimeInMillis();
+                    curTask.setNextRemind(nextMillis);
+                    db.updateTask(curTask);
+                    Log.d("NotifService", "setting reminder for " + nextMillis);
+                    Log.d("NotifService", "new task id is " + curTask.getId());
+                    h.setReminder(curTask.getName(), curTask.getId(), nextMillis);
+                    break;
+                } case 2: {
+                    // weekly
+                    cal.add(Calendar.DATE, 7);
+                    long nextMillis = cal.getTimeInMillis();
+                    curTask.setNextRemind(nextMillis);
+                    db.updateTask(curTask);
+                    h.setReminder(curTask.getName(), curTask.getId(), nextMillis);
+                    break;
+                }
+                case 3: {
+                    // monthly
+                    cal.add(Calendar.MONTH, 1);
+                    long nextMillis = cal.getTimeInMillis();
+                    curTask.setNextRemind(nextMillis);
+                    db.updateTask(curTask);
+                    h.setReminder(curTask.getName(), curTask.getId(), nextMillis);
+                    break;
+                }
+            }
+        }
+
+        db.close();
         AlarmManagerReceiver.completeWakefulIntent(intent);
     }
 
