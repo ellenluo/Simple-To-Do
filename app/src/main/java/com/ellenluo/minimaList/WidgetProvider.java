@@ -57,13 +57,15 @@ public class WidgetProvider extends AppWidgetProvider {
 
             // set list item click event
             Intent listIntent = new Intent(context, TaskDetailsActivity.class);
-            PendingIntent listPendingIntent = PendingIntent.getActivity(context, 0, listIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+            PendingIntent listPendingIntent = PendingIntent.getActivity(context, 0, listIntent,
+                    PendingIntent.FLAG_UPDATE_CURRENT);
             remoteViews.setPendingIntentTemplate(R.id.task_list, listPendingIntent);
 
             // set header click event
             Intent headerIntent = new Intent(context, MainActivity.class);
             headerIntent.putExtra("current_list", list);
-            PendingIntent headerPendingIntent = PendingIntent.getActivity(context, 0, headerIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+            PendingIntent headerPendingIntent = PendingIntent.getActivity(context, 0, headerIntent,
+                    PendingIntent.FLAG_UPDATE_CURRENT);
             remoteViews.setOnClickPendingIntent(R.id.widget_title, headerPendingIntent);
 
             appWidgetManager.updateAppWidget(appWidgetId, remoteViews);

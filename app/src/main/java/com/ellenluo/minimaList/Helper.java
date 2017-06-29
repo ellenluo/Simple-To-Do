@@ -76,7 +76,8 @@ class Helper {
         Intent intent = new Intent(this.context, AlarmManagerReceiver.class);
         intent.putExtra("text", name);
         intent.putExtra("id", id);
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(this.context, (int) id, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(this.context, (int) id, intent,
+                PendingIntent.FLAG_UPDATE_CURRENT);
 
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT) {
             alarmManager.set(AlarmManager.RTC_WAKEUP, remindMillis, pendingIntent);
@@ -88,7 +89,8 @@ class Helper {
     // cancel reminder
     void cancelReminder(long id) {
         Intent intent = new Intent(this.context, AlarmManagerReceiver.class);
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(this.context, (int) id, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(this.context, (int) id, intent,
+                PendingIntent.FLAG_UPDATE_CURRENT);
         AlarmManager alarmManager = (AlarmManager) this.context.getSystemService(Context.ALARM_SERVICE);
         alarmManager.cancel(pendingIntent);
     }

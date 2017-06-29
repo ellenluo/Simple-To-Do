@@ -108,7 +108,8 @@ public class MainFragment extends Fragment {
                                         // update widgets
                                         h.updateWidgets();
 
-                                        String message = String.format("'%s' %s", task.getName(), getString(R.string.delete_task_confirmation));
+                                        String message = String.format("'%s' %s", task.getName(),
+                                                getString(R.string.delete_task_confirmation));
                                         Toast.makeText(getActivity(), message, Toast.LENGTH_SHORT).show();
                                         break;
                                 }

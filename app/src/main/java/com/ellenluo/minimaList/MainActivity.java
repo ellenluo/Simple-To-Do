@@ -314,7 +314,8 @@ public class MainActivity extends AppCompatActivity {
                     AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
                     builder.setMessage(getString(R.string.dialog_empty_list));
 
-                    builder.setPositiveButton(getString(R.string.dialog_confirmation), new DialogInterface.OnClickListener() {
+                    builder.setPositiveButton(getString(R.string.dialog_confirmation), new DialogInterface
+                            .OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             dialog.cancel();
@@ -335,7 +336,8 @@ public class MainActivity extends AppCompatActivity {
                         AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
                         builder.setMessage(getString(R.string.dialog_duplicate_list));
 
-                        builder.setPositiveButton(getString(R.string.dialog_confirmation), new DialogInterface.OnClickListener() {
+                        builder.setPositiveButton(getString(R.string.dialog_confirmation), new DialogInterface
+                                .OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 dialog.cancel();
@@ -356,7 +358,8 @@ public class MainActivity extends AppCompatActivity {
                     AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
                     builder.setMessage(getString(R.string.dialog_duplicate_list));
 
-                    builder.setPositiveButton(getString(R.string.dialog_confirmation), new DialogInterface.OnClickListener() {
+                    builder.setPositiveButton(getString(R.string.dialog_confirmation), new DialogInterface
+                            .OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             dialog.cancel();
@@ -379,10 +382,12 @@ public class MainActivity extends AppCompatActivity {
 
                 // update widgets
                 AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(getApplicationContext());
-                int appWidgetIds[] = appWidgetManager.getAppWidgetIds(new ComponentName(getApplicationContext(), WidgetProvider.class));
+                int appWidgetIds[] = appWidgetManager.getAppWidgetIds(new ComponentName(getApplicationContext(),
+                        WidgetProvider.class));
 
                 for (int appWidgetId : appWidgetIds) {
-                    SharedPreferences widgetPref = getSharedPreferences(String.valueOf(appWidgetId), PREFERENCE_MODE_PRIVATE);
+                    SharedPreferences widgetPref = getSharedPreferences(String.valueOf(appWidgetId),
+                            PREFERENCE_MODE_PRIVATE);
                     if (widgetPref.getString("widget_list", "All Tasks").equals(oldListName)) {
                         widgetPref.edit().putString("widget_list", curList.getName()).apply();
                     }
@@ -434,10 +439,12 @@ public class MainActivity extends AppCompatActivity {
 
                         // update widgets
                         AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(getApplicationContext());
-                        int appWidgetIds[] = appWidgetManager.getAppWidgetIds(new ComponentName(getApplicationContext(), WidgetProvider.class));
+                        int appWidgetIds[] = appWidgetManager.getAppWidgetIds(
+                                new ComponentName(getApplicationContext(), WidgetProvider.class));
 
                         for (int appWidgetId : appWidgetIds) {
-                            SharedPreferences widgetPref = getSharedPreferences(String.valueOf(appWidgetId), PREFERENCE_MODE_PRIVATE);
+                            SharedPreferences widgetPref = getSharedPreferences(String.valueOf(appWidgetId),
+                                    PREFERENCE_MODE_PRIVATE);
                             if (widgetPref.getString("widget_list", "All Tasks").equals(oldListName)) {
                                 widgetPref.edit().putString("widget_list", "All Tasks").apply();
                             }
@@ -454,7 +461,8 @@ public class MainActivity extends AppCompatActivity {
                 });
 
                 // cancel button
-                builder.setPositiveButton(getString(R.string.dialog_delete_cancel), new DialogInterface.OnClickListener() {
+                builder.setPositiveButton(getString(R.string.dialog_delete_cancel), new DialogInterface
+                        .OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         dialog.cancel();
@@ -494,7 +502,8 @@ public class MainActivity extends AppCompatActivity {
                     AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
                     builder.setMessage(getString(R.string.dialog_empty_list));
 
-                    builder.setPositiveButton(getString(R.string.dialog_confirmation), new DialogInterface.OnClickListener() {
+                    builder.setPositiveButton(getString(R.string.dialog_confirmation), new DialogInterface
+                            .OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             dialog.cancel();

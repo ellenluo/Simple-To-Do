@@ -103,7 +103,8 @@ public class NotifService extends IntentService {
                     Log.d("NotifService", "new task id is " + curTask.getId());
                     h.setReminder(curTask.getName(), curTask.getId(), nextMillis);
                     break;
-                } case 2: {
+                }
+                case 2: {
                     // weekly
                     cal.add(Calendar.DATE, 7);
                     long nextMillis = cal.getTimeInMillis();

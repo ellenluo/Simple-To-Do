@@ -102,9 +102,13 @@ public class TaskDetailsActivity extends AppCompatActivity {
             Date date = cal.getTime();
 
             if (militaryTime) {
-                tvDue.setText(new SimpleDateFormat("MMMM dd, yyyy", Locale.getDefault()).format(date) + " " + getString(R.string.details_at) + " " + new SimpleDateFormat("HH:mm", Locale.getDefault()).format(date));
+                tvDue.setText(new SimpleDateFormat("MMMM dd, yyyy", Locale.getDefault()).format(date) + " " +
+                        getString(R.string.details_at) + " "
+                        + new SimpleDateFormat("HH:mm", Locale.getDefault()).format(date));
             } else {
-                tvDue.setText(new SimpleDateFormat("MMMM dd, yyyy", Locale.getDefault()).format(date) + " " + getString(R.string.details_at) + " " + new SimpleDateFormat("hh:mm a", Locale.getDefault()).format(date));
+                tvDue.setText(new SimpleDateFormat("MMMM dd, yyyy", Locale.getDefault()).format(date) + " " +
+                        getString(R.string.details_at) + " "
+                        + new SimpleDateFormat("hh:mm a", Locale.getDefault()).format(date));
             }
         }
 
@@ -115,9 +119,13 @@ public class TaskDetailsActivity extends AppCompatActivity {
             Date date = cal.getTime();
 
             if (militaryTime) {
-                tvRemind.setText(new SimpleDateFormat("MMMM dd, yyyy", Locale.getDefault()).format(date) + " " + getString(R.string.details_at) + " " + new SimpleDateFormat("HH:mm", Locale.getDefault()).format(date));
+                tvRemind.setText(new SimpleDateFormat("MMMM dd, yyyy", Locale.getDefault()).format(date) + " " +
+                        getString(R.string.details_at) + " " + new SimpleDateFormat("HH:mm", Locale.getDefault())
+                        .format(date));
             } else {
-                tvRemind.setText(new SimpleDateFormat("MMMM dd, yyyy", Locale.getDefault()).format(date) + " " + getString(R.string.details_at) + " " + new SimpleDateFormat("hh:mm a", Locale.getDefault()).format(date));
+                tvRemind.setText(new SimpleDateFormat("MMMM dd, yyyy", Locale.getDefault()).format(date) + " " +
+                        getString(R.string.details_at) + " " + new SimpleDateFormat("hh:mm a", Locale.getDefault())
+                        .format(date));
             }
 
             tvRepeatLabel.setVisibility(View.VISIBLE);
@@ -131,7 +139,8 @@ public class TaskDetailsActivity extends AppCompatActivity {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (isChecked) {
-                    Toast.makeText(TaskDetailsActivity.this, "'" + curTask.getName() + "' " + getString(R.string.delete_task_confirmation), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(TaskDetailsActivity.this, "'" + curTask.getName() + "' " +
+                            getString(R.string.delete_task_confirmation), Toast.LENGTH_SHORT).show();
 
                     // cancel any reminders
                     h.cancelReminder(curTask.getId());

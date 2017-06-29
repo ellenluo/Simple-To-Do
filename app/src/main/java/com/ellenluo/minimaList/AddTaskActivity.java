@@ -307,7 +307,8 @@ public class AddTaskActivity extends AppCompatActivity implements TimePickerFrag
 
             for (int i = 0; i < listList.size(); i++) {
                 if (listName.equals(listList.get(i).getName())) {
-                    h.displayAlert(getString(R.string.dialog_duplicate_list), getString(R.string.dialog_confirmation), "");
+                    h.displayAlert(getString(R.string.dialog_duplicate_list), getString(R.string.dialog_confirmation)
+                            , "");
                     return;
                 }
             }
@@ -393,7 +394,8 @@ public class AddTaskActivity extends AppCompatActivity implements TimePickerFrag
     // back button confirmation
     @Override
     public void onBackPressed() {
-        h.displayAlert(getString(R.string.dialog_discard_task), getString(R.string.dialog_discard_cancel), getString(R.string.dialog_discard));
+        h.displayAlert(getString(R.string.dialog_discard_task), getString(R.string.dialog_discard_cancel), getString
+                (R.string.dialog_discard));
     }
 
     // close database

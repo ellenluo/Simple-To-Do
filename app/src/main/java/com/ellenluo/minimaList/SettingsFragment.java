@@ -58,10 +58,12 @@ public class SettingsFragment extends PreferenceFragment {
 
                         // update widgets
                         AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(getActivity());
-                        int appWidgetIds[] = appWidgetManager.getAppWidgetIds(new ComponentName(getActivity(), WidgetProvider.class));
+                        int appWidgetIds[] = appWidgetManager.getAppWidgetIds(new ComponentName(getActivity(),
+                                WidgetProvider.class));
 
                         for (int appWidgetId : appWidgetIds) {
-                            SharedPreferences widgetPref = getActivity().getSharedPreferences(String.valueOf(appWidgetId), PREFERENCE_MODE_PRIVATE);
+                            SharedPreferences widgetPref = getActivity().getSharedPreferences(
+                                    String.valueOf(appWidgetId), PREFERENCE_MODE_PRIVATE);
                             widgetPref.edit().putString("widget_list", "All Tasks").apply();
                         }
 

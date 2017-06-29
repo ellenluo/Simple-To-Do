@@ -45,7 +45,8 @@ public class FeedbackFragment extends Fragment {
                 String body = etMessage.getText().toString() + "\n\n" + etName.getText().toString();
 
                 // send email
-                Intent emailIntent = new Intent(Intent.ACTION_SENDTO, Uri.fromParts("mailto","ellenyilan.luo@gmail.com", null));
+                Intent emailIntent = new Intent(Intent.ACTION_SENDTO, Uri.fromParts("mailto",
+                        "ellenyilan.luo@gmail.com", null));
                 emailIntent.putExtra(Intent.EXTRA_SUBJECT, subject);
                 emailIntent.putExtra(Intent.EXTRA_TEXT, body);
                 startActivity(Intent.createChooser(emailIntent, "Send email using..."));

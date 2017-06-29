@@ -108,9 +108,11 @@ class TaskListAdapter extends ArrayAdapter<Task> {
                 }
 
                 // set date
-                if (now.get(Calendar.DAY_OF_YEAR) == due.get(Calendar.DAY_OF_YEAR) && now.get(Calendar.YEAR) == due.get(Calendar.YEAR))
+                if (now.get(Calendar.DAY_OF_YEAR) == due.get(Calendar.DAY_OF_YEAR) &&
+                        now.get(Calendar.YEAR) == due.get(Calendar.YEAR))
                     tvDate.setText(this.context.getString(R.string.task_row_today));
-                else if (tomorrow.get(Calendar.DAY_OF_YEAR) == due.get(Calendar.DAY_OF_YEAR) && tomorrow.get(Calendar.YEAR) == due.get(Calendar.YEAR))
+                else if (tomorrow.get(Calendar.DAY_OF_YEAR) == due.get(Calendar.DAY_OF_YEAR) &&
+                        tomorrow.get(Calendar.YEAR) == due.get(Calendar.YEAR))
                     tvDate.setText(this.context.getString(R.string.task_row_tomorrow));
                 else if (now.get(Calendar.YEAR) == due.get(Calendar.YEAR))
                     tvDate.setText(new SimpleDateFormat("MMM dd", Locale.getDefault()).format(date));

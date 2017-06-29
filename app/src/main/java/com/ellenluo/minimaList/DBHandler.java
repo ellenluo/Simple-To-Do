@@ -44,7 +44,7 @@ public class DBHandler extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db) {
         // create task and list tables
         String CREATE_TASK_TABLE = String.format(Locale.US, "CREATE TABLE %s (%s INTEGER PRIMARY KEY, %s TEXT, %s " +
-                "TEXT, %s INTEGER, %s INTEGER, %s INTEGER, %s INTEGER, %s INTEGER)", TABLE_TASKS, KEY_TASK_ID,
+                        "TEXT, %s INTEGER, %s INTEGER, %s INTEGER, %s INTEGER, %s INTEGER)", TABLE_TASKS, KEY_TASK_ID,
                 KEY_TASK_NAME, KEY_TASK_DETAILS, KEY_TASK_DUE, KEY_TASK_REMIND, KEY_TASK_REPEAT,
                 KEY_TASK_NEXT_REMIND, KEY_TASK_LIST);
         String CREATE_LIST_TABLE = String.format(Locale.US, "CREATE TABLE %s (%s INTEGER PRIMARY KEY, %s TEXT)",
@@ -78,8 +78,8 @@ public class DBHandler extends SQLiteOpenHelper {
 
         // set id
         long id = -1;
-        String selectQuery = "SELECT " + KEY_TASK_ID + " FROM " + TABLE_TASKS + " ORDER BY " + KEY_TASK_ID + " DESC " +
-                "LIMIT 1";
+        String selectQuery = "SELECT " + KEY_TASK_ID + " FROM " + TABLE_TASKS + " ORDER BY " + KEY_TASK_ID +
+                " DESC LIMIT 1";
         Cursor cursor = db.rawQuery(selectQuery, null);
         if (cursor.moveToFirst()) {
             id = cursor.getLong(0);

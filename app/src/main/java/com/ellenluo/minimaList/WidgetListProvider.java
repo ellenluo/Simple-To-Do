@@ -37,7 +37,8 @@ class WidgetListProvider implements RemoteViewsService.RemoteViewsFactory {
 
     WidgetListProvider(Context context, Intent intent) {
         this.context = context;
-        int appWidgetId = intent.getIntExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, AppWidgetManager.INVALID_APPWIDGET_ID);
+        int appWidgetId = intent.getIntExtra(AppWidgetManager.EXTRA_APPWIDGET_ID,
+                AppWidgetManager.INVALID_APPWIDGET_ID);
 
         // get widget display list
         this.pref = this.context.getSharedPreferences(String.valueOf(appWidgetId), PREFERENCE_MODE_PRIVATE);
@@ -81,7 +82,8 @@ class WidgetListProvider implements RemoteViewsService.RemoteViewsFactory {
     private void updateHeader() {
         Intent intent = new Intent(this.context, WidgetProvider.class);
         intent.setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE);
-        int[] ids = AppWidgetManager.getInstance(this.context).getAppWidgetIds(new ComponentName(this.context, WidgetProvider.class));
+        int[] ids = AppWidgetManager.getInstance(this.context).getAppWidgetIds(
+                new ComponentName(this.context, WidgetProvider.class));
         intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, ids);
         this.context.sendBroadcast(intent);
     }
@@ -163,20 +165,26 @@ class WidgetListProvider implements RemoteViewsService.RemoteViewsFactory {
             else {
                 // set time
                 if (militaryTime) {
-                    remoteView.setTextViewText(R.id.task_row_time, new SimpleDateFormat("HH:mm", Locale.getDefault()).format(date));
+                    remoteView.setTextViewText(R.id.task_row_time, new SimpleDateFormat("HH:mm",
+                            Locale.getDefault()).format(date));
                 } else {
-                    remoteView.setTextViewText(R.id.task_row_time, new SimpleDateFormat("hh:mm a", Locale.getDefault()).format(date));
+                    remoteView.setTextViewText(R.id.task_row_time, new SimpleDateFormat("hh:mm a",
+                            Locale.getDefault()).format(date));
                 }
 
                 // set date
-                if (now.get(Calendar.DAY_OF_YEAR) == due.get(Calendar.DAY_OF_YEAR) && now.get(Calendar.YEAR) == due.get(Calendar.YEAR))
+                if (now.get(Calendar.DAY_OF_YEAR) == due.get(Calendar.DAY_OF_YEAR) &&
+                        now.get(Calendar.YEAR) == due.get(Calendar.YEAR))
                     remoteView.setTextViewText(R.id.task_row_date, this.context.getString(R.string.task_row_today));
-                else if (tomorrow.get(Calendar.DAY_OF_YEAR) == due.get(Calendar.DAY_OF_YEAR) && tomorrow.get(Calendar.YEAR) == due.get(Calendar.YEAR))
+                else if (tomorrow.get(Calendar.DAY_OF_YEAR) == due.get(Calendar.DAY_OF_YEAR) &&
+                        tomorrow.get(Calendar.YEAR) == due.get(Calendar.YEAR))
                     remoteView.setTextViewText(R.id.task_row_date, this.context.getString(R.string.task_row_tomorrow));
                 else if (now.get(Calendar.YEAR) == due.get(Calendar.YEAR))
-                    remoteView.setTextViewText(R.id.task_row_date, new SimpleDateFormat("MMM dd", Locale.getDefault()).format(date));
+                    remoteView.setTextViewText(R.id.task_row_date, new SimpleDateFormat("MMM dd",
+                            Locale.getDefault()).format(date));
                 else
-                    remoteView.setTextViewText(R.id.task_row_date, new SimpleDateFormat("MMM dd, yyyy", Locale.getDefault()).format(date));
+                    remoteView.setTextViewText(R.id.task_row_date, new SimpleDateFormat("MMM dd, yyyy",
+                            Locale.getDefault()).format(date));
             }
         }
 

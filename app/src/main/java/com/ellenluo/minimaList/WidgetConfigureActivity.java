@@ -87,7 +87,8 @@ public class WidgetConfigureActivity extends AppCompatActivity {
             }
         }
 
-        ArrayAdapter<String> listAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, listSpinnerItem);
+        ArrayAdapter<String> listAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item,
+                listSpinnerItem);
         listSpinner.setAdapter(listAdapter);
     }
 
@@ -99,7 +100,7 @@ public class WidgetConfigureActivity extends AppCompatActivity {
 
         // call widget update
         Intent updateIntent = new Intent(AppWidgetManager.ACTION_APPWIDGET_UPDATE, null, this, WidgetProvider.class);
-        updateIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, new int[] {appWidgetId});
+        updateIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, new int[]{appWidgetId});
         sendBroadcast(updateIntent);
 
         // launch widget

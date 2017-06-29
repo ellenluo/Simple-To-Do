@@ -362,7 +362,8 @@ public class EditTaskActivity extends AppCompatActivity implements TimePickerFra
 
             for (int i = 0; i < listList.size(); i++) {
                 if (listName.equals(listList.get(i).getName())) {
-                    h.displayAlert(getString(R.string.dialog_duplicate_list), getString(R.string.dialog_confirmation), "");
+                    h.displayAlert(getString(R.string.dialog_duplicate_list), getString(R.string.dialog_confirmation),
+                            "");
                     return;
                 }
             }
@@ -414,7 +415,8 @@ public class EditTaskActivity extends AppCompatActivity implements TimePickerFra
         curTask.setRepeat(repeat);
         curTask.setList(listId);
         db.updateTask(curTask);
-        Toast.makeText(this, "'" + curTask.getName() + "' " + getString(R.string.edit_task_confirmation), Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, "'" + curTask.getName() + "' " + getString(R.string.edit_task_confirmation),
+                Toast.LENGTH_SHORT).show();
 
         // update widgets
         h.updateWidgets();
