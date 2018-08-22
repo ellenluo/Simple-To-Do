@@ -32,6 +32,7 @@
     <string name="delete_task_confirmation">successfully removed</string>
     <string name="deleting_task">Deleting</string>
     <string name="undo_delete">Undo</string>
+    <string name="add_task_due_date">%s %d, %d</string>
 
     <!-- Task details strings -->
     <string name="details_task_name">Task:</string>
@@ -43,6 +44,7 @@
     <string name="details_list">List:</string>
     <string name="details_completed">Complete?</string>
     <string name="details_at">at</string>
+    <string name="details_date">%s at %s</string>
 
     <!-- Add/edit list strings -->
     <string name="add_list_title">Add List</string>

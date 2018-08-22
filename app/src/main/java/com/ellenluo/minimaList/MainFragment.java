@@ -1,15 +1,10 @@
 package com.ellenluo.minimaList;
 
-/**
- * MainFragment
- * Created by Ellen Luo
- * Fragment that displays a list of either all tasks, or the tasks in a particular list.
- */
-
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Paint;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -23,7 +18,11 @@ import android.widget.Toast;
 
 import java.util.ArrayList;
 
-
+/**
+ * MainFragment
+ * Created by Ellen Luo
+ * Fragment that displays a list of either all tasks, or the tasks in a particular list.
+ */
 public class MainFragment extends Fragment {
 
     private DBHandler db;
@@ -33,7 +32,7 @@ public class MainFragment extends Fragment {
     private View v;
     private ImageView ivEmpty;
 
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         v = inflater.inflate(R.layout.fragment_main, container, false);
 
         if (container != null) {
@@ -42,7 +41,7 @@ public class MainFragment extends Fragment {
 
         // set up task list
         db = new DBHandler(getActivity());
-        ListView lvTasks = (ListView) v.findViewById(R.id.task_list);
+        ListView lvTasks = v.findViewById(R.id.task_list);
         SharedPreferences pref = getActivity().getSharedPreferences("Main", PREFERENCE_MODE_PRIVATE);
 
         // set list to view
@@ -56,7 +55,7 @@ public class MainFragment extends Fragment {
         db.close();
 
         // set up empty view
-        ivEmpty = (ImageView) v.findViewById(R.id.empty_list);
+        ivEmpty = v.findViewById(R.id.empty_list);
         lvTasks.setEmptyView(ivEmpty);
 
         // set custom list adapter
@@ -80,7 +79,7 @@ public class MainFragment extends Fragment {
             @Override
             public boolean onItemLongClick(AdapterView<?> av, View v, final int pos, long id) {
                 final Task task = taskList.get(pos);
-                final TextView tvName = (TextView) v.findViewById(R.id.task_row_name);
+                final TextView tvName = v.findViewById(R.id.task_row_name);
                 tvName.setPaintFlags(tvName.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
 
                 // undo snackbar

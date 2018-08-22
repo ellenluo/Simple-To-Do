@@ -1,11 +1,5 @@
 package com.ellenluo.minimaList;
 
-/**
- * SettingsFragment
- * Created by Ellen Luo
- * PreferenceFragment that allows users to set display, theme and notification settings.
- */
-
 import android.app.AlertDialog;
 import android.appwidget.AppWidgetManager;
 import android.content.ComponentName;
@@ -19,6 +13,11 @@ import android.preference.PreferenceFragment;
 
 import java.util.ArrayList;
 
+/**
+ * SettingsFragment
+ * Created by Ellen Luo
+ * PreferenceFragment that allows users to set display, theme and notification settings.
+ */
 public class SettingsFragment extends PreferenceFragment {
 
     private static final int PREFERENCE_MODE_PRIVATE = 0;

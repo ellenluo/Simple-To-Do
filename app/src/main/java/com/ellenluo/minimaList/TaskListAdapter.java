@@ -1,11 +1,5 @@
 package com.ellenluo.minimaList;
 
-/**
- * TaskListAdapter
- * Created by Ellen Luo
- * ArrayAdapter that displays task info with a custom row layout.
- */
-
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
@@ -23,6 +17,11 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
+/**
+ * TaskListAdapter
+ * Created by Ellen Luo
+ * ArrayAdapter that displays task info with a custom row layout.
+ */
 class TaskListAdapter extends ArrayAdapter<Task> {
 
     private DBHandler db;
@@ -64,11 +63,11 @@ class TaskListAdapter extends ArrayAdapter<Task> {
 
         // set name
         Task curTask = this.taskList.get(position);
-        TextView tvName = (TextView) v.findViewById(R.id.task_row_name);
+        TextView tvName = v.findViewById(R.id.task_row_name);
         tvName.setText(curTask.getName());
 
         // set list
-        TextView tvList = (TextView) v.findViewById(R.id.task_row_list);
+        TextView tvList = v.findViewById(R.id.task_row_list);
         tvList.setTextColor(color);
 
         if (curTask.getList() != -1) {
@@ -79,9 +78,9 @@ class TaskListAdapter extends ArrayAdapter<Task> {
         }
 
         // get due date & time text
-        TextView tvDate = (TextView) v.findViewById(R.id.task_row_date);
+        TextView tvDate = v.findViewById(R.id.task_row_date);
         tvDate.setTextColor(color);
-        TextView tvTime = (TextView) v.findViewById(R.id.task_row_time);
+        TextView tvTime = v.findViewById(R.id.task_row_time);
         long millis = curTask.getDue();
 
         if (millis != -1) {

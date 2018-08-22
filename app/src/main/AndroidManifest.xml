@@ -60,7 +60,7 @@
             android:label="@string/title_activity_intro" />
 
         <service
-            android:name=".NotifService"
+            android:name=".NotificationService"
             android:enabled="true" />
 
         <service

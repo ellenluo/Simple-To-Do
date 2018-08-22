@@ -1,11 +1,5 @@
 package com.ellenluo.minimaList;
 
-/**
- * WidgetConfigureActivity
- * Created by Ellen Luo
- * Activity that allows users to select a list for the widget to display.
- */
-
 import android.appwidget.AppWidgetManager;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -21,6 +15,11 @@ import com.google.android.gms.analytics.Tracker;
 
 import java.util.ArrayList;
 
+/**
+ * WidgetConfigureActivity
+ * Created by Ellen Luo
+ * Activity that allows users to select a list for the widget to display.
+ */
 public class WidgetConfigureActivity extends AppCompatActivity {
 
     private static final int PREFERENCE_MODE_PRIVATE = 0;
@@ -47,7 +46,7 @@ public class WidgetConfigureActivity extends AppCompatActivity {
         setContentView(R.layout.activity_widget_configure);
 
         // set up toolbar
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
@@ -72,7 +71,7 @@ public class WidgetConfigureActivity extends AppCompatActivity {
         }
 
         // set up list spinner
-        listSpinner = (Spinner) findViewById(R.id.display_list);
+        listSpinner = findViewById(R.id.display_list);
 
         db = new DBHandler(this);
         ArrayList<List> listList = db.getAllLists();
@@ -121,11 +120,9 @@ public class WidgetConfigureActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
-
         if (id == R.id.action_add) {
             addWidget();
         }
-
         return super.onOptionsItemSelected(item);
     }
 

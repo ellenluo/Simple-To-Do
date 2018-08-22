@@ -5,7 +5,6 @@ package com.ellenluo.minimaList;
  * Created by Ellen Luo
  * Class to represent a List object with an id and name.
  */
-
 class List {
 
     // parameters

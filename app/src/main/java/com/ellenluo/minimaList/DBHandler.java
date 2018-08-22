@@ -1,11 +1,5 @@
 package com.ellenluo.minimaList;
 
-/**
- * DBHandler
- * Created by Ellen Luo
- * SQLiteOpenHelper that creates SQLite tables to store tasks and lists and allows various database operations.
- */
-
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -15,6 +9,11 @@ import android.database.sqlite.SQLiteOpenHelper;
 import java.util.ArrayList;
 import java.util.Locale;
 
+/**
+ * DBHandler
+ * Created by Ellen Luo
+ * SQLiteOpenHelper that creates SQLite tables to store tasks and lists and allows various database operations.
+ */
 public class DBHandler extends SQLiteOpenHelper {
 
     private static final int DATABASE_VERSION = 1;
@@ -155,7 +154,7 @@ public class DBHandler extends SQLiteOpenHelper {
     }
 
     // update task in table
-    int updateTask(Task task) {
+    void updateTask(Task task) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
         values.put(KEY_TASK_NAME, task.getName());
@@ -165,7 +164,7 @@ public class DBHandler extends SQLiteOpenHelper {
         values.put(KEY_TASK_REPEAT, task.getRepeat());
         values.put(KEY_TASK_NEXT_REMIND, task.getNextRemind());
         values.put(KEY_TASK_LIST, task.getList());
-        return db.update(TABLE_TASKS, values, KEY_TASK_ID + " = ?", new String[]{String.valueOf(task.getId())});
+        db.update(TABLE_TASKS, values, KEY_TASK_ID + " = ?", new String[]{String.valueOf(task.getId())});
     }
 
     // delete task from table
@@ -243,12 +242,11 @@ public class DBHandler extends SQLiteOpenHelper {
     }
 
     // update list in table
-    int updateList(List list) {
+    void updateList(List list) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
         values.put(KEY_LIST_NAME, list.getName());
-
-        return db.update(TABLE_LISTS, values, KEY_LIST_ID + " = ?", new String[]{String.valueOf(list.getId())});
+        db.update(TABLE_LISTS, values, KEY_LIST_ID + " = ?", new String[]{String.valueOf(list.getId())});
     }
 
     // delete list from table

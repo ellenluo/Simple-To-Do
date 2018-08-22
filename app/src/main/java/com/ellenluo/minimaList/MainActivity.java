@@ -1,11 +1,5 @@
 package com.ellenluo.minimaList;
 
-/**
- * MainActivity
- * Created by Ellen Luo
- * Activity that switches between fragments using a side navigation drawer and allows adding/editing lists.
- */
-
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.appwidget.AppWidgetManager;
@@ -39,6 +33,11 @@ import com.google.android.gms.analytics.Tracker;
 
 import java.util.ArrayList;
 
+/**
+ * MainActivity
+ * Created by Ellen Luo
+ * Activity that switches between fragments using a side navigation drawer and allows adding/editing lists.
+ */
 public class MainActivity extends AppCompatActivity {
 
     private DBHandler db;
@@ -81,7 +80,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         // set up toolbar
-        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
@@ -89,8 +88,8 @@ public class MainActivity extends AppCompatActivity {
         }
 
         // set up navigation menu
-        mDrawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        nvDrawer = (NavigationView) findViewById(R.id.nav_view);
+        mDrawer = findViewById(R.id.drawer_layout);
+        nvDrawer = findViewById(R.id.nav_view);
         setupDrawerContent(nvDrawer);
 
         drawerToggle = setupDrawerToggle();
@@ -100,7 +99,7 @@ public class MainActivity extends AppCompatActivity {
         refreshLists();
 
         // set up floating add button
-        fab = (FloatingActionButton) findViewById(R.id.fab);
+        fab = findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
                 Intent intent = new Intent(MainActivity.this, AddTaskActivity.class);
@@ -117,7 +116,6 @@ public class MainActivity extends AppCompatActivity {
 
         // check for faulty value
         if (newList != null) {
-            boolean exists = false;
             for (int i = 0; i < listList.size(); i++) {
                 if (newList.equals(listList.get(i).getName())) {
                     curList = newList;
@@ -296,11 +294,11 @@ public class MainActivity extends AppCompatActivity {
         setDialogWidth(dialog);
 
         // set text field to current name
-        etListName = (EditText) dialog.findViewById(R.id.list_name);
+        etListName = dialog.findViewById(R.id.list_name);
         etListName.setText(pref.getString("current_list", "All Tasks"));
 
         // save button
-        Button btnSave = (Button) dialog.findViewById(R.id.save_changes);
+        Button btnSave = dialog.findViewById(R.id.save_changes);
 
         btnSave.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -405,7 +403,7 @@ public class MainActivity extends AppCompatActivity {
         });
 
         // delete button
-        Button btnDelete = (Button) dialog.findViewById(R.id.delete_list);
+        Button btnDelete = dialog.findViewById(R.id.delete_list);
 
         btnDelete.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -485,10 +483,10 @@ public class MainActivity extends AppCompatActivity {
         setDialogWidth(dialog);
 
         // initialize text field
-        etListName = (EditText) dialog.findViewById(R.id.list_name);
+        etListName = dialog.findViewById(R.id.list_name);
 
         // add button
-        Button btnAdd = (Button) dialog.findViewById(R.id.add_list);
+        Button btnAdd = dialog.findViewById(R.id.add_list);
 
         btnAdd.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -571,7 +569,7 @@ public class MainActivity extends AppCompatActivity {
         });
 
         // cancel button
-        Button btnCancel = (Button) dialog.findViewById(R.id.cancel);
+        Button btnCancel = dialog.findViewById(R.id.cancel);
 
         btnCancel.setOnClickListener(new View.OnClickListener() {
             @Override

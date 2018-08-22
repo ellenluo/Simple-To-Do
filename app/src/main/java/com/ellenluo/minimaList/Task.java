@@ -5,7 +5,6 @@ package com.ellenluo.minimaList;
  * Created by Ellen Luo
  * Class to represent a Task object with id, name, details, due date, reminder and list parameters.
  */
-
 public class Task {
 
     // parameters

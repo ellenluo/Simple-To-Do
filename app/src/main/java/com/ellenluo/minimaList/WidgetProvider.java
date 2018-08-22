@@ -1,11 +1,5 @@
 package com.ellenluo.minimaList;
 
-/**
- * WidgetProvider
- * Created by Ellen Luo
- * AppWidgetProvider that creates and updates widgets.
- */
-
 import android.app.PendingIntent;
 import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProvider;
@@ -18,6 +12,11 @@ import android.preference.PreferenceManager;
 import android.support.v4.content.ContextCompat;
 import android.widget.RemoteViews;
 
+/**
+ * WidgetProvider
+ * Created by Ellen Luo
+ * AppWidgetProvider that creates and updates widgets.
+ */
 public class WidgetProvider extends AppWidgetProvider {
 
     private static final int PREFERENCE_MODE_PRIVATE = 0;
@@ -25,7 +24,7 @@ public class WidgetProvider extends AppWidgetProvider {
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        if (intent.getAction().equals(ACTION_SCHEDULED_UPDATE)) {
+        if (intent.getAction() != null && intent.getAction().equals(ACTION_SCHEDULED_UPDATE)) {
             AppWidgetManager manager = AppWidgetManager.getInstance(context);
             int[] ids = manager.getAppWidgetIds(new ComponentName(context, WidgetProvider.class));
             onUpdate(context, manager, ids);

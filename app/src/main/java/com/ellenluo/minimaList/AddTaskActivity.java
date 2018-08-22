@@ -1,11 +1,5 @@
 package com.ellenluo.minimaList;
 
-/**
- * AddTaskActivity
- * Created by Ellen Luo
- * Activity that allows users to create a new task with customizable name, due date, reminder, list and details.
- */
-
 import android.preference.PreferenceManager;
 import android.support.v4.app.DialogFragment;
 import android.content.Intent;
@@ -36,6 +30,11 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
+/**
+ * AddTaskActivity
+ * Created by Ellen Luo
+ * Activity that allows users to create a new task with customizable name, due date, reminder, list and details.
+ */
 public class AddTaskActivity extends AppCompatActivity implements TimePickerFragment.OnTimeSetListener,
         DatePickerFragment.OnDateSetListener {
 
@@ -83,7 +82,7 @@ public class AddTaskActivity extends AppCompatActivity implements TimePickerFrag
         setContentView(R.layout.activity_add_task);
 
         // set up toolbar
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
@@ -97,27 +96,27 @@ public class AddTaskActivity extends AppCompatActivity implements TimePickerFrag
         militaryTime = prefSettings.getBoolean("24h", false);
 
         // initialize due date/time
-        tvDueDate = (TextView) findViewById(R.id.due_date);
-        tvDueTime = (TextView) findViewById(R.id.due_time);
-        btnClearDue = (Button) findViewById(R.id.clear_due);
+        tvDueDate = findViewById(R.id.due_date);
+        tvDueTime = findViewById(R.id.due_time);
+        btnClearDue = findViewById(R.id.clear_due);
 
         // initialize reminder date/time/repeat
-        tvRemindDate = (TextView) findViewById(R.id.remind_date);
-        tvRemindTime = (TextView) findViewById(R.id.remind_time);
-        final Button btnSetRemind = (Button) findViewById(R.id.set_remind);
-        btnClearRemind = (Button) findViewById(R.id.clear_remind);
-        tvRepeat = (TextView) findViewById(R.id.repeat);
-        repeatSpinner = (Spinner) findViewById(R.id.repeat_spinner);
+        tvRemindDate = findViewById(R.id.remind_date);
+        tvRemindTime = findViewById(R.id.remind_time);
+        final Button btnSetRemind = findViewById(R.id.set_remind);
+        btnClearRemind = findViewById(R.id.clear_remind);
+        tvRepeat = findViewById(R.id.repeat);
+        repeatSpinner = findViewById(R.id.repeat_spinner);
         ArrayAdapter<CharSequence> repeatAdapter = ArrayAdapter.createFromResource(this, R.array.repeat_options,
                 android.R.layout.simple_spinner_dropdown_item);
         repeatSpinner.setAdapter(repeatAdapter);
 
         // initialize new list instructions/text field
-        tvAddList = (TextView) findViewById(R.id.new_list_instructions);
-        etAddList = (EditText) findViewById(R.id.list_name);
+        tvAddList = findViewById(R.id.new_list_instructions);
+        etAddList = findViewById(R.id.list_name);
 
         // set up reminder switch
-        Switch remindSwitch = (Switch) findViewById(R.id.remind_switch);
+        Switch remindSwitch = findViewById(R.id.remind_switch);
 
         remindSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
@@ -146,7 +145,7 @@ public class AddTaskActivity extends AppCompatActivity implements TimePickerFrag
         });
 
         // set up list spinner
-        Spinner listSpinner = (Spinner) findViewById(R.id.list_spinner);
+        Spinner listSpinner = findViewById(R.id.list_spinner);
 
         db = new DBHandler(this);
         listList = db.getAllLists();
@@ -234,12 +233,12 @@ public class AddTaskActivity extends AppCompatActivity implements TimePickerFrag
         if (picker == 0) {
             due = Calendar.getInstance();
             due.set(year, month, day, 0, 0, 0);
-            tvDueDate.setText(monthArray[month] + " " + day + ", " + year);
+            tvDueDate.setText(getString(R.string.add_task_due_date, monthArray[month], day, year));
             btnClearDue.setVisibility(View.VISIBLE);
         } else {
             remind = Calendar.getInstance();
             remind.set(year, month, day, 0, 0, 0);
-            tvRemindDate.setText(monthArray[month] + " " + day + ", " + year);
+            tvRemindDate.setText(getString(R.string.add_task_due_date, monthArray[month], day, year));
             btnClearRemind.setVisibility(View.VISIBLE);
         }
 
@@ -281,8 +280,8 @@ public class AddTaskActivity extends AppCompatActivity implements TimePickerFrag
     // add task to database
     @SuppressWarnings("ConstantConditions")
     private void addTask() {
-        EditText etName = (EditText) findViewById(R.id.task_name);
-        EditText etDetails = (EditText) findViewById(R.id.task_details);
+        EditText etName = findViewById(R.id.task_name);
+        EditText etDetails = findViewById(R.id.task_details);
         String taskName = etName.getText().toString().trim();
         String details = etDetails.getText().toString();
 

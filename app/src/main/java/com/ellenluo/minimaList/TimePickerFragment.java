@@ -1,14 +1,9 @@
 package com.ellenluo.minimaList;
 
-/**
- * TimePickerFragment
- * Created by Ellen Luo
- * DialogFragment that displays a time picker.
- */
-
 import android.app.Activity;
 import android.app.Dialog;
 import android.app.TimePickerDialog;
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -18,6 +13,11 @@ import android.widget.TimePicker;
 
 import java.util.Calendar;
 
+/**
+ * TimePickerFragment
+ * Created by Ellen Luo
+ * DialogFragment that displays a time picker.
+ */
 public class TimePickerFragment extends DialogFragment {
 
     OnTimeSetListener listener;
@@ -43,9 +43,11 @@ public class TimePickerFragment extends DialogFragment {
     }
 
     @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
-        listener = (OnTimeSetListener) activity;
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if (context instanceof Activity){
+            listener = (TimePickerFragment.OnTimeSetListener) context;
+        }
     }
 
 }

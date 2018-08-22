@@ -1,14 +1,9 @@
 package com.ellenluo.minimaList;
 
-/**
- * DatePickerFragment
- * Created by Ellen Luo
- * DialogFragment that displays a calendar date picker.
- */
-
 import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
@@ -16,6 +11,11 @@ import android.widget.DatePicker;
 
 import java.util.Calendar;
 
+/**
+ * DatePickerFragment
+ * Created by Ellen Luo
+ * DialogFragment that displays a calendar date picker.
+ */
 public class DatePickerFragment extends DialogFragment {
 
     OnDateSetListener listener;
@@ -38,9 +38,11 @@ public class DatePickerFragment extends DialogFragment {
     }
 
     @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
-        listener = (OnDateSetListener) activity;
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if (context instanceof Activity){
+            listener = (OnDateSetListener) context;
+        }
     }
 
 }

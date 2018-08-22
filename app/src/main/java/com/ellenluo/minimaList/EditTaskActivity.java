@@ -1,11 +1,5 @@
 package com.ellenluo.minimaList;
 
-/**
- * EditTaskActivity
- * Created by Ellen Luo
- * Activity that allows users to modify the parameters of a task.
- */
-
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -38,6 +32,11 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
+/**
+ * EditTaskActivity
+ * Created by Ellen Luo
+ * Activity that allows users to modify the parameters of a task.
+ */
 public class EditTaskActivity extends AppCompatActivity implements TimePickerFragment.OnTimeSetListener,
         DatePickerFragment.OnDateSetListener {
 
@@ -88,7 +87,7 @@ public class EditTaskActivity extends AppCompatActivity implements TimePickerFra
         setContentView(R.layout.activity_edit_task);
 
         // set up toolbar
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
@@ -107,15 +106,15 @@ public class EditTaskActivity extends AppCompatActivity implements TimePickerFra
         curTask = db.getTask(id);
 
         // set fields to current values
-        etName = (EditText) findViewById(R.id.task_name);
-        etDetails = (EditText) findViewById(R.id.task_details);
+        etName = findViewById(R.id.task_name);
+        etDetails = findViewById(R.id.task_details);
         etName.setText(curTask.getName());
         etDetails.setText(curTask.getDetails());
 
         // set up current due date/time
-        tvDueDate = (TextView) findViewById(R.id.due_date);
-        tvDueTime = (TextView) findViewById(R.id.due_time);
-        btnClearDue = (Button) findViewById(R.id.clear_due);
+        tvDueDate = findViewById(R.id.due_date);
+        tvDueTime = findViewById(R.id.due_time);
+        btnClearDue = findViewById(R.id.clear_due);
 
         if (curTask.getDue() != -1) {
             Calendar cal = Calendar.getInstance();
@@ -134,13 +133,13 @@ public class EditTaskActivity extends AppCompatActivity implements TimePickerFra
         }
 
         // set up current reminder
-        final Button btnSetRemind = (Button) findViewById(R.id.set_remind);
-        Switch remindSwitch = (Switch) findViewById(R.id.remind_switch);
-        tvRemindDate = (TextView) findViewById(R.id.remind_date);
-        tvRemindTime = (TextView) findViewById(R.id.remind_time);
-        btnClearRemind = (Button) findViewById(R.id.clear_remind);
-        tvRepeat = (TextView) findViewById(R.id.repeat);
-        repeatSpinner = (Spinner) findViewById(R.id.repeat_spinner);
+        final Button btnSetRemind = findViewById(R.id.set_remind);
+        Switch remindSwitch = findViewById(R.id.remind_switch);
+        tvRemindDate = findViewById(R.id.remind_date);
+        tvRemindTime = findViewById(R.id.remind_time);
+        btnClearRemind = findViewById(R.id.clear_remind);
+        tvRepeat = findViewById(R.id.repeat);
+        repeatSpinner = findViewById(R.id.repeat_spinner);
         ArrayAdapter<CharSequence> repeatAdapter = ArrayAdapter.createFromResource(this, R.array.repeat_options,
                 android.R.layout.simple_spinner_dropdown_item);
         repeatSpinner.setAdapter(repeatAdapter);
@@ -200,11 +199,11 @@ public class EditTaskActivity extends AppCompatActivity implements TimePickerFra
         });
 
         // initialize new list instructions/text field
-        tvAddList = (TextView) findViewById(R.id.new_list_instructions);
-        etAddList = (EditText) findViewById(R.id.list_name);
+        tvAddList = findViewById(R.id.new_list_instructions);
+        etAddList = findViewById(R.id.list_name);
 
         // set up spinner
-        Spinner listSpinner = (Spinner) findViewById(R.id.list_spinner);
+        Spinner listSpinner = findViewById(R.id.list_spinner);
         ArrayList<List> listList = db.getAllLists();
         size = listList.size();
 
@@ -292,12 +291,12 @@ public class EditTaskActivity extends AppCompatActivity implements TimePickerFra
         if (picker == 0) {
             due = Calendar.getInstance();
             due.set(year, month, day);
-            tvDueDate.setText(monthArray[month] + " " + day + ", " + year);
+            tvDueDate.setText(getString(R.string.add_task_due_date, monthArray[month], day, year));
             btnClearDue.setVisibility(View.VISIBLE);
         } else {
             remind = Calendar.getInstance();
             remind.set(year, month, day);
-            tvRemindDate.setText(monthArray[month] + " " + day + ", " + year);
+            tvRemindDate.setText(getString(R.string.add_task_due_date, monthArray[month], day, year));
             btnClearRemind.setVisibility(View.VISIBLE);
         }
 

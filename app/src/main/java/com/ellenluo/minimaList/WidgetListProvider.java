@@ -1,11 +1,5 @@
 package com.ellenluo.minimaList;
 
-/**
- * WidgetListProvider
- * Created by Ellen Luo
- * RemoteViewsFactory that populates a widget with tasks in the selected list using a custom row layout.
- */
-
 import android.appwidget.AppWidgetManager;
 import android.content.ComponentName;
 import android.content.Context;
@@ -24,6 +18,11 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
+/**
+ * WidgetListProvider
+ * Created by Ellen Luo
+ * RemoteViewsFactory that populates a widget with tasks in the selected list using a custom row layout.
+ */
 class WidgetListProvider implements RemoteViewsService.RemoteViewsFactory {
 
     private DBHandler db;
@@ -31,7 +30,7 @@ class WidgetListProvider implements RemoteViewsService.RemoteViewsFactory {
     private static final int PREFERENCE_MODE_PRIVATE = 0;
 
     private ArrayList<Task> taskList;
-    private Context context = null;
+    private Context context;
 
     private String list;
 

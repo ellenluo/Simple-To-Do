@@ -12,7 +12,6 @@ import com.google.android.gms.analytics.Tracker;
  * Created by Ellen Luo
  * Activity that displays an image with basic instructions.
  */
-
 public class IntroActivity extends AppCompatActivity {
 
     @Override

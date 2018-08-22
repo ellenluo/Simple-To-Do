@@ -1,14 +1,9 @@
 package com.ellenluo.minimaList;
 
-/**
- * FeedbackFragment
- * Created by Ellen Luo
- * Fragment that allows users to submit feedback by email.
- */
-
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,14 +12,14 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
 
-import com.google.android.gms.analytics.Tracker;
-import com.google.android.gms.tasks.RuntimeExecutionException;
-
+/**
+ * FeedbackFragment
+ * Created by Ellen Luo
+ * Fragment that allows users to submit feedback by email.
+ */
 public class FeedbackFragment extends Fragment {
 
-    private Tracker tracker;
-
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_feedback, container, false);
 
         if (container != null) {
@@ -32,10 +27,10 @@ public class FeedbackFragment extends Fragment {
         }
 
         // find all fields
-        final EditText etName = (EditText) v.findViewById(R.id.user_name);
-        final EditText etMessage = (EditText) v.findViewById(R.id.message);
-        final Spinner feedbackType = (Spinner) v.findViewById(R.id.feedback_type);
-        Button btnSubmit = (Button) v.findViewById(R.id.send_feedback);
+        final EditText etName = v.findViewById(R.id.user_name);
+        final EditText etMessage = v.findViewById(R.id.message);
+        final Spinner feedbackType = v.findViewById(R.id.feedback_type);
+        Button btnSubmit = v.findViewById(R.id.send_feedback);
 
         btnSubmit.setOnClickListener(new View.OnClickListener() {
             @Override

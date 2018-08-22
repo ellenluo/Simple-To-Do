@@ -1,11 +1,5 @@
 package com.ellenluo.minimaList;
 
-/**
- * Helper
- * Created by Ellen Luo
- * Helper class that contains methods used by multiple classes.
- */
-
 import android.app.Activity;
 import android.app.AlarmManager;
 import android.app.AlertDialog;
@@ -19,10 +13,16 @@ import android.content.SharedPreferences;
 import android.os.Build;
 import android.preference.PreferenceManager;
 import android.support.v4.content.ContextCompat;
+import android.util.Log;
 import android.widget.Spinner;
 
 import java.util.Calendar;
 
+/**
+ * Helper
+ * Created by Ellen Luo
+ * Helper class that contains methods used by multiple classes.
+ */
 class Helper {
 
     private Context context;
@@ -78,6 +78,7 @@ class Helper {
         intent.putExtra("id", id);
         PendingIntent pendingIntent = PendingIntent.getBroadcast(this.context, (int) id, intent,
                 PendingIntent.FLAG_UPDATE_CURRENT);
+        Log.d("Helper", "Setting reminder with id " + id);
 
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT) {
             alarmManager.set(AlarmManager.RTC_WAKEUP, remindMillis, pendingIntent);
